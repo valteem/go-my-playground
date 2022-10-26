@@ -1,0 +1,113 @@
+[Verbose - 17:49:57.629] Config: {"name":"Launch file","type":"go","trace":"verbose","showLog":true,"logOutput":"dap","request":"launch","mode":"test","program":"./main.go","env":{"GOPATH":"/home/ubuntu/go"},"args":["-test.v","--","arg1","arg2","arg3"],"__configurationTarget":5,"packagePathToGoModPathMap":{"/home/ubuntu/00Files/Go/my-snippets/debug-bin":"/home/ubuntu/00Files/Go/my-snippets/debug-bin"},"debugAdapter":"dlv-dap","showRegisters":false,"showGlobalVariables":false,"substitutePath":[],"dlvFlags":[],"hideSystemGoroutines":false,"dlvToolPath":"/home/ubuntu/go/bin/dlv","__buildDir":"/home/ubuntu/00Files/Go/my-snippets/debug-bin"}
+
+[Verbose - 17:49:57.630] session c93c3f85-97b1-4184-b542-db3ade63e8a2 will start with {"name":"Launch file","type":"go","trace":"verbose","showLog":true,"logOutput":"dap","request":"launch","mode":"test","program":"./main.go","env":{"GOPATH":"/home/ubuntu/go"},"args":["-test.v","--","arg1","arg2","arg3"],"__configurationTarget":5,"packagePathToGoModPathMap":{"/home/ubuntu/00Files/Go/my-snippets/debug-bin":"/home/ubuntu/00Files/Go/my-snippets/debug-bin"},"debugAdapter":"dlv-dap","showRegisters":false,"showGlobalVariables":false,"substitutePath":[],"dlvFlags":[],"hideSystemGoroutines":false,"dlvToolPath":"/home/ubuntu/go/bin/dlv","__buildDir":"/home/ubuntu/00Files/Go/my-snippets/debug-bin"}
+
+[Trace - 17:49:57.636] client -> {"command":"initialize","arguments":{"clientID":"vscode","clientName":"Visual Studio Code","adapterID":"go","pathFormat":"path","linesStartAt1":true,"columnsStartAt1":true,"supportsVariableType":true,"supportsVariablePaging":true,"supportsRunInTerminalRequest":true,"locale":"en-us","supportsProgressReporting":true,"supportsInvalidatedEvent":true,"supportsMemoryReferences":true},"type":"request","seq":1}
+
+[Trace - 17:49:57.639] client  <- {"seq":0,"type":"event","event":"output","body":{"category":"console","output":"Starting: /home/ubuntu/go/bin/dlv dap --check-go-version=false --log=true --log-output=dap --listen=127.0.0.1:39617 --log-dest=3 from /home/ubuntu/00Files/Go/my-snippets/debug-bin\n"}}
+
+[Info - 17:49:57.639] Starting: /home/ubuntu/go/bin/dlv dap --check-go-version=false --log=true --log-output=dap --listen=127.0.0.1:39617 --log-dest=3 from /home/ubuntu/00Files/Go/my-snippets/debug-bin
+
+[Trace - 17:49:57.647] client  <- {"seq":0,"type":"event","event":"output","body":{"category":"console","output":"DAP server listening at: 127.0.0.1:39617\n"}}
+
+[Info - 17:49:57.647] DAP server listening at: 127.0.0.1:39617
+
+[Trace - 17:49:57.648] client  <- {"seq":0,"type":"event","event":"output","body":{"category":"console","output":"2022-05-09T17:49:57+03:00 debug layer=dap DAP server pid = 18708\n"}}
+
+[Info - 17:49:57.648] 2022-05-09T17:49:57+03:00 debug layer=dap DAP server pid = 18708
+
+[Verbose - 17:49:57.649] Running dlv dap server: pid=18708
+
+[Trace - 17:49:57.650] client  <- {"seq":0,"type":"event","event":"output","body":{"category":"console","output":"2022-05-09T17:49:57+03:00 debug layer=dap DAP connection 1 started\n"}}
+
+[Info - 17:49:57.650] 2022-05-09T17:49:57+03:00 debug layer=dap DAP connection 1 started
+
+[Trace - 17:49:57.650] client  <- {"seq":0,"type":"event","event":"output","body":{"category":"console","output":"2022-05-09T17:49:57+03:00 debug layer=dap [<- from client]{\"seq\":1,\"type\":\"request\",\"command\":\"initialize\",\"arguments\":{\"clientID\":\"vscode\",\"clientName\":\"Visual Studio Code\",\"adapterID\":\"go\",\"locale\":\"en-us\",\"linesStartAt1\":true,\"columnsStartAt1\":true,\"pathFormat\":\"path\",\"supportsVariableType\":true,\"supportsVariablePaging\":true,\"supportsRunInTerminalRequest\":true,\"supportsMemoryReferences\":true,\"supportsProgressReporting\":true,\"supportsInvalidatedEvent\":true}}\n2022-05-09T17:49:57+03:00 debug layer=dap [-> to client]{\"seq\":0,\"type\":\"response\",\"request_seq\":1,\"success\":true,\"command\":\"initialize\",\"body\":{\"supportsConfigurationDoneRequest\":true,\"supportsFunctionBreakpoints\":true,\"supportsConditionalBreakpoints\":true,\"supportsEvaluateForHovers\":true,\"supportsSetVariable\":true,\"supportsExceptionInfoRequest\":true,\"supportsDelayedStackTraceLoading\":true,\"supportsLogPoints\":true,\"supportsDisassembleRequest\":true,\"supportsClipboardContext\":true,\"supportsSteppingGranularity\":true,\"supportsInstructionBreakpoints\":true}}\n"}}
+
+[Info - 17:49:57.650] 2022-05-09T17:49:57+03:00 debug layer=dap [<- from client]{"seq":1,"type":"request","command":"initialize","arguments":{"clientID":"vscode","clientName":"Visual Studio Code","adapterID":"go","locale":"en-us","linesStartAt1":true,"columnsStartAt1":true,"pathFormat":"path","supportsVariableType":true,"supportsVariablePaging":true,"supportsRunInTerminalRequest":true,"supportsMemoryReferences":true,"supportsProgressReporting":true,"supportsInvalidatedEvent":true}}
+2022-05-09T17:49:57+03:00 debug layer=dap [-> to client]{"seq":0,"type":"response","request_seq":1,"success":true,"command":"initialize","body":{"supportsConfigurationDoneRequest":true,"supportsFunctionBreakpoints":true,"supportsConditionalBreakpoints":true,"supportsEvaluateForHovers":true,"supportsSetVariable":true,"supportsExceptionInfoRequest":true,"supportsDelayedStackTraceLoading":true,"supportsLogPoints":true,"supportsDisassembleRequest":true,"supportsClipboardContext":true,"supportsSteppingGranularity":true,"supportsInstructionBreakpoints":true}}
+
+[Trace - 17:49:57.651] client  <- {"seq":0,"type":"response","request_seq":1,"success":true,"command":"initialize","body":{"supportsConfigurationDoneRequest":true,"supportsFunctionBreakpoints":true,"supportsConditionalBreakpoints":true,"supportsEvaluateForHovers":true,"supportsSetVariable":true,"supportsExceptionInfoRequest":true,"supportsDelayedStackTraceLoading":true,"supportsLogPoints":true,"supportsDisassembleRequest":true,"supportsClipboardContext":true,"supportsSteppingGranularity":true,"supportsInstructionBreakpoints":true}}
+
+[Trace - 17:49:57.656] client -> {"command":"launch","arguments":{"name":"Launch file","type":"go","trace":"verbose","showLog":true,"logOutput":"dap","request":"launch","mode":"test","program":"./main.go","env":{"GOPATH":"/home/ubuntu/go"},"args":["-test.v","--","arg1","arg2","arg3"],"__configurationTarget":5,"packagePathToGoModPathMap":{"/home/ubuntu/00Files/Go/my-snippets/debug-bin":"/home/ubuntu/00Files/Go/my-snippets/debug-bin"},"debugAdapter":"dlv-dap","showRegisters":false,"showGlobalVariables":false,"substitutePath":[],"dlvFlags":[],"hideSystemGoroutines":false,"dlvToolPath":"/home/ubuntu/go/bin/dlv","__buildDir":"/home/ubuntu/00Files/Go/my-snippets/debug-bin","__sessionId":"c93c3f85-97b1-4184-b542-db3ade63e8a2"},"type":"request","seq":2}
+
+[Trace - 17:49:57.657] client  <- {"seq":0,"type":"event","event":"output","body":{"category":"console","output":"2022-05-09T17:49:57+03:00 debug layer=dap [<- from client]{\"seq\":2,\"type\":\"request\",\"command\":\"launch\",\"arguments\":{\"name\":\"Launch file\",\"type\":\"go\",\"trace\":\"verbose\",\"showLog\":true,\"logOutput\":\"dap\",\"request\":\"launch\",\"mode\":\"test\",\"program\":\"./main.go\",\"env\":{\"GOPATH\":\"/home/ubuntu/go\"},\"args\":[\"-test.v\",\"--\",\"arg1\",\"arg2\",\"arg3\"],\"__configurationTarget\":5,\"packagePathToGoModPathMap\":{\"/home/ubuntu/00Files/Go/my-snippets/debug-bin\":\"/home/ubuntu/00Files/Go/my-snippets/debug-bin\"},\"debugAdapter\":\"dlv-dap\",\"showRegisters\":false,\"showGlobalVariables\":false,\"substitutePath\":[],\"dlvFlags\":[],\"hideSystemGoroutines\":false,\"dlvToolPath\":\"/home/ubuntu/go/bin/dlv\",\"__buildDir\":\"/home/ubuntu/00Files/Go/my-snippets/debug-bin\",\"__sessionId\":\"c93c3f85-97b1-4184-b542-db3ade63e8a2\"}}\n"}}
+
+[Info - 17:49:57.657] 2022-05-09T17:49:57+03:00 debug layer=dap [<- from client]{"seq":2,"type":"request","command":"launch","arguments":{"name":"Launch file","type":"go","trace":"verbose","showLog":true,"logOutput":"dap","request":"launch","mode":"test","program":"./main.go","env":{"GOPATH":"/home/ubuntu/go"},"args":["-test.v","--","arg1","arg2","arg3"],"__configurationTarget":5,"packagePathToGoModPathMap":{"/home/ubuntu/00Files/Go/my-snippets/debug-bin":"/home/ubuntu/00Files/Go/my-snippets/debug-bin"},"debugAdapter":"dlv-dap","showRegisters":false,"showGlobalVariables":false,"substitutePath":[],"dlvFlags":[],"hideSystemGoroutines":false,"dlvToolPath":"/home/ubuntu/go/bin/dlv","__buildDir":"/home/ubuntu/00Files/Go/my-snippets/debug-bin","__sessionId":"c93c3f85-97b1-4184-b542-db3ade63e8a2"}}
+
+[Trace - 17:49:57.658] client  <- {"seq":0,"type":"event","event":"output","body":{"category":"console","output":"2022-05-09T17:49:57+03:00 debug layer=dap parsed launch config: {\n\t\"mode\": \"test\",\n\t\"program\": \"./main.go\",\n\t\"args\": [\n\t\t\"-test.v\",\n\t\t\"--\",\n\t\t\"arg1\",\n\t\t\"arg2\",\n\t\t\"arg3\"\n\t],\n\t\"env\": {\n\t\t\"GOPATH\": \"/home/ubuntu/go\"\n\t},\n\t\"backend\": \"default\",\n\t\"stackTraceDepth\": 50\n}\n"}}
+
+[Info - 17:49:57.658] 2022-05-09T17:49:57+03:00 debug layer=dap parsed launch config: {
+	"mode": "test",
+	"program": "./main.go",
+	"args": [
+		"-test.v",
+		"--",
+		"arg1",
+		"arg2",
+		"arg3"
+	],
+	"env": {
+		"GOPATH": "/home/ubuntu/go"
+	},
+	"backend": "default",
+	"stackTraceDepth": 50
+}
+
+[Trace - 17:49:57.747] client  <- {"seq":0,"type":"event","event":"output","body":{"category":"console","output":"2022-05-09T17:49:57+03:00 debug layer=dap building from \"/home/ubuntu/00Files/Go/my-snippets/debug-bin\": [go test -c -o /home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin -gcflags all=-N -l ./main.go]\n"}}
+
+[Info - 17:49:57.748] 2022-05-09T17:49:57+03:00 debug layer=dap building from "/home/ubuntu/00Files/Go/my-snippets/debug-bin": [go test -c -o /home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin -gcflags all=-N -l ./main.go]
+
+[Trace - 17:49:57.787] client  <- {"seq":0,"type":"event","event":"output","body":{"category":"console","output":"2022-05-09T17:49:57+03:00 debug layer=dap launching binary '/home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin' with config: {\n\t\"mode\": \"test\",\n\t\"program\": \"/home/ubuntu/00Files/Go/my-snippets/debug-bin/main.go\",\n\t\"args\": [\n\t\t\"-test.v\",\n\t\t\"--\",\n\t\t\"arg1\",\n\t\t\"arg2\",\n\t\t\"arg3\"\n\t],\n\t\"cwd\": \"/home/ubuntu/00Files/Go/my-snippets/debug-bin\",\n\t\"output\": \"/home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin\",\n\t\"dlvCwd\": \"/home/ubuntu/00Files/Go/my-snippets/debug-bin\",\n\t\"env\": {\n\t\t\"GOPATH\": \"/home/ubuntu/go\"\n\t},\n\t\"backend\": \"default\",\n\t\"stackTraceDepth\": 50\n}\n"}}
+
+[Info - 17:49:57.788] 2022-05-09T17:49:57+03:00 debug layer=dap launching binary '/home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin' with config: {
+	"mode": "test",
+	"program": "/home/ubuntu/00Files/Go/my-snippets/debug-bin/main.go",
+	"args": [
+		"-test.v",
+		"--",
+		"arg1",
+		"arg2",
+		"arg3"
+	],
+	"cwd": "/home/ubuntu/00Files/Go/my-snippets/debug-bin",
+	"output": "/home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin",
+	"dlvCwd": "/home/ubuntu/00Files/Go/my-snippets/debug-bin",
+	"env": {
+		"GOPATH": "/home/ubuntu/go"
+	},
+	"backend": "default",
+	"stackTraceDepth": 50
+}
+
+[Trace - 17:49:57.788] client  <- {"seq":0,"type":"event","event":"output","body":{"category":"console","output":"2022-05-09T17:49:57+03:00 debug layer=dap Failed to launch: could not launch process: open /home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin: no such file or directory\n2022-05-09T17:49:57+03:00 debug layer=dap [-> to client]{\"seq\":0,\"type\":\"response\",\"request_seq\":2,\"success\":false,\"command\":\"launch\",\"message\":\"Failed to launch\",\"body\":{\"error\":{\"id\":3000,\"format\":\"Failed to launch: could not launch process: open /home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin: no such file or directory\",\"showUser\":true}}}\n"}}
+
+[Info - 17:49:57.788] 2022-05-09T17:49:57+03:00 debug layer=dap Failed to launch: could not launch process: open /home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin: no such file or directory
+2022-05-09T17:49:57+03:00 debug layer=dap [-> to client]{"seq":0,"type":"response","request_seq":2,"success":false,"command":"launch","message":"Failed to launch","body":{"error":{"id":3000,"format":"Failed to launch: could not launch process: open /home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin: no such file or directory","showUser":true}}}
+
+[Trace - 17:49:57.789] client  <- {"seq":0,"type":"response","request_seq":2,"success":false,"command":"launch","message":"Failed to launch","body":{"error":{"id":3000,"format":"Failed to launch: could not launch process: open /home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin: no such file or directory","showUser":true}}}
+
+[Trace - 17:49:57.878] client -> {"command":"disconnect","arguments":{"restart":false},"type":"request","seq":3}
+
+[Trace - 17:49:57.885] client  <- {"seq":0,"type":"event","event":"output","body":{"category":"console","output":"2022-05-09T17:49:57+03:00 debug layer=dap [<- from client]{\"seq\":3,\"type\":\"request\",\"command\":\"disconnect\",\"arguments\":{}}\n2022-05-09T17:49:57+03:00 debug layer=dap [-> to client]{\"seq\":0,\"type\":\"response\",\"request_seq\":3,\"success\":true,\"command\":\"disconnect\"}\n2022-05-09T17:49:57+03:00 debug layer=dap [-> to client]{\"seq\":0,\"type\":\"event\",\"event\":\"terminated\",\"body\":{}}\n2022-05-09T17:49:57+03:00 debug layer=dap DAP server stopping...\n2022-05-09T17:49:57+03:00 debug layer=dap DAP server stopped\n"}}
+
+[Info - 17:49:57.886] 2022-05-09T17:49:57+03:00 debug layer=dap [<- from client]{"seq":3,"type":"request","command":"disconnect","arguments":{}}
+2022-05-09T17:49:57+03:00 debug layer=dap [-> to client]{"seq":0,"type":"response","request_seq":3,"success":true,"command":"disconnect"}
+2022-05-09T17:49:57+03:00 debug layer=dap [-> to client]{"seq":0,"type":"event","event":"terminated","body":{}}
+2022-05-09T17:49:57+03:00 debug layer=dap DAP server stopping...
+2022-05-09T17:49:57+03:00 debug layer=dap DAP server stopped
+
+[Trace - 17:49:57.886] client  <- {"seq":0,"type":"response","request_seq":3,"success":true,"command":"disconnect"}
+
+[Trace - 17:49:57.887] client  <- {"seq":0,"type":"event","event":"terminated","body":{}}
+
+[Trace - 17:49:57.887] client  <- {"seq":0,"type":"event","event":"output","body":{"category":"stderr","output":"could not remove /home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin: remove /home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin: no such file or directory\n"}}
+
+[Trace - 17:49:57.888] client  <- {"seq":0,"type":"event","event":"output","body":{"category":"console","output":"dlv dap (18708) exited with code: 0\n"}}
+
+[Info - 17:49:57.888] dlv dap (18708) exited with code: 0
+
+[Verbose - 17:49:58.295] session c93c3f85-97b1-4184-b542-db3ade63e8a2 will stop
+
+[Info - 17:49:58.298] dlv dap process(18708) already exited (exit code: 0)
+

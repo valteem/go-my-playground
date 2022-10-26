@@ -1,0 +1,46 @@
+Starting: /home/ubuntu/go/bin/dlv dap --check-go-version=false --log=true --log-output=dap --listen=127.0.0.1:39617 --log-dest=3 from /home/ubuntu/00Files/Go/my-snippets/debug-bin
+DAP server listening at: 127.0.0.1:39617
+2022-05-09T17:49:57+03:00 debug layer=dap DAP server pid = 18708
+2022-05-09T17:49:57+03:00 debug layer=dap DAP connection 1 started
+2022-05-09T17:49:57+03:00 debug layer=dap [<- from client]{"seq":1,"type":"request","command":"initialize","arguments":{"clientID":"vscode","clientName":"Visual Studio Code","adapterID":"go","locale":"en-us","linesStartAt1":true,"columnsStartAt1":true,"pathFormat":"path","supportsVariableType":true,"supportsVariablePaging":true,"supportsRunInTerminalRequest":true,"supportsMemoryReferences":true,"supportsProgressReporting":true,"supportsInvalidatedEvent":true}}
+2022-05-09T17:49:57+03:00 debug layer=dap [-> to client]{"seq":0,"type":"response","request_seq":1,"success":true,"command":"initialize","body":{"supportsConfigurationDoneRequest":true,"supportsFunctionBreakpoints":true,"supportsConditionalBreakpoints":true,"supportsEvaluateForHovers":true,"supportsSetVariable":true,"supportsExceptionInfoRequest":true,"supportsDelayedStackTraceLoading":true,"supportsLogPoints":true,"supportsDisassembleRequest":true,"supportsClipboardContext":true,"supportsSteppingGranularity":true,"supportsInstructionBreakpoints":true}}
+2022-05-09T17:49:57+03:00 debug layer=dap [<- from client]{"seq":2,"type":"request","command":"launch","arguments":{"name":"Launch file","type":"go","trace":"verbose","showLog":true,"logOutput":"dap","request":"launch","mode":"test","program":"./main.go","env":{"GOPATH":"/home/ubuntu/go"},"args":["-test.v","--","arg1","arg2","arg3"],"__configurationTarget":5,"packagePathToGoModPathMap":{"/home/ubuntu/00Files/Go/my-snippets/debug-bin":"/home/ubuntu/00Files/Go/my-snippets/debug-bin"},"debugAdapter":"dlv-dap","showRegisters":false,"showGlobalVariables":false,"substitutePath":[],"dlvFlags":[],"hideSystemGoroutines":false,"dlvToolPath":"/home/ubuntu/go/bin/dlv","__buildDir":"/home/ubuntu/00Files/Go/my-snippets/debug-bin","__sessionId":"c93c3f85-97b1-4184-b542-db3ade63e8a2"}}
+2022-05-09T17:49:57+03:00 debug layer=dap parsed launch config: {
+	"mode": "test",
+	"program": "./main.go",
+	"args": [
+		"-test.v",
+		"--",
+		"arg1",
+		"arg2",
+		"arg3"
+	],
+	"env": {
+		"GOPATH": "/home/ubuntu/go"
+	},
+	"backend": "default",
+	"stackTraceDepth": 50
+}
+2022-05-09T17:49:57+03:00 debug layer=dap building from "/home/ubuntu/00Files/Go/my-snippets/debug-bin": [go test -c -o /home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin -gcflags all=-N -l ./main.go]
+2022-05-09T17:49:57+03:00 debug layer=dap launching binary '/home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin' with config: {
+	"mode": "test",
+	"program": "/home/ubuntu/00Files/Go/my-snippets/debug-bin/main.go",
+	"args": [
+		"-test.v",
+		"--",
+		"arg1",
+		"arg2",
+		"arg3"
+	],
+	"cwd": "/home/ubuntu/00Files/Go/my-snippets/debug-bin",
+	"output": "/home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin",
+	"dlvCwd": "/home/ubuntu/00Files/Go/my-snippets/debug-bin",
+	"env": {
+		"GOPATH": "/home/ubuntu/go"
+	},
+	"backend": "default",
+	"stackTraceDepth": 50
+}
+2022-05-09T17:49:57+03:00 debug layer=dap Failed to launch: could not launch process: open /home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin: no such file or directory
+2022-05-09T17:49:57+03:00 debug layer=dap [-> to client]{"seq":0,"type":"response","request_seq":2,"success":false,"command":"launch","message":"Failed to launch","body":{"error":{"id":3000,"format":"Failed to launch: could not launch process: open /home/ubuntu/00Files/Go/my-snippets/debug-bin/__debug_bin: no such file or directory","showUser":true}}}
+
