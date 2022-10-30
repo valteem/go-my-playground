@@ -1,0 +1,16 @@
+package main
+
+import (
+	"fmt"
+	"reflect"
+	"regexp"
+)
+
+func main() {
+
+	r, _ := regexp.Compile("p([a-z]+)ch") // "p[a-z][a-z]ch" works too
+	fmt.Println(r, reflect.TypeOf(r)) // (*Regexp) String() provides input for Println()
+
+	s := r.MatchString("peach")
+	fmt.Println(s)
+}
