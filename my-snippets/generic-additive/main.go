@@ -5,14 +5,14 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-/* func Scale[S []~E, E int](s S, sc E) S{
+func Scale[S ~[]E, E int](s S, sc E) S{
     r := make(S, len(s))
     for i, v := range s {
-        r[i] = v * c
+        r[i] = v * sc
     }
 
     return r
-} */
+}
 
 type additive interface {
 	int|uint32|uint64|float32|float64
@@ -38,5 +38,9 @@ func main() {
 	fmt.Println(add(a_float32, b_float32), addConstraints(a_float32, b_float32))
 	a_float64, b_float64 := 1.0, 2.0
 	fmt.Println(add(a_float64, b_float64), addConstraints(a_float64, b_float64))
+
+	sl := []int{1, 2, 4, 8}
+	sl = Scale(sl, 2)
+	fmt.Println(sl)
 
 }
