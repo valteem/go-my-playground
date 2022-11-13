@@ -1,0 +1,4 @@
+http.HandleFunc(pattern, handler)
+ServeMux.HandleFunc(pattern, handler)
+mux.Handle(pattern, HandleFunc(handler))          //HandleFunc(handler) - one argument (function)
+type HandleFunc func(ResponseWriter, *Request)    //func(w, r) - function with two arguments, most probably of a certain type
