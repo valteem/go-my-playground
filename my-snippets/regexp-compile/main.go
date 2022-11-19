@@ -13,4 +13,8 @@ func main() {
 
 	s := r.MatchString("peach")
 	fmt.Println(s)
+
+	re := regexp.MustCompile("^/contact/([a-zA-Z0-9]+)/event/([0-9]+)")
+	fmt.Println(re.FindStringSubmatch("/contact/Name1/event/1234"))
+
 }
