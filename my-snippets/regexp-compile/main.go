@@ -17,4 +17,7 @@ func main() {
 	re := regexp.MustCompile("^/contact/([a-zA-Z0-9]+)/event/([0-9]+)")
 	fmt.Println(re.FindStringSubmatch("/contact/Name1/event/1234"))
 
+	r1 := regexp.MustCompile("([/]+)")
+	fmt.Println(r1.MatchString("//"))
+
 }
