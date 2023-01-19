@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"sync"
 	"time"
 )
@@ -13,11 +13,11 @@ func AsyncLevelOne(ctx context.Context, wg *sync.WaitGroup) {
 	for {
 		select {
 		case <-ctx.Done():
-		  fmt.Println("Sync Level One: context canceled")
+		  log.Println("Sync Level One: context canceled")
 		  wg.Done()
 		  return
 		default:
-		  fmt.Println("Sync Level One: nothing")
+		  log.Println("Sync Level One: nothing")
 		}	
 	}
  }
@@ -26,11 +26,11 @@ func AsyncLevelTwo(ctx context.Context, wg *sync.WaitGroup) {
 	for {
 		select {
 		case <-ctx.Done():
-		  fmt.Println("Sync Level Two: context canceled")
+		  log.Println("Sync Level Two: context canceled")
 		  wg.Done()
 		  return
 		default:
-		  fmt.Println("Sync Level Two: nothing")
+		  log.Println("Sync Level Two: nothing")
 		}
 	}
 }
@@ -40,7 +40,7 @@ func AsyncChain() {
 	wg.Add(2)
 	ctx, cancel := context.WithCancel(context.Background())
 	go AsyncLevelOne(ctx, &wg)
-	time.Sleep(30 * time.Microsecond)
+	time.Sleep(10 * time.Microsecond)
 	cancel()
 	wg.Wait()
 }
