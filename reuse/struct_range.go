@@ -1,15 +1,9 @@
 package reuse
 
-import (
-	"fmt"
-)
-
-func RangeOverStructDefinedInline() {
-
-	for i, tt := range []struct{
-		inpValue any
-		expected []int
-	}{{"input", []int{1 ,2, 3}}, {"output", []int{2, 4, 6}}} {
-		fmt.Println(i, tt)
+func SliceOfSquares(inp []int32) []int32 {
+	outp := []int32{}
+	for _, v := range inp {
+		outp = append(outp, v*v)
 	}
+	return outp
 }
