@@ -3,6 +3,7 @@ package reuse
 import (
 	"fmt"
 )
+
 const (
 	maxDepth = 3
 )
@@ -20,7 +21,7 @@ func nestedCall(s []string) {
 
 func CallStackPanicRecover() (err error) {
 	defer func() {
-		if r := recover(); r != nil {
+		if r := recover(); r != nil { // defer parameters evaluated at call time, no parameters - no evaluation :)
 			err = fmt.Errorf("%s", r)
 		}
 	}()
