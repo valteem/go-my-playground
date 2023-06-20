@@ -2,6 +2,7 @@ package reuse_test
 
 import (
 	"fmt"
+	"strconv"
 	"sync"
 	"testing"
 
@@ -9,20 +10,18 @@ import (
 )
 
 func TestPool(t *testing.T) {
+
 	pool := sync.Pool{New: reuse.New}
-	testResource := pool.Get().(*reuse.Resource)
-	fmt.Println(testResource.Name)
-	testResource.Name = "another resource"
-	pool.Put(testResource)
-	anotherResource :=  pool.Get().(*reuse.Resource)
-	fmt.Println(anotherResource.Name)
-	pool.Put(anotherResource)
-	yetAnotherResource :=  pool.Get().(*reuse.Resource)
-	fmt.Println(yetAnotherResource.Name)
-	yetAnotherResource.Name = "yet another resource"
-	pool.Put(yetAnotherResource)
-	for i := 0; i < 4; i++ {
-		more :=  pool.Get().(*reuse.Resource)
-		fmt.Println(more.Name)
+
+	for i := 0; i < 5; i++ {
+		r := reuse.Resource{}
+		r.Name = "name" + strconv.Itoa(i)
+		pool.Put(&r) // *reuse.Resource (pointer), not reuse.Resource (object)
 	}
+
+	for i := 0; i < 6; i++ {
+		r := pool.Get().(*reuse.Resource)
+		fmt.Println(r.Name)
+	}
+
 }
