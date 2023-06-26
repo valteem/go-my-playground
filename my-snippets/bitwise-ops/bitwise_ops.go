@@ -15,8 +15,8 @@ func BitsPres(i uint64) string {
 
 func main() {
 
-	var i uint64 = 62
-	var j uint64 = 39
+	var i uint64 = 4
+	var j uint64 = i >> 1
 	fmt.Println(BitsPres(i))
 	fmt.Println(BitsPres(j))
 	fmt.Println("AND (i & j)")
