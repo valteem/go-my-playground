@@ -1,29 +1,29 @@
 package reuse
 
 import (
-	"bufio"
+	"net"
 	"regexp"
-	"strings"
 )
 
-type IPFreq struct {
-	IP string
-	Frequency int
-}
+const (
+	pat = `\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b`
+)
 
-func ParseLogForIP(l string) []IPFreq {
+func validateIPAddress(s string) bool { return net.ParseIP(s) != nil }
 
-	re, _ := regexp.Compile(`^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$`)
+func ParseLogForIP(l string) map[string]int {
+
+	re, _ := regexp.Compile(pat) // defined in ipv4_validate.go
 
 	matches := re.FindAllString(l, -1)
 
+	count := make(map[string]int)
+
 	for _, m := range matches {
-		s := strings.Split(m, `.`)
+		if validateIPAddress(m) {
+			count[m]++
+		}
 	}
 
-// https://stackoverflow.com/questions/33162449/iterate-over-multiline-string-in-go
-	scanner := bufio.NewScanner(strings.NewReader(l))
-	for scanner.Scan() {
-
-	}
+	return count
 }
