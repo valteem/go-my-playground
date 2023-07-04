@@ -24,5 +24,6 @@ func TestAssertType(t *testing.T) {
 	fmt.Println(reuse.AssertType(f))
 
 	fmt.Println(reflect.TypeOf(f))
+	fmt.Println(reflect.TypeOf(reflect.TypeOf(f))) // *reflect.rtype (type.go::317)
 
 }
