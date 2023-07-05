@@ -14,4 +14,7 @@ func TestErrorUnwrap(t *testing.T) {
 	if errors.Is(err, reuse.ErrNotNegativeValue) {
 		fmt.Println("sentinel error found")
 	}
+	if errors.Unwrap(err) == nil {
+		fmt.Println("no more errors inside")
+	}
 }
