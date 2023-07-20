@@ -38,3 +38,37 @@ func MakeSendChanWithWG(wg *sync.WaitGroup, num ...int) <- chan int {
 	}()
 	return out	
 }
+
+func SendToChanUntilDone(done <-chan struct{}) <-chan int {
+	out := make(chan int)
+	i := 1
+	go func() {
+		for {
+			select {
+			case <-done:
+				close(out)
+				return
+			default:
+				out <- i
+				i++
+			}
+		}
+	}()
+	return out
+}
+
+func ReadFromChanUntilDone(ch <-chan int, done chan struct{}) <-chan int {
+	out := make(chan int)
+	go func() {
+		for {
+			select {
+			case <-done:
+				close(out)
+				return
+			case v := <-ch:
+				out <- v
+			}
+		}
+	}()
+	return(out)
+}

@@ -13,6 +13,7 @@ import (
 
 const (
 	delayUpperLimit = 5
+	numReads = 12
 )
 
 func TestSquares(t *testing.T) {
@@ -59,4 +60,15 @@ func TestSquaresWithWG(t *testing.T) {
 
 	wg.Wait()
 
+}
+
+func TestUntilDone(t *testing.T) {
+	done := make(chan struct{}, 2)
+	s := reuse.SendToChanUntilDone(done)
+	r := reuse.ReadFromChanUntilDone(s, done)
+	for i := 0; i < numReads; i++ {
+		fmt.Println(<-r)
+	}
+	done <- struct{}{}
+	done <- struct{}{}
 }
