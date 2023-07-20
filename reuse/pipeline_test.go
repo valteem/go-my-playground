@@ -4,6 +4,7 @@ package reuse_test
 
 import (
 	"fmt"
+	"sync"
 	"testing"
 	"time"
 
@@ -42,4 +43,20 @@ func TestSquaresWithDelay(t *testing.T) {
 	}
 
 	time.Sleep(time.Duration(delayUpperLimit) * time.Second) // roughly 1 sec of delay for every channel
+}
+
+func TestSquaresWithWG(t *testing.T) {
+	wg := &sync.WaitGroup{}
+	wg.Add(1) // make sure that all sends are completed
+
+	go func() {
+		defer wg.Done() // after all sends are completed
+		for v := range reuse.CalcSquares(reuse.MakeSendChanWithWG(wg, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)) {
+			fmt.Printf("output %d\n", v)
+			wg.Done()
+		}
+	}()
+
+	wg.Wait()
+
 }

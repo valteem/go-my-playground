@@ -2,6 +2,8 @@
 
 package reuse
 
+import "sync"
+
 func MakeSendChan(num ...int) <-chan int {
 	out := make(chan int)
 	go func() {
@@ -22,4 +24,17 @@ func CalcSquares(ch <-chan int) <-chan int {
 		close(squares)
 	}()
 	return squares
+}
+
+func MakeSendChanWithWG(wg *sync.WaitGroup, num ...int) <- chan int {
+	out := make(chan int)
+	wg.Add(len(num)) // make sure wg counter is set to max value before receiver in main/test starts reading from channel
+	go func() {
+		for _, v := range num {
+			out <- v
+//			wg.Add(1) // this way wg counter in main/test may reach zero before all sends are completed
+		}
+		close(out)
+	}()
+	return out	
 }
