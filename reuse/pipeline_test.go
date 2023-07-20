@@ -64,11 +64,13 @@ func TestSquaresWithWG(t *testing.T) {
 
 func TestUntilDone(t *testing.T) {
 	done := make(chan struct{}, 2)
+	defer close(done) // sends zero value to _all_ receivers (hence no need for counting receivers)
 	s := reuse.SendToChanUntilDone(done)
 	r := reuse.ReadFromChanUntilDone(s, done)
 	for i := 0; i < numReads; i++ {
 		fmt.Println(<-r)
 	}
-	done <- struct{}{}
-	done <- struct{}{}
+	// done <- struct{}{}
+	// done <- struct{}{}
+
 }
