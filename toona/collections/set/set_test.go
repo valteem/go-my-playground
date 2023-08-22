@@ -33,6 +33,14 @@ func TestSetNew(t *testing.T) {
 			t.Errorf("error set initialization - redundant elements in map %s", k)
 		}
 	}
+
+	r := []string{"two", "three"}
+	s.RemoveMany(r...)
+	for _, v := range r {
+		if _, in := s[v]; in {
+			t.Errorf("error rremoving element %s", v)
+		}
+	
+	}
+	
 }
-
-
