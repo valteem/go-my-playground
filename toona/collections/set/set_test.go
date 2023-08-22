@@ -1,6 +1,8 @@
 package set_test
 
 import (
+	"reflect"
+	"sort"
 	"testing"
 
 	"my.play.go/toona/collections/set"
@@ -22,7 +24,7 @@ func TestSetNew(t *testing.T) {
 	}
 
 // all map keys are in slice
-	for k, _ := range s {
+	for k := range s {
 		in := false
 		for _, v := range e {
 			if k == v {
@@ -43,4 +45,28 @@ func TestSetNew(t *testing.T) {
 	
 	}
 	
+}
+
+func TestSetMerge(t *testing.T) {
+
+	e1 := []string{"one", "two", "three"}
+	s1 := set.New(e1...) // generic argument type inference
+
+	e2 := []string{"three", "four", "five"}
+	s2 := set.New(e2...)
+
+	s1.Merge(s2)
+
+	expected := []string{"one", "two", "three", "four", "five"}
+	result := s1.ExtractSlice()
+	//TODO: replace inline sorting with custom slice sort
+	sort.Slice(expected, func(i, j int) bool {
+		return expected[i] < expected[j]
+	})
+	sort.Slice(result, func(i, j int) bool {
+		return result[i] < result[j]
+	})
+	if !reflect.DeepEqual(expected, result) {
+		t.Error("error merging slices")
+	}
 }

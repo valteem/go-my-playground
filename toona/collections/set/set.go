@@ -36,3 +36,17 @@ func (s Set[T]) RemoveMany(elts... T) {
 		s.Remove(v)
 	}
 }
+
+func (s Set[T]) Merge(s2 Set[T]) {
+	for k := range s2 {
+		s[k] = struct{}{}
+	}
+}
+
+func (s Set[T]) ExtractSlice() []T {
+	l := []T{}
+	for k := range s {
+		l = append(l, k)
+	}
+	return l
+}
