@@ -12,7 +12,7 @@ func NewWithLen[T comparable](l int) Set[T] {
 	return s
  }
 
-func (s Set[T]) Insert(elt T) { // maps are actually pointers (https://stackoverflow.com/a/53680008), hence no neet for (s *Set)
+func (s Set[T]) Insert(elt T) { // maps are actually pointers (https://stackoverflow.com/a/53680008), hence no need for (s *Set)
 	s[elt] = struct{}{}
 }
 
@@ -25,4 +25,14 @@ func (s Set[T]) InsertMany(elts ...T) {
 func (s Set[T]) InsertNew(elt T) Set[T] {
 	s[elt] = struct{}{}
 	return s
+}
+
+func (s Set[T]) Remove(elt T) {
+	delete(s, elt)
+}
+
+func (s Set[T]) RemoveMany(elts... T) {
+	for _, v := range elts {
+		s.Remove(v)
+	}
 }
