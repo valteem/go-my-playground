@@ -14,9 +14,25 @@ func TestSetNew(t *testing.T) {
 		t.Errorf("error set initialization - invalid length")
 	}
 
+// all slice elements are in map	
 	for _, v := range e {
 		if _, in := s[v]; !in {
 			t.Errorf("error set initialization - element not found %s", v)
 		}
 	}
+
+// all map keys are in slice
+	for k, _ := range s {
+		in := false
+		for _, v := range e {
+			if k == v {
+				in = true
+			}
+		}
+		if !in {
+			t.Errorf("error set initialization - redundant elements in map %s", k)
+		}
+	}
 }
+
+
