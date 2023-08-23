@@ -98,3 +98,22 @@ func TestSetContains(t *testing.T) {
 		t.Error(`{"a", "b", "c", "i", "j"} is not superset of {"a", "b", "k"}`)
 	}
 }
+
+func TestSetIntersection(t *testing.T) {
+
+	e1 := []string{"a", "b", "c", "f", "g", "h"}
+	s1 := set.New(e1...)
+	e2 := []string{"b", "c", "h", "i", "j", "k"}
+	s2 := set.New(e2...)
+
+	s3 := s1.Intersection(s2)
+	result := s3.ExtractSlice()
+	sort.Slice(result, func(i, j int) bool {
+		return result[i] < result[j]
+	})
+	expected := []string{"b", "c", "h"}
+	if !reflect.DeepEqual(result, expected) {
+		t.Error("wrong intersection result")
+	}
+
+}

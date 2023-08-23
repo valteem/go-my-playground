@@ -75,3 +75,17 @@ func (s Set[T]) IsSuperSetOf(s2 Set[T]) bool {
 	return true
 
 }
+
+func (s Set[T]) Intersection(s2 Set[T]) Set[T] {
+
+	result := New[T]()
+	
+	for k := range s2 {
+		if s.Contains(k) {
+			result.Insert(k)
+		}
+	}
+
+	return result
+
+}
