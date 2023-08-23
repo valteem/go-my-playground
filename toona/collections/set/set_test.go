@@ -70,3 +70,31 @@ func TestSetMerge(t *testing.T) {
 		t.Error("error merging slices")
 	}
 }
+
+func TestSetContains(t *testing.T) {
+
+	e := []string{"one", "two", "three"}
+	s := set.New(e...)
+	
+	if !s.Contains("three") {
+		t.Errorf("set must contain element %s", "three")
+	}
+	if s.Contains("four") {
+		t.Errorf("set does not contain element %s", "four")
+	}
+
+	e1 := []string{"a", "b", "c", "i", "j"}
+	s1 := set.New(e1...)
+
+	e2 := []string{"a", "c", "j"}
+	s2 := set.New(e2...)
+	if !s1.IsSuperSetOf(s2) {
+		t.Error(`{"a", "b", "c", "i", "j"} is superset of {"a", "c", "j"}`)
+	}
+
+	e3 := []string{"a", "b", "k"}
+	s3 := set.New(e3...)
+	if s1.IsSuperSetOf(s3) {
+		t.Error(`{"a", "b", "c", "i", "j"} is not superset of {"a", "b", "k"}`)
+	}
+}

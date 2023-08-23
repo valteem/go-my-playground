@@ -50,3 +50,28 @@ func (s Set[T]) ExtractSlice() []T {
 	}
 	return l
 }
+
+func (s Set[T]) Contains(elt T) bool  {
+	_, in := s[elt]
+	return in
+}
+
+func (s Set[T]) IsSuperSetOf(s2 Set[T]) bool {
+
+	if s2 == nil {
+		return true
+	}
+
+	if len(s2) > len(s) {
+		return false
+	}
+
+	for k := range s2 {
+		if !s.Contains(k) {
+			return false
+		}
+	}
+
+	return true
+
+}
