@@ -2,12 +2,19 @@ package sequences
 
 import (
 	"errors"
+	"strings"
 	"sync"
 )
 
 var (
 	errStackEmpty = errors.New("stack empty")
 	errMaxDepth = errors.New("max stack depth achieved")
+	leftDelim = "{[("
+	rightDelim = "}])"
+)
+
+const (
+
 )
 
 type Stack [T any] struct {
@@ -82,4 +89,22 @@ func (a *AllocStack[T]) Pop() (T, error) {
 	r := a.arr[a.depth - 1]
 	a.depth--
 	return r, nil
+}
+
+func MatchDelim(s string) bool {
+	stk := NewStack[string]()
+	for _, c := range s {
+		v := string(c)
+		if strings.Contains(leftDelim, v) {
+			stk.Push(v)
+		} else if strings.Contains(rightDelim, v) {
+			if stk.IsEmpty() {
+				return false
+			} else if pv, _ := stk.Pop();
+			          strings.Index(rightDelim, v) != strings.Index(leftDelim, pv) {
+				return false
+			}	
+		}
+	}
+	return stk.IsEmpty()
 }

@@ -33,3 +33,16 @@ func TestAllocStack(t *testing.T) {
 	}
 	
 }
+
+func TestMatchDelim(t *testing.T) {
+
+	s1 := `{a+[b+(m+n)]}`
+    if sequences.MatchDelim(s1) != true {
+		t.Error("wrong MatchDelim result : true expected")
+	}
+    s2 := "{a+[b+(m+n)]"
+	if sequences.MatchDelim(s2) == true {
+		t.Error("wrong MatchDelim result : false expected")
+	}
+
+}
