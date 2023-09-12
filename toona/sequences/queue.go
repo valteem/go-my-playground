@@ -37,16 +37,15 @@ func (q *CircularQueue[T]) IsFull() bool {
 	return q.size == q.cap
 }
 
-func (q *CircularQueue[T]) Enqueue(e T) bool {
-	if q.IsFull() {
-		return false
-	}
+func (q *CircularQueue[T]) Enqueue(e T) {
 	q.lock.Lock()
 	defer q.lock.Unlock()
+	if q.size == q.cap {
+		q.resize()
+	}
 	available := (q.front + q.size) % q.cap
 	q.arr[available] = e
 	q.size++
-	return true
 }
 
 func (q *CircularQueue[T]) Dequeue() T {
@@ -79,4 +78,22 @@ func (q *CircularQueue[T]) String() string {
 	}
 	output += "<-tail"
 	return output
+}
+
+func (q *CircularQueue[T]) resize() {
+	n := make([]T, 2 * q.cap)
+	idxOld := q.front
+	idxNew := 0
+	count := 0
+	for {
+		count++
+		if count > q.size {
+			break
+		}
+		n[idxNew] = q.arr[idxOld]
+		idxOld = (idxOld + 1) % q.cap
+		idxNew ++
+	}
+	q.cap = q.cap * 2
+	q.arr = n
 }

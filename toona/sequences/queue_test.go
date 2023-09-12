@@ -40,3 +40,19 @@ func TestCircularQueue(t *testing.T) {
 	fmt.Println(q)
 
 }
+
+func TestCircularQueueResize(t *testing.T) {
+
+	q := sequences.NewCircularQueue[int](queueCap)
+
+	for i := 1; i <= queueCap * 2; i++ {
+		q.Enqueue(i)
+	}
+
+	for i := 1; i <= queueCap * 2; i++ {
+		if v := q.Dequeue(); v != i {
+			t.Errorf("wrong Dequeue() result: got %v expected %v", v, i)
+		}
+	}
+
+}
