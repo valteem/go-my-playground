@@ -96,4 +96,5 @@ func (q *CircularQueue[T]) resize() {
 	}
 	q.cap = q.cap * 2
 	q.arr = n
+	q.front = 0
 }
