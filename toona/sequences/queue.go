@@ -49,12 +49,12 @@ func (q *CircularQueue[T]) Enqueue(e T) {
 }
 
 func (q *CircularQueue[T]) Dequeue() T {
-	if q.IsEmpty() {
+	q.lock.Lock()
+	defer q.lock.Unlock()
+	if q.size == 0 {
 		var t T
 		return t 
 	}
-	q.lock.Lock()
-	defer q.lock.Unlock()
 	t := q.arr[q.front]
 	q.size--
 	q.front = (q.front + 1) % q.cap
@@ -62,11 +62,11 @@ func (q *CircularQueue[T]) Dequeue() T {
 }
 
 func (q *CircularQueue[T]) String() string {
-	if q.IsEmpty() {
-		return "empty queue"
-	}
 	q.lock.Lock()
 	defer q.lock.Unlock()
+	if q.size == 0 {
+		return "empty queue"
+	}
 	i := q.front
 	output := fmt.Sprintf("head<-%v", q.arr[i])
 	for {
