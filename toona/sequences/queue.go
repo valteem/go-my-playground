@@ -48,17 +48,17 @@ func (q *CircularQueue[T]) Enqueue(e T) {
 	q.size++
 }
 
-func (q *CircularQueue[T]) Dequeue() T {
+func (q *CircularQueue[T]) Dequeue() (T, error) {
 	q.lock.Lock()
 	defer q.lock.Unlock()
 	if q.size == 0 {
 		var t T
-		return t 
+		return t, fmt.Errorf("empty queue")
 	}
 	t := q.arr[q.front]
 	q.size--
 	q.front = (q.front + 1) % q.cap
-	return t
+	return t, nil
 }
 
 func (q *CircularQueue[T]) String() string {

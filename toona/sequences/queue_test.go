@@ -30,7 +30,7 @@ func TestCircularQueue(t *testing.T) {
 	fmt.Println(q)
 
 	for i := 1; i <= queueCap; i++ {
-		_ = q.Dequeue()
+		_, _ = q.Dequeue()
 	}
 
 	if q.IsEmpty() == false {
@@ -50,7 +50,7 @@ func TestCircularQueueResize(t *testing.T) {
 	}
 
 	for i := 1; i <= queueCap * 2; i++ {
-		if v := q.Dequeue(); v != i {
+		if v, _ := q.Dequeue(); v != i {
 			t.Errorf("wrong Dequeue() result: got %v expected %v", v, i)
 		}
 	}
