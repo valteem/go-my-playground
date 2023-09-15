@@ -13,10 +13,6 @@ var (
 	rightDelim = "}])"
 )
 
-const (
-
-)
-
 type Stack [T any] struct {
 	lock sync.Mutex
 	arr []T
