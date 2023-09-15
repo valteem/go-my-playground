@@ -5,6 +5,10 @@ import (
 	"sync"
 )
 
+var (
+	errDequeEmpty = fmt.Errorf("empty deque")
+)
+
 type CircularDeque [T any] struct {
 	arr []T
 	cap int

@@ -5,6 +5,10 @@ import (
 	"sync"
 )
 
+var (
+	errQueueEmpty = fmt.Errorf("empty queue")
+)
+
 type CircularQueue [T any] struct {
 	arr []T
 	cap int
