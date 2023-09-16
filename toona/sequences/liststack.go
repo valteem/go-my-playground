@@ -1,7 +1,6 @@
 package sequences
 
 import (
-//	"fmt"
 	"sync"
 )
 
@@ -15,14 +14,10 @@ func NewListStack[T any]() *ListStack[T] {
 }
 
 func (s *ListStack[T]) IsEmpty() bool {
-	s.lock.Lock()
-	defer s.lock.Unlock()
 	return s.list.IsEmpty()
 }
 
 func (s *ListStack[T]) Push(e T) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
 	s.list.AddToHead(e)
 }
 
@@ -37,7 +32,5 @@ func (s *ListStack[T]) Pop() (T, error) {
 }
 
 func(s *ListStack[T]) String() string {
-	s.lock.Lock()
-	defer s.lock.Unlock()
 	return s.list.String()
 }
