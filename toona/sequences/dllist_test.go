@@ -3,6 +3,7 @@ package sequences_test
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 
 	"my.play.go/toona/sequences"
@@ -25,8 +26,8 @@ func TestDoubleLinkedList(t *testing.T) {
 		l.AddToTail(i)
 	}
 
-	s := fmt.Sprintln(l)
-	if reflect.DeepEqual(s, "head<->4<->3<->2<->1<->1<->2<->3<->4<->tail") {
+	s := strings.TrimSuffix(fmt.Sprintln(l), "\n")
+	if !reflect.DeepEqual(s, "head<->4<->3<->2<->1<->1<->2<->3<->4<->tail") {
 		t.Errorf("wrong String() result: %s", s)
 	}
 
