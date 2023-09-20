@@ -1,10 +1,10 @@
-package toona_test
+package sorting_test
 
 import (
 	"fmt"
 	"testing"
 
-	"my.play.go/toona"
+	"my.play.go/toona/sorting"
 )
 
 func TestInsertionSort(t *testing.T) {
@@ -19,10 +19,10 @@ func TestInsertionSort(t *testing.T) {
 		}
 	}
 
-	toona.InsertionSort[int](s, f)
+	sorting.InsertionSort[int](s, f)
 
 	fmt.Println(s)
 
-	fmt.Println(toona.InsertionSort[int]([]int{1}, f))
+	fmt.Println(sorting.InsertionSort[int]([]int{1}, f))
 
 }

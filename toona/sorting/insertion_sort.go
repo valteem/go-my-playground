@@ -1,4 +1,4 @@
-package toona
+package sorting
 
 import (
 	"fmt"
