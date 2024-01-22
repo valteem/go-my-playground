@@ -1,3 +1,5 @@
+// https://stackoverflow.com/a/40951013
+
 package main
 
 import (
