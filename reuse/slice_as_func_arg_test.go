@@ -10,7 +10,7 @@ func TestAppendToSlice(t *testing.T) {
 	
 	s := []int{1, 2, 3, 4}
 	reuse.AppendToSlice[int](s, 5)
-	e := []int{1, 2, 3, 4} // nothind appended, slice is passed by value
+	e := []int{1, 2, 3, 4} // nothind appended, slice is passed by value, which means length and capacity of 'outer' slice are not affected
 	if !reuse.SliceEqual(s, e) {
 		t.Errorf("Expected %+v, returned %+v", e, s)
 	}

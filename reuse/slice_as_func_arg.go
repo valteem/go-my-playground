@@ -1,7 +1,7 @@
 package reuse
 
 func AppendToSlice[T any](s []T, a T) {
-	s = append(s, a)
+	s = append(s, a) // length and capacity of 's' are not affected by 'append' after function is completed
 }
 
 func AppendToSliceP[T any](s *[]T, a T) {
