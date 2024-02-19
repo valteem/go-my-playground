@@ -2,6 +2,7 @@ package atq
 
 import (
 	"context"
+	"crypto/tls"
 	"time"
 
 	"github.com/valteem/atq/internal/base"
@@ -126,4 +127,25 @@ func newTaskInfo(msg base.TaskMessage, state TaskState, nextProcessAt time.Time,
 		State: state,
 	}
 	return &info
+}
+
+// 'Discriminated union of types':
+// - RedisClientOpt
+// - RedisFailoverClientOpt
+// - RedisClusterClientOpt
+type RedisConnOpt interface {
+	MakeRedisClient() any
+}
+
+type RedisClientOpt struct {
+	Network string // default TCP
+	Addr string // host:port
+	Username string
+	Password string
+	DB int // Redis DB to select after connecting to a server
+	DialTimeout time.Duration // establish new connection, default 5 sec
+	ReadTimeout time.Duration // socket reads, default 3 sec
+	WriteTimeout time.Duration //socket writes, default 3 sec
+	PoolSize int // max number of socket connections, default 10 per CPU
+	TLSConfig *tls.Config // TLS negotiated only if this field is set
 }
