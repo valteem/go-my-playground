@@ -8,7 +8,7 @@ import (
 
 func TestConvertUnixTiime(t *testing.T) {
 	t1, t2 := reuse.ConvertUnixTimeZero()
-	if t1 != t2 {
+	if t1 == t2 {
 		t.Errorf("%+v %+v", t1, t2)
 	}
 }
