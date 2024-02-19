@@ -5,7 +5,7 @@ type TaskMessage struct {
 	Type string
 	Payload []byte
 	ID string
-	Qeueu string
+	Queue string
 	Retry int
 	Retried int
 	ErrorMsg string
