@@ -37,4 +37,17 @@ func TestHostSplit(t *testing.T) {
 	if p != "44536" {
 		t.Errorf("wrong port number: %+v", p)
 	}
+
+	addr = "https://127.0.0.1"
+	u, _ = url.Parse(addr)
+	h, p, e := net.SplitHostPort(u.Host) // returns empty 'h' and 'p' if port is not specified, throws error
+	if e == nil {
+		t.Errorf("error should be thrown")
+	}
+	if h != "" {
+		t.Errorf("wrong host name: %+v", h)
+	}
+	if p != "" {
+		t.Errorf("wrong port number: %+v", p)
+	}
 }
