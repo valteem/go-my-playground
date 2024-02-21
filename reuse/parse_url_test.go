@@ -1,6 +1,7 @@
 package reuse
 
 import (
+	"net"
 	"net/url"
 	"strings"
 
@@ -23,5 +24,17 @@ func TestToURL(t *testing.T) {
 	p := strings.Split(s, "/")
 	if p[0] != "questions" {
 		t.Errorf("wrong split result")
+	}
+}
+
+func TestHostSplit(t *testing.T) {
+	addr := "https://localhost:44536"
+	u, _ := url.Parse(addr)
+	h, p, _ := net.SplitHostPort(u.Host)
+	if h != "localhost" {
+		t.Errorf("wrong host name: %+v", h)
+	}
+	if p != "44536" {
+		t.Errorf("wrong port number: %+v", p)
 	}
 }
