@@ -3,6 +3,11 @@ package atq
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
+	"net"
+	"net/url"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -216,4 +221,36 @@ func (opt RedisClusterClientOpt) MakeRedisClient() any {
 		WriteTimeout: opt.WriteTimeout,
 		TLSConfig:    opt.TLSConfig,
 	})
+}
+
+func parseRedisURI(u url.URL) (RedisConnOpt, error) {
+	var db int
+	var err error
+	var redisConnOpt RedisClientOpt
+
+	if len(u.Path) > 0 {
+		s := strings.Split(strings.Trim(u.Path, "/"), "/") // remove leading and trailing slashes, split to segments
+		db, err = strconv.Atoi(s[0])
+		if err != nil {
+			return nil, fmt.Errorf("error parsing redis uri: db number must be first segment of the path")
+		}
+	}
+	var password string
+	if v, ok := u.User.Password(); ok { // URL.Password() returns URL.password, URL.passwordSet
+		password = v
+	}
+
+	if u.Scheme == "rediss" { // 'redis' vs 'rediss' same as 'http' vs 'https'
+		h, _, err := net.SplitHostPort(u.Host)
+		if err != nil {
+			h = u.Host
+		}
+		redisConnOpt.TLSConfig = &tls.Config{ServerName: h}
+	}
+
+	redisConnOpt.Addr = u.Host
+	redisConnOpt.Password = password
+	redisConnOpt.DB = db
+
+	return redisConnOpt, nil
 }
