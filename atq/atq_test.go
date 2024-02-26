@@ -22,7 +22,7 @@ func TestTaskStateString(t *testing.T) {
 	}
 }
 
-func TestParseRedisUri(t *testing.T) {
+func TestParseRedisURI(t *testing.T) {
 	addr := "rediss://u0:p0@server:44567/1"
 	u, _ := url.Parse(addr)
 	r, e := parseRedisURI(u)
@@ -57,5 +57,30 @@ func TestParseRedisSocketURI(t *testing.T) {
 	}
 	if c.DB != 1 {
 		t.Errorf("wrong Redis DB number %+v:", c.DB)
+	}
+}
+
+func TestParseRedisSentinelURI(t *testing.T) {
+	addr := "redis-sentinel://:pwd@host1:44567,host2:44568,host3:44569?master=mName"
+	u, _ := url.Parse(addr)
+	r, e := parseRedisSentinelURI(u)
+	if e != nil {
+		t.Errorf("error parsing Redis sentinel URI")
+	}
+	c, ok := r.(RedisFailoverClientOpt)
+	if !ok {
+		t.Errorf("wrong 'parseRedisSentinelURI' output format")
+	}
+	sentinelAddrsExpected := []string{"host1:44567", "host2:44568", "host3:44569"}
+	for i, v := range c.SentinelAddrs {
+		if sentinelAddrsExpected[i] != v {
+			t.Errorf("wrong host address: expect %s, get %s", sentinelAddrsExpected[i], v)
+		}
+	}
+	if c.MasterName != "mName" {
+		t.Errorf("wrong master name: %s", c.MasterName)
+	}
+	if c.SentinelPassword != "pwd" {
+		t.Errorf("wrong sentinel password: %s", c.SentinelPassword)
 	}
 }

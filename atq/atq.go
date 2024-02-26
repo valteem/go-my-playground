@@ -275,3 +275,14 @@ func parseRedisSocketUri(u *url.URL) (RedisConnOpt, error) {
 	}
 	return RedisClientOpt{Network: "unix", Addr: u.Path, DB: db, Password: password}, nil
 }
+
+func parseRedisSentinelURI(u *url.URL) (RedisConnOpt, error) {
+	// URL handling error is missing, returns client no matter what
+	addrs := strings.Split(u.Host, ",")
+	master := u.Query().Get("master")
+	var password string
+	if v, ok := u.User.Password(); ok {
+		password = v
+	}
+	return RedisFailoverClientOpt{MasterName: master, SentinelAddrs: addrs, SentinelPassword: password}, nil
+}
