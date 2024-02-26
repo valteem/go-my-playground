@@ -53,7 +53,7 @@ func TestHostSplit(t *testing.T) {
 }
 
 func TestQuery(t *testing.T) {
-	addr := "https://localhost:44567/?storage=Main&sku=0001&qty=1"
+	addr := "https://someuser:somepassword@localhost:44567/?storage=Main&sku=0001&qty=1"
 	result := map[string]string{
 		"storage": "Main",
 		"sku":     "0001",
@@ -65,5 +65,11 @@ func TestQuery(t *testing.T) {
 		if q.Get(k) != v {
 			t.Errorf("wrong URL query value for key %s: get %s, expect %s", k, q.Get(k), v)
 		}
+	}
+	if u.User.Username() != "someuser" {
+		t.Errorf("wrong username %s", u.User.Username())
+	}
+	if p, _ := u.User.Password(); p != "somepassword" {
+		t.Errorf("wrong password %s", p)
 	}
 }
