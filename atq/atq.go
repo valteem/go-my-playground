@@ -223,7 +223,7 @@ func (opt RedisClusterClientOpt) MakeRedisClient() any {
 	})
 }
 
-func parseRedisURI(u url.URL) (RedisConnOpt, error) {
+func parseRedisURI(u *url.URL) (RedisConnOpt, error) {
 	var db int
 	var err error
 	var redisConnOpt RedisClientOpt
@@ -253,4 +253,25 @@ func parseRedisURI(u url.URL) (RedisConnOpt, error) {
 	redisConnOpt.DB = db
 
 	return redisConnOpt, nil
+}
+
+func parseRedisSocketUri(u *url.URL) (RedisConnOpt, error) {
+	errPrefix := "atq: error parsing redis socket uri"
+	if len(u.Path) == 0 {
+		return nil, fmt.Errorf("%s: path does not exist", errPrefix)
+	}
+	q := u.Query()
+	var db int
+	var err error
+	if n := q.Get("db"); n != "" {
+		db, err = strconv.Atoi(n)
+		if err != nil {
+			return nil, fmt.Errorf("%s: query parameter 'db' must be a number", errPrefix)
+		}
+	}
+	var password string
+	if v, ok := u.User.Password(); ok {
+		password = v
+	}
+	return RedisClientOpt{Network: "unix", Addr: u.Path, DB: db, Password: password}, nil
 }
