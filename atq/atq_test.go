@@ -22,9 +22,9 @@ func TestTaskStateString(t *testing.T) {
 	}
 }
 
-func TestParseRedisURI(t *testing.T) {
-	addr := "rediss://u0:p0@server:44567/1"
-	u, _ := url.Parse(addr)
+func TestParseSimpleRedisURI(t *testing.T) {
+	uri := "rediss://u0:p0@server:44567/1"
+	u, _ := url.Parse(uri)
 	r, e := parseRedisURI(u)
 	if e != nil {
 		t.Errorf("error parsing Redis URI")
@@ -42,8 +42,8 @@ func TestParseRedisURI(t *testing.T) {
 }
 
 func TestParseRedisSocketURI(t *testing.T) {
-	addr := "redis-socket://u0:p0@localhost:44567/some_path?db=1"
-	u, _ := url.Parse(addr)
+	uri := "redis-socket://u0:p0@localhost:44567/some_path?db=1"
+	u, _ := url.Parse(uri)
 	r, e := parseRedisSocketUri(u)
 	if e != nil {
 		t.Errorf("error parsing Redis socket URI")
@@ -61,8 +61,8 @@ func TestParseRedisSocketURI(t *testing.T) {
 }
 
 func TestParseRedisSentinelURI(t *testing.T) {
-	addr := "redis-sentinel://:pwd@host1:44567,host2:44568,host3:44569?master=mName"
-	u, _ := url.Parse(addr)
+	uri := "redis-sentinel://:pwd@host1:44567,host2:44568,host3:44569?master=mName"
+	u, _ := url.Parse(uri)
 	r, e := parseRedisSentinelURI(u)
 	if e != nil {
 		t.Errorf("error parsing Redis sentinel URI")
@@ -83,4 +83,21 @@ func TestParseRedisSentinelURI(t *testing.T) {
 	if c.SentinelPassword != "pwd" {
 		t.Errorf("wrong sentinel password: %s", c.SentinelPassword)
 	}
+}
+
+func TestParseRedisURI(t *testing.T) {
+
+	uri := map[string]string{"redis": "redis://u0:p0@server:44567/1",
+		"redis-socket":   "redis-socket://u0:p0@localhost:44567/some_path?db=1",
+		"redis-sentinel": "redis-sentinel://:pwd@host1:44567,host2:44568,host3:44569?master=mName",
+		"unsupported":    "unsupported://user:password@server/path",
+	}
+
+	for k, v := range uri {
+		_, e := ParseRedisURI(v)
+		if e != nil && k != "unsupported" {
+			t.Errorf("error parsing '%v' scheme", k)
+		}
+	}
+
 }

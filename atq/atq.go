@@ -286,3 +286,20 @@ func parseRedisSentinelURI(u *url.URL) (RedisConnOpt, error) {
 	}
 	return RedisFailoverClientOpt{MasterName: master, SentinelAddrs: addrs, SentinelPassword: password}, nil
 }
+
+func ParseRedisURI(uri string) (RedisConnOpt, error) {
+	u, e := url.Parse(uri)
+	if e != nil {
+		return nil, fmt.Errorf("atq: could not parse redis uri: %v", e)
+	}
+	switch u.Scheme {
+	case "redis", "rediss":
+		return parseRedisURI(u)
+	case "redis-socket":
+		return parseRedisSocketUri(u)
+	case "redis-sentinel":
+		return parseRedisSentinelURI(u)
+	default:
+		return nil, fmt.Errorf("atq: unsupported redis scheme")
+	}
+}
