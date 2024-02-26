@@ -51,3 +51,19 @@ func TestHostSplit(t *testing.T) {
 		t.Errorf("wrong port number: %+v", p)
 	}
 }
+
+func TestQuery(t *testing.T) {
+	addr := "https://localhost:44567/?storage=Main&sku=0001&qty=1"
+	result := map[string]string{
+		"storage": "Main",
+		"sku":     "0001",
+		"qty":     "1",
+	}
+	u, _ := url.Parse(addr)
+	q := u.Query()
+	for k, v := range result {
+		if q.Get(k) != v {
+			t.Errorf("wrong URL query value for key %s: get %s, expect %s", k, q.Get(k), v)
+		}
+	}
+}
