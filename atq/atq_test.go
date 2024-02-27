@@ -161,3 +161,40 @@ func TestParseRedisURI(t *testing.T) {
 	}
 
 }
+
+func TestParseRedisURIErrors(t *testing.T) {
+
+	tests := []struct {
+		description string
+		uri         string
+	}{
+		{
+			"unsupported scheme",
+			"rdb://localhost:44567",
+		},
+		{
+			"missing scheme",
+			"localhost:44567",
+		},
+		{
+			"multiple db numbers",
+			"redis://localhost:44567/1,2,3",
+		},
+		{
+			"missing path for socket connection",
+			"redis-socket://?db=1",
+		},
+		{
+			"non integer db number",
+			"redis-socket:///path/to/redis?db=two",
+		},
+	}
+
+	for _, test := range tests {
+		_, e := ParseRedisURI(test.uri)
+		if e == nil {
+			t.Errorf("%s: ParseRedisURI(%q) succeded for malformed input, should return error", test.description, test.uri)
+		}
+	}
+
+}
