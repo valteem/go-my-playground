@@ -21,6 +21,19 @@ type ResultWriter struct {
 	ctx    context.Context // TODO: find SO thread about packing context inside struct considered a bad idea
 }
 
+func (w *ResultWriter) Write(data []byte) (n int, err error) {
+	select {
+	case <-w.ctx.Done():
+		return 0, fmt.Errorf("failed to write task result: %+v", w.ctx.Err())
+	default:
+	}
+	return 0, nil //w.broker.WriteResult(w.qname, w.id, data)
+}
+
+func (w *ResultWriter) TaskID() string {
+	return w.id
+}
+
 type Task struct {
 	typename string // type of task
 	payload  []byte // data needed to perform the task
