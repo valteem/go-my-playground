@@ -1,8 +1,12 @@
 package atq
 
 import (
+	"crypto/tls"
 	"net/url"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 )
 
 func TestTaskStateString(t *testing.T) {
@@ -87,16 +91,72 @@ func TestParseRedisSentinelURI(t *testing.T) {
 
 func TestParseRedisURI(t *testing.T) {
 
-	uri := map[string]string{"redis": "redis://u0:p0@server:44567/1",
-		"redis-socket":   "redis-socket://u0:p0@localhost:44567/some_path?db=1",
-		"redis-sentinel": "redis-sentinel://:pwd@host1:44567,host2:44568,host3:44569?master=mName",
-		"unsupported":    "unsupported://user:password@server/path",
+	tests := []struct {
+		uri      string
+		expected RedisConnOpt
+	}{
+		{
+			"redis://localhost:44567",
+			RedisClientOpt{Addr: "localhost:44567"},
+		},
+		{
+			"rediss://localhost:44567",
+			RedisClientOpt{Addr: "localhost:44567", TLSConfig: &tls.Config{ServerName: "localhost"}},
+		},
+		{
+			"redis://localhost:44567/1",
+			RedisClientOpt{Addr: "localhost:44567", DB: 1},
+		},
+		{
+			"redis://:somepassword@localhost:44567",
+			RedisClientOpt{Addr: "localhost:44567", Password: "somepassword"},
+		},
+		{
+			"redis://:somepassword@192.168.1.100/2",
+			RedisClientOpt{Addr: "192.168.1.100", Password: "somepassword", DB: 2},
+		},
+		{
+			"redis-socket:///var/run/redis/redis.sock",
+			RedisClientOpt{Network: "unix", Addr: "/var/run/redis/redis.sock"},
+		},
+		{
+			"redis-socket://:somepassword@/var/run/redis/redis.sock",
+			RedisClientOpt{Network: "unix", Addr: "/var/run/redis/redis.sock", Password: "somepassword"},
+		},
+		{
+			"redis-socket:///var/run/redis/redis.sock?db=3",
+			RedisClientOpt{Network: "unix", Addr: "/var/run/redis/redis.sock", DB: 3},
+		},
+		{
+			"redis-socket://:somepassword@/var/run/redis/redis.sock?db=4",
+			RedisClientOpt{Network: "unix", Addr: "/var/run/redis/redis.sock", Password: "somepassword", DB: 4},
+		},
+		{
+			"redis-sentinel://localhost:44567,localhost:44568,localhost:44569?master=mname",
+			RedisFailoverClientOpt{
+				MasterName:    "mname",
+				SentinelAddrs: []string{"localhost:44567", "localhost:44568", "localhost:44569"},
+			},
+		},
+		{
+			"redis-sentinel://:somepassword@localhost:44567,localhost:44568,localhost:44569?master=mname",
+			RedisFailoverClientOpt{
+				MasterName:       "mname",
+				SentinelAddrs:    []string{"localhost:44567", "localhost:44568", "localhost:44569"},
+				SentinelPassword: "somepassword",
+			},
+		},
 	}
 
-	for k, v := range uri {
-		_, e := ParseRedisURI(v)
-		if e != nil && k != "unsupported" {
-			t.Errorf("error parsing '%v' scheme", k)
+	for _, test := range tests {
+		r, e := ParseRedisURI(test.uri)
+		if e != nil {
+			t.Errorf("ParseRedisURI(%q) returned an error: %+v", test.uri, e)
+			continue // jump to next test in 'tests'
+		}
+		diff := cmp.Diff(test.expected, r, cmpopts.IgnoreUnexported(tls.Config{}))
+		if diff != "" {
+			t.Errorf("ParseRedisURI(%q) = %+v, expected %+v, (-expected, +result) %+v", test.uri, r, test.expected, diff)
 		}
 	}
 
