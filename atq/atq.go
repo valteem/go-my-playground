@@ -15,9 +15,9 @@ import (
 )
 
 type ResultWriter struct {
-	id     string          // task ID
-	qname  string          // qeueu name this task belongs to
-	broker any             // base.Broker /internal/base
+	id     string // task ID
+	qname  string // qeueu name this task belongs to
+	broker base.Broker
 	ctx    context.Context // TODO: find SO thread about packing context inside struct considered a bad idea
 }
 
@@ -27,7 +27,7 @@ func (w *ResultWriter) Write(data []byte) (n int, err error) {
 		return 0, fmt.Errorf("failed to write task result: %+v", w.ctx.Err())
 	default:
 	}
-	return 0, nil //w.broker.WriteResult(w.qname, w.id, data)
+	return w.broker.WriteResult(w.qname, w.id, data)
 }
 
 func (w *ResultWriter) TaskID() string {
