@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/google/go-cmp v0.5.6
+	github.com/google/uuid v1.2.0
 	github.com/redis/go-redis/v9 v9.0.3
 )
 
