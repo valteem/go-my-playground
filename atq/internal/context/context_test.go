@@ -50,3 +50,47 @@ func TestCreateContextWithFutureDeadline(t *testing.T) {
 		}
 	}
 }
+
+func TestGetTaskMetadataFromContext(t *testing.T) {
+	tests := []struct {
+		description string
+		msg         *base.TaskMessage
+	}{
+		{
+			description: "zero retry count",
+			msg: &base.TaskMessage{
+				Type:    "defaultType",
+				ID:      uuid.NewString(),
+				Retry:   100,
+				Retried: 0,
+				Timeout: 3600,
+				Queue:   "default",
+			},
+		},
+	}
+	for _, tst := range tests {
+		ctx, cancel := New(context.Background(), tst.msg, time.Now().Add(60*time.Minute))
+		defer cancel()
+		id, ok := GetTaskID(ctx)
+		if !ok {
+			t.Errorf("%s: GetTaskID() returned false", tst.description)
+		}
+		if ok && id != tst.msg.ID {
+			t.Errorf("%s: GetsTaskID() returned %q, expected %q", tst.description, id, tst.msg.ID)
+		}
+		retried, ok := GetRetryCount(ctx)
+		if !ok {
+			t.Errorf("%s: GetRetryCount() returned false", tst.description)
+		}
+		if ok && retried != tst.msg.Retried {
+			t.Errorf("%s: GetRetryCount() returned %q, expected %q", tst.description, retried, tst.msg.Retried)
+		}
+		qname, ok := GetQueueName(ctx)
+		if !ok {
+			t.Errorf("%s: GetQueueName() returned false", tst.description)
+		}
+		if ok && qname != tst.msg.Queue {
+			t.Errorf("%s: GetsQueueName() returned %q, expected %q", tst.description, qname, tst.msg.Queue)
+		}
+	}
+}
