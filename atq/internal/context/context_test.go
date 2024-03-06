@@ -51,6 +51,41 @@ func TestCreateContextWithFutureDeadline(t *testing.T) {
 	}
 }
 
+func TestCreateContextWithPastDeadline(t *testing.T) {
+	tests := []struct {
+		deadline time.Time
+	}{
+		{
+			time.Now().Add(-1 * time.Hour),
+		},
+	}
+	for _, tst := range tests {
+		msg := &base.TaskMessage{
+			Type:    "someType",
+			ID:      uuid.NewString(),
+			Payload: nil,
+		}
+
+		ctx, cancel := New(context.Background(), msg, tst.deadline)
+		defer cancel()
+
+		select {
+		case <-ctx.Done():
+		default:
+			t.Errorf("cancel signal not expected")
+		}
+
+		result, ok := ctx.Deadline()
+		if !ok {
+			t.Errorf("deadline is set, no false return value expected")
+		}
+		if !cmp.Equal(tst.deadline, result) {
+			t.Errorf("ctx.Deadline() returned %+v, expected %+v", result, tst.deadline)
+		}
+
+	}
+}
+
 func TestGetTaskMetadataFromContext(t *testing.T) {
 	tests := []struct {
 		description string
