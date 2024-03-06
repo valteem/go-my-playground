@@ -2,6 +2,7 @@ package context
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -83,6 +84,54 @@ func TestCreateContextWithPastDeadline(t *testing.T) {
 			t.Errorf("ctx.Deadline() returned %+v, expected %+v", result, tst.deadline)
 		}
 
+	}
+}
+
+func TestCreateContextWithBaseContext(t *testing.T) {
+	// https://go.dev/blog/context
+	type ctxKey string
+	type ctxValue string
+	var key ctxKey = "key"
+	var value ctxValue = "value"
+
+	tests := []struct {
+		baseCtx  context.Context
+		validate func(ctx context.Context, t *testing.T) error
+	}{
+		{
+			baseCtx: context.WithValue(context.Background(), key, value), // passing key and value of custom types to avoid collision
+			validate: func(ctx context.Context, t *testing.T) error {
+				result, ok := ctx.Value(key).(ctxValue)
+				if !ok {
+					return fmt.Errorf("ctx.Value() returned false, expected true")
+				}
+				if expected := value; result != expected {
+					return fmt.Errorf("ctxValue() returned %+v, expect %s", result, expected)
+				}
+				return nil
+			},
+		},
+	}
+
+	for _, tst := range tests {
+		msg := &base.TaskMessage{
+			Type:    "someType",
+			ID:      uuid.NewString(),
+			Payload: nil,
+		}
+
+		ctx, cancel := New(tst.baseCtx, msg, time.Now().Add(30*time.Minute))
+		defer cancel()
+
+		select {
+		case x := <-ctx.Done():
+			t.Errorf("<-ctx.Done() returned %+v, expect nothing", x)
+		default:
+		}
+
+		if e := tst.validate(ctx, t); e != nil {
+			t.Errorf("%+v", e)
+		}
 	}
 }
 
