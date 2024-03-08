@@ -39,7 +39,7 @@ func TestCanonicalCode(t *testing.T) {
 	for _, tst := range tests {
 		c := CanonicalCode(tst.err)
 		if c != tst.expected {
-			t.Errorf("expect %v error code, get %v instead", tst.expected, c)
+			t.Errorf("%s: expect %v error code, get %v instead", tst.description, tst.expected, c)
 		}
 	}
 
