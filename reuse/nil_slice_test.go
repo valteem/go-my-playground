@@ -9,9 +9,10 @@ import (
 func TestInitNilSlice(t *testing.T) {
 
 	in := []string(nil) // most probably useful for inline nil slice declaration
-	if in != nil {
-		t.Errorf("slice must be nil")
-	}
+	// impossible condition: nil != nil
+	// if in != nil {
+	// 	t.Errorf("slice must be nil")
+	// }
 	add := []string{"first, second", "third", "closing"}
 	out := append(in, add...)
 	for i, v := range out {
