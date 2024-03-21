@@ -43,3 +43,19 @@ func TestSliceReassign(t *testing.T) {
 		t.Errorf("pointer to `copied` slice is %s", cAddr)
 	}
 }
+
+func TestShallowSliceCopyCapLen(t *testing.T) {
+	s := []int{-2, -1}
+	c := s
+	c[0] = 1
+	c[1] = 2
+	for i := 3; i <= 128; i++ {
+		c = append(c, i)
+	}
+	if s[0] != c[0] {
+		t.Errorf("%d %d", s[0], c[0])
+	}
+	if cap(s) == cap(c) {
+		t.Errorf("%d %d", cap(s), cap(c))
+	}
+}
