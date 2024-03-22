@@ -31,3 +31,15 @@ var SortZSetEntryOpt = cmp.Transformer("SortZSetEntries", func(in []base.Z) []ba
 	})
 	return out
 })
+
+// cmp.Option to compare slices of ServerInfo (process info)
+var SortServerInfoOpt = cmp.Transformer("SortServerInfo", func(in []*base.ServerInfo) []*base.ServerInfo {
+	out := append([]*base.ServerInfo(nil), in...) // avoid mutating input
+	sort.Slice(out, func(i, j int) bool {
+		if out[i].Host != out[j].Host {
+			return out[i].Host < out[j].Host // both processes must belong to the same host to be considered equal (?)
+		}
+		return out[i].PID < out[j].PID
+	})
+	return out
+})
