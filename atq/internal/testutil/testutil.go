@@ -22,3 +22,12 @@ var SortMsgOpt = cmp.Transformer("SortTaskMessages", func(in []*base.TaskMessage
 	})
 	return out
 })
+
+// cmp.Option to compare slices of base.Z entries
+var SortZSetEntryOpt = cmp.Transformer("SortZSetEntries", func(in []base.Z) []base.Z {
+	out := append([]base.Z(nil), in...) // The Transformer must not mutate <input> in any way (https://pkg.go.dev/github.com/google/go-cmp/cmp#Transformer)
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].Message.ID < out[j].Message.ID
+	})
+	return out
+})

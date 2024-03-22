@@ -25,6 +25,12 @@ type TaskMessage struct {
 	CompletedAt  int64
 }
 
+// sorted set member (whatever this may mean)
+type Z struct {
+	Message *TaskMessage
+	Score   int64
+}
+
 type ServerInfo struct {
 	Host              string
 	PID               int
