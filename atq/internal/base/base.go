@@ -93,3 +93,14 @@ type Broker interface {
 	// Write (?)
 	WriteResult(qname, id string, data []byte) (n int, err error)
 }
+
+// Info about a periodic task
+type SchedulerEntry struct {
+	ID      string
+	Spec    string    // describes schedule of the entry
+	Type    string    // task type
+	Payload []byte    // task payload
+	Opts    []string  // task options
+	Next    time.Time // next time task will be enqueued
+	Prev    time.Time // last time task was enqueued, zero if task was never enqueued
+}

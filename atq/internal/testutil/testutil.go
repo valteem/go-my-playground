@@ -52,3 +52,12 @@ var SortWorkerInfoOpt = cmp.Transformer("SortWorkerInfo", func(in []*base.Worker
 	})
 	return out
 })
+
+// cmp.Option to compare slices of base.SchedulerEntry
+var SortSchedulerEntryOpt = cmp.Transformer("SortSchedulerEntry", func(in []*base.SchedulerEntry) []*base.SchedulerEntry {
+	out := append([]*base.SchedulerEntry(nil), in...) // avoid mutating input
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].Spec < out[j].Spec
+	})
+	return out
+})
