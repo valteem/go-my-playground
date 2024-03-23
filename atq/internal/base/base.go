@@ -104,3 +104,8 @@ type SchedulerEntry struct {
 	Next    time.Time // next time task will be enqueued
 	Prev    time.Time // last time task was enqueued, zero if task was never enqueued
 }
+
+type SchedulerEnqueueEvent struct {
+	TaskID     string
+	EnqueuedAt time.Time
+}

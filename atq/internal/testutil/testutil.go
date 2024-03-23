@@ -61,3 +61,11 @@ var SortSchedulerEntryOpt = cmp.Transformer("SortSchedulerEntry", func(in []*bas
 	})
 	return out
 })
+
+var SortSchedulerEnqueueEventOpt = cmp.Transformer("SortSchedulerEnqueueEvent", func(in []*base.SchedulerEnqueueEvent) []*base.SchedulerEnqueueEvent {
+	out := append([]*base.SchedulerEnqueueEvent(nil), in...)
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].EnqueuedAt.Unix() < out[j].EnqueuedAt.Unix()
+	})
+	return out
+})
