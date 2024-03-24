@@ -1,4 +1,3 @@
-// TODO: extend example to actual nested interfaces
 package reuse_test
 
 import (
