@@ -46,17 +46,17 @@ func TestTypeFormat(t *testing.T) {
 		{
 			description:       "package variable type int",
 			typedVar:          someInt,
-			typeFormattedName: "int", // globat type, no package name prefix
+			typeFormattedName: "int", // global type, no package name prefix
 		},
 		{
 			description:       "package variable type float",
 			typedVar:          someFloat,
-			typeFormattedName: "float64", // globat type, no package name prefix
+			typeFormattedName: "float64", // global type, no package name prefix
 		},
 		{
 			description:       "package variable type string",
 			typedVar:          someString,
-			typeFormattedName: "string", // globat type, no package name prefix
+			typeFormattedName: "string", // global type, no package name prefix
 		},
 		{
 			description: "composit literal",
@@ -72,7 +72,7 @@ func TestTypeFormat(t *testing.T) {
 		{
 			description:       "local variable type local struct",
 			typedVar:          localPerson{name: "some name", age: 31},
-			typeFormattedName: "reuse_test.localPerson", // package name prefix depite variable being local
+			typeFormattedName: "reuse_test.localPerson", // package name prefix despite variable being local
 		},
 	}
 
