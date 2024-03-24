@@ -6,15 +6,14 @@ import (
 	"testing"
 )
 
-type Clappable interface {
-	Clap()
+type Knocking interface {
+	Knock()
 }
 
 type Sounding interface {
-	Clappable // example of nested interface
+	Knocking // example of nested interface
 	Voice()
 	Noise()
-	Knock()
 	Drum()
 }
 
@@ -39,6 +38,13 @@ func (f Flute) Voice() {
 	fmt.Println("tootle-too ...")
 }
 
+type Hype struct{}
+
+func (h Hype) Knock() {}
+func (h Hype) Voice() {}
+func (h Hype) Noise() {}
+func (h Hype) Drum()  {}
+
 func TestNestedInterfaces(t *testing.T) {
 	tests := []struct {
 		description string
@@ -46,14 +52,19 @@ func TestNestedInterfaces(t *testing.T) {
 		evalResult  bool
 	}{
 		{
-			description: "drums comply with Drumming interface",
+			description: "drums type complies with Drumming interface",
 			evalObj:     Drums{},
 			evalResult:  true,
 		},
 		{
-			description: "flute does not comply with Drumming interface",
+			description: "flute type does not comply with Drumming interface",
 			evalObj:     Flute{},
 			evalResult:  false,
+		},
+		{
+			description: "hype type complies with Drumming interface",
+			evalObj:     Hype{},
+			evalResult:  true,
 		},
 	}
 	for _, tst := range tests {
