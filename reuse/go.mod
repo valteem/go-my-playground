@@ -1,6 +1,6 @@
 module github.com/valteem/reuse
 
-go 1.19
+go 1.22
 
 require (
 	github.com/hashicorp/go-immutable-radix/v2 v2.1.0
