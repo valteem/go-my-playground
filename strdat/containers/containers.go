@@ -7,7 +7,7 @@ import (
 	"github.com/valteem/strdat/utils"
 )
 
-type container[T any] interface {
+type Container[T any] interface {
 	Empty() bool
 	Size() int
 	Clear()
@@ -15,7 +15,7 @@ type container[T any] interface {
 	String() string
 }
 
-func GetSortedValues[T cmp.Ordered](c container[T]) []T {
+func GetSortedValues[T cmp.Ordered](c Container[T]) []T {
 	values := c.Values()
 	if len(values) < 2 {
 		return values
@@ -24,7 +24,7 @@ func GetSortedValues[T cmp.Ordered](c container[T]) []T {
 	return values
 }
 
-func GetSortedValuesFunc[T any](c container[T], comp utils.Comparator[T]) []T {
+func GetSortedValuesFunc[T any](c Container[T], comp utils.Comparator[T]) []T {
 	values := c.Values()
 	if len(values) < 2 {
 		return values
