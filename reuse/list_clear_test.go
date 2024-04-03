@@ -15,3 +15,13 @@ func TestListClear(t *testing.T) {
 		t.Errorf("get %v, expect %v", l, expect)
 	}
 }
+
+func TestRemove(t *testing.T) {
+	l := []int{0, 1, 2, 3, 4}
+	index := 2
+	copy(l[index:], l[index+1:])
+	expect := []int{0, 1, 3, 4, 4}
+	if !cmp.Equal(l, expect) {
+		t.Errorf("get %v, expect %v", l, expect)
+	}
+}
