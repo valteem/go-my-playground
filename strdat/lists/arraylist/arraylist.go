@@ -1,7 +1,9 @@
 package arraylist
 
 import (
+	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/valteem/strdat/utils"
 )
@@ -175,4 +177,16 @@ func (list *List[T]) Set(index int, value T) {
 		return
 	}
 	list.elements[index] = value
+}
+
+// String representation
+func (list *List[T]) String() string {
+	str := "ArrayList\n"
+	values := make([]string, 0, list.size)
+	for _, value := range list.elements[:list.size] {
+		values = append(values, fmt.Sprintf("%v", value))
+	}
+	str += strings.Join(values, ", ")
+	str = strings.TrimSuffix(str, " ")
+	return str
 }

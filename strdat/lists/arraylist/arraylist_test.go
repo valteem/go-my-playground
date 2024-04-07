@@ -316,3 +316,27 @@ func TestSet(t *testing.T) {
 		}
 	}
 }
+
+func TestString(t *testing.T) {
+	tests := []struct {
+		description string
+		lst         *List[int]
+		output      string
+	}{
+		{
+			description: "list with values",
+			lst:         New[int](0, 1, 2, 3, 4),
+			output:      "ArrayList\n0, 1, 2, 3, 4",
+		},
+		{
+			description: "empty list",
+			lst:         New[int](),
+			output:      "ArrayList\n",
+		},
+	}
+	for _, tst := range tests {
+		if r := tst.lst.String(); r != tst.output {
+			t.Errorf("%s:, get %v, expect %v", tst.description, r, tst.output)
+		}
+	}
+}
