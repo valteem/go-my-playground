@@ -1,5 +1,11 @@
 package arraylist
 
+import (
+	"slices"
+
+	"github.com/valteem/strdat/utils"
+)
+
 type List[T comparable] struct {
 	elements []T
 	size     int
@@ -123,4 +129,50 @@ func (list *List[T]) Empty() bool {
 
 func (list *List[T]) Size() int {
 	return list.size
+}
+
+func (list *List[T]) Clear() {
+	list.size = 0
+	list.elements = []T{}
+}
+
+func (list *List[T]) Sort(comparator utils.Comparator[T]) {
+	if len(list.elements) < 2 {
+		return
+	}
+	slices.SortFunc(list.elements[:list.size], comparator) // avoid sorting pre-allocated `sleeping` elements
+}
+
+func (list *List[T]) Swap(i, j int) {
+	if list.withinRange(i) && list.withinRange(j) {
+		list.elements[i], list.elements[j] = list.elements[j], list.elements[i]
+	}
+}
+
+// Inserts value before the given position (index), valid positions are 0 (insert at the beginning), 1, 2, ..., list.size (append)
+// Does nothing if position (index) is negative or greater than list size
+func (list *List[T]) Insert(index int, values ...T) {
+	if !list.withinRange(index) {
+		if index == list.size {
+			list.Add(values...)
+		}
+		return
+	}
+	l := len(values)
+	list.growBy(l)
+	list.size += l
+	copy(list.elements[index+l:], list.elements[index:list.size-1]) // (list.size - l) - end of list before growBy(l)
+	copy(list.elements[index:], values)
+}
+
+// Sets the value of an element at the given position (index), valid positions are 0, 1, ..., list.size (append)
+// Does nothing if position is negative of greater than list size
+func (list *List[T]) Set(index int, value T) {
+	if !list.withinRange(index) {
+		if index == list.size {
+			list.Add(value)
+		}
+		return
+	}
+	list.elements[index] = value
 }
