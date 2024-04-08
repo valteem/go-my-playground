@@ -340,3 +340,226 @@ func TestString(t *testing.T) {
 		}
 	}
 }
+
+func TestIteratorNextEmpty(t *testing.T) {
+	list := New[string]()
+	it := list.Iterator()
+	for it.Next() { // it.Next() immediately returns `false` on empty list, hence no error
+		t.Errorf("Cannot iterate on empty list")
+	}
+}
+
+func TestIteratorNext(t *testing.T) {
+	list := New[string]("a", "b")
+	list.Add("c")
+	expected := []string{"a", "b", "c"}
+	countExpected := 3
+	it := list.Iterator()
+	count := 0
+	for it.Next() {
+		count++
+		index := it.Index()
+		value := it.Value()
+		if value != expected[index] {
+			t.Errorf("get %v, expect %v", value, expected[index])
+		}
+	}
+	if count != countExpected {
+		t.Errorf("get %d, expect %d", count, countExpected)
+	}
+}
+
+func TestIteratorPrevEmpty(t *testing.T) {
+	list := New[string]()
+	it := list.Iterator()
+	for it.Prev() {
+		t.Errorf("cannot iterate over empty list")
+	}
+}
+
+func TestIteratorPrev(t *testing.T) {
+	list := New[string]("a", "c")
+	list.Insert(1, "b")
+	it := list.Iterator()
+	expected := []string{"a", "b", "c"}
+	for it.Next() { // move to the end of the list
+	}
+	count := 0 // it.Index() = 3 at this point, right beyond last list element
+	for it.Prev() {
+		count++
+		index := it.Index()
+		value := it.Value()
+		if value != expected[index] {
+			t.Errorf("get value %v for index %d, expect %v", value, index, expected[index])
+		}
+	}
+	if count != len(expected) {
+		t.Errorf("get count %d, expect %d", count, len(expected))
+	}
+}
+
+func TestIteratorBeginEndFirstLast(t *testing.T) {
+	list := New[int](0, 1, 2, 3, 4)
+	it := list.Iterator()
+	idxBegin, idxEnd := -1, 5
+	idxFirst, idxLast := 0, 4
+	valueFirst, valueLast := 0, 4
+	it.End()
+	if it.Index() != idxEnd {
+		t.Errorf("iterator index at the end should be %d, get %d", idxEnd, it.Index())
+	}
+	it.Begin()
+	if it.Index() != idxBegin {
+		t.Errorf("iterator index at the beginning should be %d, get %d", idxBegin, it.Index())
+	}
+	if last := it.Last(); last != true {
+		t.Errorf("arraylist has last element, it.Last() should return `true`, get %t", last)
+	} else {
+		if i, v := it.Index(), it.Value(); i != idxLast || v != valueLast {
+			t.Errorf("it.Last() moves to %v at position %d, expect %v at position %d", v, i, valueLast, idxLast)
+		}
+	}
+	if first := it.First(); first != true {
+		t.Errorf("arraylist has first element, it.First() should return `true`, get %t", first)
+	} else {
+		if i, v := it.Index(), it.Value(); i != idxFirst || v != valueFirst {
+			t.Errorf("it.First moves to %v at position %d, expect %v at position %d", v, i, valueFirst, idxFirst)
+		}
+	}
+}
+
+func TestIteratorBeginEndFirstLastEmpty(t *testing.T) {
+	list := New[string]()
+	it := list.Iterator()
+
+	// it.First() = 0, it.Last() = -1, looks pretty strange, last index before first
+	idxBegin, idxFirst, idxLast, idxEnd := -1, 0, -1, 0
+
+	it.Begin()
+	if i := it.Index(); i != idxBegin {
+		t.Errorf("it.Index() on empty list should return %d after it.Begin(), get %d", idxBegin, i)
+	}
+
+	first := it.First()
+	if first != false {
+		t.Errorf("it.First() on empty list should return `false`, get %t", first)
+	}
+	if i := it.Index(); i != idxFirst {
+		t.Errorf("it.Index() on empty list should return %d after it.First(), get %d", idxFirst, i)
+	}
+
+	last := it.Last()
+	if last != false {
+		t.Errorf("it.Last() should return `false` on empty list, get %t", last)
+	}
+	if i := it.Index(); i != idxLast {
+		t.Errorf("it.Index() on empty list should return %d after it.Last(), get %d", idxLast, i)
+	}
+
+	it.End()
+	if i := it.Index(); i != idxEnd {
+		t.Errorf("it.Index() on empty list should return %d after it.End(), get %d", idxEnd, i)
+	}
+}
+
+func TestIteratorBeginEndFirstLastSingleElement(t *testing.T) {
+	list := New[string]("a")
+	it := list.Iterator()
+
+	idxBegin, idxFirst, idxLast, idxEnd := -1, 0, 0, 1
+
+	it.Begin()
+	if i := it.Index(); i != idxBegin {
+		t.Errorf("it.Index() on single element list should return %d after it.Begin(), get %d", idxBegin, i)
+	}
+
+	it.First()
+	if i := it.Index(); i != idxFirst {
+		t.Errorf("it.Index() on single element list should return %d after it.First(), get %d", idxFirst, i)
+	}
+
+	it.Last()
+	if i := it.Index(); i != idxLast {
+		t.Errorf("it.Index() on single element list should return %d after it.Last(), get %d", idxLast, i)
+	}
+
+	it.End()
+	if i := it.Index(); i != idxEnd {
+		t.Errorf("it.Index() on single element list should return %d after it.End(), get %d", idxEnd, i)
+	}
+}
+
+func TestIteratorNextTo(t *testing.T) {
+
+	minValue, idxFound, valueFound := 0, 0, 0
+	f := func(i, v int) bool {
+		return v >= minValue
+	}
+
+	// Empty list
+	list := New[int]()
+	it := list.Iterator()
+	next := it.NextTo(f)
+	if next == true {
+		t.Errorf("cannot iterate over empty list")
+	}
+
+	// Not found
+	list.Add(0, 1, 2, 3, 4)
+	minValue = 5
+	next = it.NextTo(f)
+	if next == true {
+		t.Errorf("Not found: should return `false`")
+	}
+	// Found
+	minValue, idxFound, valueFound = 2, 2, 2
+	it.Begin()
+	next = it.NextTo(f)
+	if next != true {
+		t.Errorf("failed to move to position satisfying given condition ")
+	} else {
+		if i, v := it.Index(), it.Value(); i != idxFound || v != valueFound {
+			t.Errorf("get %v at position %d, expect %v at position %d", v, i, valueFound, idxFound)
+		}
+	}
+}
+
+func TestIteratorPrevTo(t *testing.T) {
+
+	maxValue, idxFound, valueFound := 0, 0, 0
+	f := func(i, v int) bool {
+		return v <= maxValue
+	}
+
+	list := New[int]()
+	it := list.Iterator()
+
+	// Empty list
+	it.End()
+	prev := it.PrevTo(f)
+	if prev != false {
+		t.Errorf("cannot iterate over empty list")
+	}
+
+	// Not found
+	list.Add(0, 1, 2, 3, 4)
+	maxValue = -1
+	it.End()
+	prev = it.PrevTo(f)
+	if prev != false {
+		t.Errorf("Not found: should return false")
+	}
+
+	// Found
+	maxValue, idxFound, valueFound = 2, 2, 2
+	it.End()
+	prev = it.PrevTo(f)
+	if prev != true {
+		t.Errorf("failed to move to position satisfying given condition")
+	} else {
+		if i, v := it.Index(), it.Value(); i != idxFound || v != valueFound {
+			t.Errorf("get %v at position %d, expect %v at position %d", v, i, valueFound, idxFound)
+		}
+	}
+
+}
