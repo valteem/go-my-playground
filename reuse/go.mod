@@ -3,6 +3,7 @@ module github.com/valteem/reuse
 go 1.22
 
 require (
+	github.com/emirpasic/gods/v2 v2.0.0-alpha
 	github.com/google/go-cmp v0.5.6
 	github.com/hashicorp/go-immutable-radix/v2 v2.1.0
 	github.com/hibiken/asynq v0.24.1
