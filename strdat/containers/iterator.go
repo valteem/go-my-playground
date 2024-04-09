@@ -5,7 +5,7 @@ type IteratorWithIndex[T any] interface {
 	// Returns `true` if there exists next element in container, otherwise `false`
 	// Points to the first element when called for the first time (if the container has any elements at all)
 	// Modifies the state of the iterator
-	Next()
+	Next() bool
 
 	// Returns value of the current element
 	// Doesn't modify the state of the iterator
