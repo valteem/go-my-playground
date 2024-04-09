@@ -1,6 +1,12 @@
 package arraylist
 
-import ()
+import (
+	"github.com/valteem/strdat/containers"
+)
+
+// Assert implementation of interfaces from containers/iterator.go
+var _ containers.IteratorWithIndex[string] = (*Iterator[string])(nil) // dereferencing pointer (interface methods implemented with pointer receiver) + type conversion (https://stackoverflow.com/a/69470411)
+var _ containers.ReverseIteratorWithIndex[string] = (*Iterator[string])(nil)
 
 // Holds the state of iterator
 type Iterator[T comparable] struct {
