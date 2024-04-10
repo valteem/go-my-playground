@@ -1,6 +1,7 @@
 package arraylist
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -701,4 +702,40 @@ func TestListFind(t *testing.T) {
 			t.Errorf("%s, get %v at position %d, expect %v at position %d", tst.description, outputvalue, outputIndex, tst.expectedValue, tst.expectedIndex)
 		}
 	}
+}
+
+func TestListSerialization(t *testing.T) {
+
+	list := New[int](0, 1, 2, 3, 4)
+
+	var err error
+
+	assert := func() {
+		if output, expected := list.Values(), []int{0, 1, 2, 3, 4}; !cmp.Equal(output, expected) {
+			t.Errorf("List values: get %v, expect %v", output, expected)
+		}
+		if output, expected := list.Size(), 5; output != expected {
+			t.Errorf("List size: get %d, expect %d", output, expected)
+		}
+		if err != nil {
+			t.Errorf("Get error %v", err)
+		}
+	}
+
+	assert()
+
+	bytes, err := list.ToJSON()
+	assert()
+
+	err = list.FromJSON(bytes)
+	assert()
+
+	_, err = json.Marshal([]any{list})
+	if err != nil {
+		t.Errorf("Error marshaling json: %v", err)
+	}
+
+	err = json.Unmarshal([]byte(`[0,1,2,3,4]`), list) // don't need a pointer to list here
+	assert()
+
 }

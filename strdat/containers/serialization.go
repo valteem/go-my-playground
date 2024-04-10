@@ -5,7 +5,7 @@ type JSONSerializer interface {
 	MarshalJSON() ([]byte, error) // implements json.Marshaler
 }
 
-type JSONDeserialization interface {
+type JSONDeserializer interface {
 	FromJSON([]byte) error      // populates container from input JSON
 	UnmarshalJSON([]byte) error // implements json.Unmarshaler
 }
