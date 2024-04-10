@@ -7,7 +7,7 @@ import (
 )
 
 func TestAppendToSlice(t *testing.T) {
-	
+
 	s := []int{1, 2, 3, 4}
 	reuse.AppendToSlice[int](s, 5)
 	e := []int{1, 2, 3, 4} // nothind appended, slice is passed by value, which means length and capacity of 'outer' slice are not affected
@@ -15,7 +15,7 @@ func TestAppendToSlice(t *testing.T) {
 		t.Errorf("Expected %+v, returned %+v", e, s)
 	}
 
-	s0:= []int{1, 2, 3, 4}
+	s0 := []int{1, 2, 3, 4}
 	reuse.AppendToSliceP[int](&s0, 5)
 	e0 := []int{1, 2, 3, 4, 5}
 	if !reuse.SliceEqual(s0, e0) {
@@ -34,6 +34,23 @@ func TestAppendToSlice(t *testing.T) {
 	e2 := []int{1, 2, 3, 4, 5}
 	if !reuse.SliceEqual(c2.Slice(), e2) {
 		t.Errorf("Expected %+v, returned %+v", e2, c2.Slice())
+	}
+
+}
+
+type wlist struct {
+	elements []int
+}
+
+func TestSliceWrapper(t *testing.T) {
+	w := &wlist{elements: []int{1, 2, 3}}
+	f := func(e *[]int, v int) {
+		*e = append(*e, v)
+
+	}
+	f(&w.elements, 4)
+	if expectedlength, expectedvalue := len(w.elements), w.elements[3]; expectedlength != 4 || expectedvalue != 4 {
+		t.Errorf("get slice length %d, expect 4, get value of last element %d, expect 4", expectedlength, expectedvalue)
 	}
 
 }
