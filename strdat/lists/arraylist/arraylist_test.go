@@ -563,3 +563,142 @@ func TestIteratorPrevTo(t *testing.T) {
 	}
 
 }
+
+func TestListEach(t *testing.T) {
+	list := New[int]()
+	list.Add(0, 1, 2, 3, 4)
+	expected := []int{0, 1, 2, 3, 4}
+	list.Each(func(index int, value int) {
+		if value != expected[index] {
+			t.Errorf("Get %v at position %d, expect %v", value, index, expected[index])
+		}
+	})
+}
+
+func TestListMap(t *testing.T) {
+	list := New[int](0, 1, 2, 3, 4)
+	newList := list.Map(func(index int, value int) int {
+		return value * value
+	})
+	expected := []int{0, 1, 4, 9, 16}
+	if !cmp.Equal(newList.Values(), expected) {
+		t.Errorf("Get %v, expect %v", newList.Values(), expected)
+	}
+}
+
+func TestListSelect(t *testing.T) {
+	list := New[int](0, 1, 2, 3, 4)
+	newList := list.Select(func(index int, value int) bool {
+		return ((value / 2) * 2) == value
+	})
+	expected := []int{0, 2, 4}
+	if !cmp.Equal(newList.Values(), expected) {
+		t.Errorf("Get %v, expect %v", newList.Values(), expected)
+	}
+}
+
+func TestListAny(t *testing.T) {
+	tests := []struct {
+		description string
+		lst         *List[int]
+		output      bool
+	}{
+		{
+			description: "Even only",
+			lst:         New[int](2, 4, 6, 8),
+			output:      true,
+		},
+		{
+			description: "Uneven only",
+			lst:         New[int](1, 3, 5, 7),
+			output:      false,
+		},
+		{
+			description: "Mix of even and uneven",
+			lst:         New[int](1, 2, 3, 4),
+			output:      true,
+		},
+	}
+	for _, tst := range tests {
+		a := tst.lst.Any(func(index, value int) bool {
+			return ((value / 2) * 2) == value
+		})
+		if a != tst.output {
+			t.Errorf("%s: get %t, expect %t", tst.description, a, tst.output)
+		}
+	}
+}
+
+func TestListAll(t *testing.T) {
+	tests := []struct {
+		description string
+		input       *List[int]
+		expected    bool
+	}{
+		{
+			description: "Even only",
+			input:       New[int](2, 4, 6, 8),
+			expected:    true,
+		},
+		{
+			description: "Uneven only",
+			input:       New[int](1, 3, 5, 7),
+			expected:    false,
+		},
+		{
+			description: "Mix of even and uneven",
+			input:       New[int](1, 2, 3, 4),
+			expected:    false,
+		},
+	}
+	for _, tst := range tests {
+		output := tst.input.All(func(index, value int) bool {
+			return ((value / 2) * 2) == value
+		})
+		if output != tst.expected {
+			t.Errorf("%s: get %t, expect %t", tst.description, output, tst.expected)
+		}
+	}
+}
+
+func TestListFind(t *testing.T) {
+	tests := []struct {
+		description   string
+		input         *List[int]
+		expectedIndex int
+		expectedValue int
+	}{
+		{
+			description:   "First element found",
+			input:         New[int](2, 3, 4, 5),
+			expectedIndex: 0,
+			expectedValue: 2,
+		},
+		{
+			description:   "Last element found",
+			input:         New[int](1, 3, 5, 8),
+			expectedIndex: 3,
+			expectedValue: 8,
+		},
+		{
+			description:   "Element in the middle found",
+			input:         New[int](1, 3, 4, 5, 7),
+			expectedIndex: 2,
+			expectedValue: 4,
+		},
+		{
+			description:   "Not found",
+			input:         New[int](1, 3, 5, 7),
+			expectedIndex: -1,
+			expectedValue: 0,
+		},
+	}
+	for _, tst := range tests {
+		outputIndex, outputvalue := tst.input.Find(func(i, v int) bool {
+			return ((v / 2) * 2) == v
+		})
+		if outputIndex != tst.expectedIndex || outputvalue != tst.expectedValue {
+			t.Errorf("%s, get %v at position %d, expect %v at position %d", tst.description, outputvalue, outputIndex, tst.expectedValue, tst.expectedIndex)
+		}
+	}
+}
