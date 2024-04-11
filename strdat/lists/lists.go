@@ -9,7 +9,7 @@ type List[T comparable] interface {
 	Get(index int) (T, bool)
 	Remove(index int) // does not return error or bool
 	Add(values ...T)
-	Contains(values ...T) // intersection (?)
+	Contains(values ...T) bool // intersection (?)
 	Sort(comparator utils.Comparator[T])
 	Swap(index1, index2 int)
 	Insert(index int, values ...T) // after or before index?
