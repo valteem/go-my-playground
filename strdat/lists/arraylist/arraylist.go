@@ -5,8 +5,11 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/valteem/strdat/lists"
 	"github.com/valteem/strdat/utils"
 )
+
+var _ lists.List[int] = (*List[int])(nil)
 
 type List[T comparable] struct {
 	elements []T
