@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	list "github.com/emirpasic/gods/v2/lists/arraylist"
+	slList "github.com/emirpasic/gods/v2/lists/singlylinkedlist"
 )
 
 func TestIteratorBeginEndFirstLastSingleElement(t *testing.T) {
@@ -31,4 +32,14 @@ func TestIteratorBeginEndFirstLastSingleElement(t *testing.T) {
 	if i := it.Index(); i != idxEnd {
 		t.Errorf("it.Index() on single element list should return %d after it.End(), get %d", idxEnd, i)
 	}
+}
+
+func TestSinglyLinkedListIterator(t *testing.T) {
+	list := slList.New[int](0, 1, 2, 3, 4)
+	it := list.Iterator()
+	it.Begin()
+	if v := it.Value(); v == 0 { // nil dereference
+		t.Errorf("it.Begin() must point to 'before-first'")
+	}
+
 }
