@@ -78,6 +78,7 @@ func (list *List[T]) Remove(index int) {
 	}
 	if list.size == 1 {
 		list.Clear()
+		return
 	}
 	var beforeElement *element[T]
 	element := list.first
