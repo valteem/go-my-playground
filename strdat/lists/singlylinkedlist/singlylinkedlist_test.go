@@ -434,3 +434,104 @@ func TestListSet(t *testing.T) {
 	}
 
 }
+
+func TestListEach(t *testing.T) {
+
+	list := New[string]("a", "b", "c")
+
+	a := []string{"a", "b", "c"}
+
+	list.Each(func(index int, value string) {
+		if actual := a[index]; actual != value {
+			t.Errorf("list.Each(%d): get %s, expect %s", index, actual, value)
+		}
+	})
+
+}
+
+func TestListMap(t *testing.T) {
+
+	list := New[string]("a", "b", "c")
+
+	mapped := list.Map(func(index int, value string) string {
+		return value + value
+	})
+
+	if actual, expected := mapped.Values(), []string{"aa", "bb", "cc"}; !cmp.Equal(actual, expected) {
+		t.Errorf("list.Map(): get %v, expect %v", actual, expected)
+	}
+
+}
+
+func TestListSelect(t *testing.T) {
+
+	list := New[string]("a", "f", "m", "t", "v", "x")
+
+	selected := list.Select(func(index int, value string) bool {
+		return (index >= 2) && (value < "w")
+	})
+
+	if actual, expected := selected.Values(), []string{"m", "t", "v"}; !cmp.Equal(actual, expected) {
+		t.Errorf("list.Select(): get %v, expect %v", actual, expected)
+	}
+
+}
+
+func TestListAny(t *testing.T) {
+
+	list := New[string]("a", "b", "c")
+
+	a := list.Any(func(index int, value string) bool {
+		return value <= "c"
+	})
+	if !a {
+		t.Errorf("list.Any(): get %t, expect %t", a, true)
+	}
+
+	a = list.Any(func(index int, value string) bool {
+		return value >= "x"
+	})
+	if a {
+		t.Errorf("list.Any(): get %t, expect %t", a, false)
+	}
+
+}
+
+func TestListAll(t *testing.T) {
+
+	list := New[string]("a", "b", "c")
+
+	all := list.All(func(index int, value string) bool {
+		return value >= "a" && value <= "c"
+	})
+	if !all {
+		t.Errorf("list.All(): get %t, expect %t", all, true)
+	}
+
+	all = list.All(func(index int, value string) bool {
+		return value >= "x" && value <= "y"
+	})
+	if all {
+		t.Errorf("list.All(): get %t, expect %t", all, false)
+	}
+
+}
+
+func TestListFind(t *testing.T) {
+
+	list := New[string]("a", "b", "c")
+
+	index, value := list.Find(func(index int, value string) bool {
+		return index == 1 && value == "b"
+	})
+	if index != 1 || value != "b" {
+		t.Errorf("list.Find(): get (%d, %s), expect (%d, %s)", index, value, 1, "b")
+	}
+
+	index, value = list.Find(func(index int, value string) bool {
+		return index > 10 && value > "u"
+	})
+	if index != -1 || value != "" {
+		t.Errorf("list.Find(): get (%d, %s), expect (%d, %s)", index, value, -1, "")
+	}
+}
