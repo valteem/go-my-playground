@@ -1,6 +1,7 @@
 package singlylinkedlist
 
 import (
+	stdcmp "cmp"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -122,4 +123,314 @@ func TestListAdd(t *testing.T) {
 			t.Errorf("list.Get(%d): get (%s, %t), expect (%s, %t)", tst.index, actualOutput, actualOk, tst.expectedOutput, tst.expectedOk)
 		}
 	}
+}
+
+func TestListAppendPrepend(t *testing.T) {
+
+	list := New[string]("j")
+	list.Append("k")
+	list.Prepend("i")
+
+	if actualOutput, expectedOutput := list.Empty(), false; actualOutput != expectedOutput {
+		t.Errorf("list.Empty(): get %t, expect %t", actualOutput, expectedOutput)
+	}
+
+	if actualOutput, expectedOutput := list.Size(), 3; actualOutput != expectedOutput {
+		t.Errorf("list.Size(): get %d, expect %d", actualOutput, expectedOutput)
+	}
+
+	tests := []struct {
+		index          int
+		expectedOutput string
+		expectedOk     bool
+	}{
+		{
+			index:          0,
+			expectedOutput: "i",
+			expectedOk:     true,
+		},
+		{
+			index:          1,
+			expectedOutput: "j",
+			expectedOk:     true,
+		},
+		{
+			index:          2,
+			expectedOutput: "k",
+			expectedOk:     true,
+		},
+		{
+			index:          3,
+			expectedOutput: "",
+			expectedOk:     false,
+		},
+	}
+	for _, tst := range tests {
+		actualOutput, actualOk := list.Get(tst.index)
+		if actualOutput != tst.expectedOutput || actualOk != tst.expectedOk {
+			t.Errorf("list.Get(%d): get (%s, %t), expect (%s, %t)", tst.index, actualOutput, actualOk, tst.expectedOutput, tst.expectedOk)
+		}
+	}
+
+}
+
+func TestListRemove(t *testing.T) {
+
+	list := New[string]("i", "j", "k")
+
+	list.Remove(1)
+	if actualOutput, expectedOutput := list.Empty(), false; actualOutput != expectedOutput {
+		t.Errorf("list.Empty(): get %t, expect %t", actualOutput, expectedOutput)
+	}
+	if actualOutput, expectedOutput := list.Size(), 2; actualOutput != expectedOutput {
+		t.Errorf("list.Size(): get %d, expect %d", actualOutput, expectedOutput)
+	}
+	tests := []struct {
+		index          int
+		expectedOutput string
+	}{
+		{
+			index:          0,
+			expectedOutput: "i",
+		},
+		{
+			index:          1,
+			expectedOutput: "k",
+		},
+	}
+	for _, tst := range tests {
+		actualOutput, _ := list.Get(tst.index)
+		if actualOutput != tst.expectedOutput {
+			t.Errorf("list.Get(%d): get %s, expect %s", tst.index, actualOutput, tst.expectedOutput)
+		}
+	}
+
+	list.Remove(0)
+	if actualOutput, expectedOutput := list.Empty(), false; actualOutput != expectedOutput {
+		t.Errorf("list.Empty(): get %t, expect %t", actualOutput, expectedOutput)
+	}
+	if actualOutput, expectedOutput := list.Size(), 1; actualOutput != expectedOutput {
+		t.Errorf("list.Empty(): get %d, expect %d", actualOutput, expectedOutput)
+	}
+	actualOutput, _ := list.Get(0)
+	index, expectedOutput := 0, "k"
+	if actualOutput != expectedOutput {
+		t.Errorf("list.GetO(%d): get %s, expect %s", index, actualOutput, expectedOutput)
+	}
+
+	list.Remove(1) // out-of bounds, nothing happens
+	if actualOutput, expectedOutput := list.Empty(), false; actualOutput != expectedOutput {
+		t.Errorf("list.Empty(): get %t, expect %t", actualOutput, expectedOutput)
+	}
+	if actualOutput, expectedOutput := list.Size(), 1; actualOutput != expectedOutput {
+		t.Errorf("list.Empty(): get %d, expect %d", actualOutput, expectedOutput)
+	}
+	actualOutput, _ = list.Get(0)
+	index, expectedOutput = 0, "k"
+	if actualOutput != expectedOutput {
+		t.Errorf("list.GetO(%d): get %s, expect %s", index, actualOutput, expectedOutput)
+	}
+
+	list.Remove(0)
+	if actualOutput, expectedOutput := list.Empty(), true; actualOutput != expectedOutput {
+		t.Errorf("list.Empty(): get %t, expect %t", actualOutput, expectedOutput)
+	}
+	if actualOutput, expectedOutput := list.Size(), 0; actualOutput != expectedOutput {
+		t.Errorf("list.Empty(): get %d, expect %d", actualOutput, expectedOutput)
+	}
+	actualOutput, actualOk := list.Get(0)
+	index, expectedOutput, expectedOk := 0, "", false
+	if actualOutput != expectedOutput || actualOk != expectedOk {
+		t.Errorf("list.GetO(%d): get (%s, %t), expect (%s, %t)", index, actualOutput, actualOk, expectedOutput, expectedOk)
+	}
+
+	list.Remove(0) // empty list, nothing happens
+	if actualOutput, expectedOutput := list.Empty(), true; actualOutput != expectedOutput {
+		t.Errorf("list.Empty(): get %t, expect %t", actualOutput, expectedOutput)
+	}
+	if actualOutput, expectedOutput := list.Size(), 0; actualOutput != expectedOutput {
+		t.Errorf("list.Empty(): get %d, expect %d", actualOutput, expectedOutput)
+	}
+	actualOutput, actualOk = list.Get(0)
+	index, expectedOutput, expectedOk = 0, "", false
+	if actualOutput != expectedOutput || actualOk != expectedOk {
+		t.Errorf("list.GetO(%d): get (%s, %t), expect (%s, %t)", index, actualOutput, actualOk, expectedOutput, expectedOk)
+	}
+}
+
+func TestListSwap(t *testing.T) {
+
+	list := New[string]("a", "b", "c")
+
+	list.Swap(0, 2)
+	if actual, expected := list.Values(), []string{"c", "b", "a"}; !cmp.Equal(actual, expected) {
+		t.Errorf("list.Swap(): get %v, expect %v", actual, expected)
+	}
+
+	list.Swap(0, 3) // out-of-bounds, nothing happens
+	if actual, expected := list.Values(), []string{"c", "b", "a"}; !cmp.Equal(actual, expected) {
+		t.Errorf("list.Swap(): get %v, expect %v", actual, expected)
+	}
+
+}
+
+func TestListSort(t *testing.T) {
+	list := New[string]("x", "k", "v", "a", "y", "m")
+	list.Sort(stdcmp.Compare[string])
+	if actual, expected := list.Values(), []string{"a", "k", "m", "v", "x", "y"}; !cmp.Equal(actual, expected) {
+		t.Errorf("list.Sort(): get %v, expect %v", actual, expected)
+	}
+}
+
+func TestListClear(t *testing.T) {
+	list := New[string]("k", "u", "x")
+	list.Clear()
+	if actualOutput, expectedOutput := list.Empty(), true; actualOutput != expectedOutput {
+		t.Errorf("list.Empty(): get %t, expect %t", actualOutput, expectedOutput)
+	}
+	if actualOutput, expectedOutput := list.Size(), 0; actualOutput != expectedOutput {
+		t.Errorf("list.Size(): get %d, expect %d", actualOutput, expectedOutput)
+	}
+	index, expectedOutput, expectedOk := 0, "", false
+	actualOutput, actualOk := list.Get(index)
+	if actualOutput != expectedOutput || actualOk != expectedOk {
+		t.Errorf("list.Get(%d): get (%s, %t), expect (%s, %t)", index, actualOutput, actualOk, expectedOutput, expectedOk)
+	}
+}
+
+func TestListContains(t *testing.T) {
+
+	list := New[string]("a", "b", "c")
+
+	tests := []struct {
+		value          string
+		expectedOutput bool
+	}{
+		{
+			value:          "a",
+			expectedOutput: true,
+		},
+		{
+			value:          "b",
+			expectedOutput: true,
+		},
+		{
+			value:          "c",
+			expectedOutput: true,
+		},
+		{
+			value:          "x",
+			expectedOutput: false,
+		},
+		{
+			value:          "y",
+			expectedOutput: false,
+		},
+	}
+
+	for _, tst := range tests {
+		if actualOutput := list.Contains(tst.value); actualOutput != tst.expectedOutput {
+			t.Errorf("list.Contains(%s): get %t, expect %t", tst.value, actualOutput, tst.expectedOutput)
+		}
+	}
+
+}
+
+func TestListValues(t *testing.T) {
+	list := New[string]("i", "j", "k")
+	if actual, expected := list.Values(), []string{"i", "j", "k"}; !cmp.Equal(actual, expected) {
+		t.Errorf("list.Values(): get %v, expect %v", actual, expected)
+	}
+}
+
+func TestListIndexOf(t *testing.T) {
+
+	list := New[string]("a", "b", "c")
+
+	tests := []struct {
+		value          string
+		expectedOutput int
+	}{
+		{
+			value:          "a",
+			expectedOutput: 0,
+		},
+		{
+			value:          "b",
+			expectedOutput: 1,
+		},
+		{
+			value:          "c",
+			expectedOutput: 2,
+		},
+		{
+			value:          "x",
+			expectedOutput: -1,
+		},
+		{
+			value:          "bb",
+			expectedOutput: -1,
+		},
+		{
+			value:          "",
+			expectedOutput: -1,
+		},
+	}
+
+	for _, tst := range tests {
+		if actualOutput := list.IndexOf(tst.value); actualOutput != tst.expectedOutput {
+			t.Errorf("list.IndexOf(%s): get %d, expect %d", tst.value, actualOutput, tst.expectedOutput)
+		}
+	}
+
+}
+
+func TestListInsert(t *testing.T) {
+
+	list := New[string]("a", "b", "c")
+
+	list.Insert(0, "") // prepend
+	if actual, expected := list.Values(), []string{"", "a", "b", "c"}; !cmp.Equal(actual, expected) {
+		t.Errorf("list.Insert(): get %v, expect %v", actual, expected)
+	}
+
+	list.Insert(4, "x") // append
+	if actual, expected := list.Values(), []string{"", "a", "b", "c", "x"}; !cmp.Equal(actual, expected) {
+		t.Errorf("list.Insert(): get %v, expect %v", actual, expected)
+	}
+
+	list.Insert(3, "bb")
+	if actual, expected := list.Values(), []string{"", "a", "b", "bb", "c", "x"}; !cmp.Equal(actual, expected) {
+		t.Errorf("list.Insert(): get %v, expect %v", actual, expected)
+	}
+
+	list.Insert(7, "u") // out-of-bounds, nothing happens
+	if actual, expected := list.Values(), []string{"", "a", "b", "bb", "c", "x"}; !cmp.Equal(actual, expected) {
+		t.Errorf("list.Insert(): get %v, expect %v", actual, expected)
+	}
+
+}
+
+func TestListSet(t *testing.T) {
+
+	list := New[string]()
+
+	list.Set(0, "a")
+	list.Set(1, "b") // append
+	list.Set(2, "c") // append
+	if actual, expected := list.Values(), []string{"a", "b", "c"}; !cmp.Equal(actual, expected) {
+		t.Errorf("list.Set(): get %v, expect %v", actual, expected)
+	}
+
+	list.Set(0, "x")
+	list.Set(2, "y")
+	if actual, expected := list.Values(), []string{"x", "b", "y"}; !cmp.Equal(actual, expected) {
+		t.Errorf("list.Set(): get %v, expect %v", actual, expected)
+	}
+
+	list.Set(4, "u") //out-of-bounds, nothing happens
+	if actual, expected := list.Values(), []string{"x", "b", "y"}; !cmp.Equal(actual, expected) {
+		t.Errorf("list.Set(): get %v, expect %v", actual, expected)
+	}
+
 }
