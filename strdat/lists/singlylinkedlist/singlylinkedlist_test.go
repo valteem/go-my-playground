@@ -2,6 +2,7 @@ package singlylinkedlist
 
 import (
 	stdcmp "cmp"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -582,6 +583,94 @@ func TestListChaining(t *testing.T) {
 		actualValue, actualOk := chainedList.Get(tst.index)
 		if actualValue != tst.expectedValue || actualOk != tst.expectedOk {
 			t.Errorf("list.Get(%d): get (%s, %t), expect (%s, %t", tst.index, actualValue, actualOk, tst.expectedValue, tst.expectedOk)
+		}
+	}
+}
+
+func TestListIteratorNextOverEmpty(t *testing.T) {
+	list := New[string]()
+	it := list.Iterator()
+	for it.Next() {
+		t.Errorf("cannot iterate over empty list")
+	}
+}
+func TestListIteratorNext(t *testing.T) {
+	list := New[string]("a", "b", "c")
+	it := list.Iterator()
+	count := 0
+	var index int
+	var actualValue string
+	elements := []string{"a", "b", "c"}
+	length := len(elements)
+	for it.Next() {
+		count++
+		index = it.Index()
+		actualValue = it.Value()
+		if index >= length {
+			t.Errorf("it.Next(): index %d out of bounds (should be less than %d)", index, length)
+		}
+		if expectedValue := elements[index]; actualValue != expectedValue {
+			t.Errorf("it.Next() on count %d (index %d): get %s, expect %s", count, index, actualValue, expectedValue)
+		}
+	}
+}
+
+func TestListIteratorBegin(t *testing.T) {
+	list := New[string]()
+	it := list.Iterator()
+	it.Begin()
+	list.Add("a", "b", "c")
+	it.Next()
+	if actualIndex, expectedIndex, actualValue, expectedValue := it.Index(), 0, it.Value(), "a"; actualIndex != expectedIndex || actualValue != expectedValue {
+		t.Errorf("it.Next() after it.Begin(): get %s at %d, expect %s at %d", actualValue, actualIndex, expectedValue, expectedIndex)
+	}
+}
+
+func TestListIteratorFirst(t *testing.T) {
+	list := New[string]()
+	it := list.Iterator()
+	if actual, expected := it.First(), false; actual != expected {
+		t.Errorf("empty list - First() must return `false`")
+	}
+	list.Add("a", "b", "c")
+	if actual, expected := it.First(), true; actual != expected {
+		t.Errorf("non-empty list - First() must return `true`")
+	}
+	if actualIndex, actualValue, expectedIndex, expectedValue := it.Index(), it.Value(), 0, "a"; actualIndex != expectedIndex || actualValue != expectedValue {
+		t.Errorf("get %s at %d, expect %s at %d", actualValue, actualIndex, expectedValue, expectedIndex)
+	}
+}
+
+func TestListIteratorNextTo(t *testing.T) {
+	lookup := func(index int, value string) bool {
+		return strings.HasPrefix(value, "b")
+	}
+
+	{
+		list := New[string]()
+		it := list.Iterator()
+		for it.NextTo(lookup) {
+			t.Errorf("cannot iterate over empty list")
+		}
+	}
+
+	{
+		list := New[string]("a", "c", "x")
+		it := list.Iterator()
+		for it.NextTo(lookup) {
+			t.Errorf("it.NextTo() cannot return 'true` - lookup functions should find nothing")
+		}
+	}
+
+	{
+		list := New[string]("a", "b", "c")
+		it := list.Iterator()
+		it.Begin()
+		if !it.NextTo(lookup) {
+			t.Errorf("it.NextTo should return `true` - lookup value is in the list")
+		}
+		if actualIndex, actualValue, expectedIndex, expectedValue := it.Index(), it.Value(), 1, "b"; actualIndex != expectedIndex || actualValue != expectedValue {
+			t.Errorf("get %s at %d, expect %s at %d", actualValue, actualIndex, expectedValue, expectedIndex)
 		}
 	}
 }
