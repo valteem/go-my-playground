@@ -535,3 +535,53 @@ func TestListFind(t *testing.T) {
 		t.Errorf("list.Find(): get (%d, %s), expect (%d, %s)", index, value, -1, "")
 	}
 }
+
+// `Chaining`, Enumerable{} (and probably some more stuff) actually come from Ruby (https://stackoverflow.com/q/70818283)
+func TestListChaining(t *testing.T) {
+	list := New[string]("a", "b", "c", "x", "y")
+	chainedList := list.Select(func(index int, value string) bool {
+		return value > "a"
+	}).Map(func(index int, value string) string {
+		return value + value
+	})
+	if actual, expected := chainedList.Size(), 4; actual != expected {
+		t.Errorf("list.Size(): get %d, expect %d", actual, expected)
+	}
+	tests := []struct {
+		index         int
+		expectedValue string
+		expectedOk    bool
+	}{
+		{
+			index:         0,
+			expectedValue: "bb",
+			expectedOk:    true,
+		},
+		{
+			index:         1,
+			expectedValue: "cc",
+			expectedOk:    true,
+		},
+		{
+			index:         2,
+			expectedValue: "xx",
+			expectedOk:    true,
+		},
+		{
+			index:         3,
+			expectedValue: "yy",
+			expectedOk:    true,
+		},
+		{
+			index:         4,
+			expectedValue: "",
+			expectedOk:    false,
+		},
+	}
+	for _, tst := range tests {
+		actualValue, actualOk := chainedList.Get(tst.index)
+		if actualValue != tst.expectedValue || actualOk != tst.expectedOk {
+			t.Errorf("list.Get(%d): get (%s, %t), expect (%s, %t", tst.index, actualValue, actualOk, tst.expectedValue, tst.expectedOk)
+		}
+	}
+}
