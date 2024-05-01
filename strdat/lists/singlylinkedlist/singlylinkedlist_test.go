@@ -2,6 +2,7 @@ package singlylinkedlist
 
 import (
 	stdcmp "cmp"
+	"encoding/json"
 	"strings"
 	"testing"
 
@@ -673,4 +674,35 @@ func TestListIteratorNextTo(t *testing.T) {
 			t.Errorf("get %s at %d, expect %s at %d", actualValue, actualIndex, expectedValue, expectedIndex)
 		}
 	}
+}
+
+func TestListSerialization(t *testing.T) {
+	list := New[string]("a", "b", "c")
+	var err error
+	assert := func() {
+		if actualValues, expectedValues := list.Values(), []string{"a", "b", "c"}; !cmp.Equal(actualValues, expectedValues) {
+			t.Errorf("list.Values(): get %v, expect %v", actualValues, expectedValues)
+		}
+		if actualSize, expectedSize := list.Size(), 3; actualSize != expectedSize {
+			t.Errorf("list.Size(): get %d, expect %d", actualSize, expectedSize)
+		}
+		if err != nil {
+			t.Errorf("%v", err)
+		}
+	}
+
+	assert()
+
+	bytes, err := list.ToJSON()
+	assert()
+
+	err = list.FromJSON(bytes)
+	assert()
+
+	bytes, err = json.Marshal(list)
+	assert()
+
+	list.Clear()
+	err = json.Unmarshal(bytes, list) // `list` is already a pointer to 'singlylinkedlist` struct, not a struct itself (provided by New())
+	assert()
 }
