@@ -706,3 +706,14 @@ func TestListSerialization(t *testing.T) {
 	err = json.Unmarshal(bytes, list) // `list` is already a pointer to 'singlylinkedlist` struct, not a struct itself (provided by New())
 	assert()
 }
+
+func TestListString(t *testing.T) {
+	list := New[int](1, 2, 3)
+	str := list.String()
+	if !strings.HasPrefix(str, "SinglyLinkedList") {
+		t.Errorf("list.String(): wrong prefix")
+	}
+	if str != "SinglyLinkedList\n1, 2, 3" {
+		t.Errorf("list.String(): wrong output %+s", str)
+	}
+}
