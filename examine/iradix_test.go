@@ -1,4 +1,4 @@
-package reuse_test
+package examine
 
 import (
 	"testing"
@@ -16,7 +16,7 @@ func TestBasicInsert(t *testing.T) {
 	if oldValue != 3 {
 		t.Errorf("Old value should be 11, is %+v", oldValue)
 	}
-	if r.Len() != 4{
+	if r.Len() != 4 {
 		t.Errorf("Tree length should be 4, is %+v", r.Len())
 	}
 	if isSet != true {

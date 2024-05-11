@@ -1,4 +1,4 @@
-package reuse_test
+package examine
 
 import (
 	"testing"

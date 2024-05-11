@@ -1,7 +1,6 @@
-package reuse
+package examine
 
 import (
-
 	"testing"
 
 	"github.com/hibiken/asynq"
