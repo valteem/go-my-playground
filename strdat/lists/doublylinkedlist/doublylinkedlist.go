@@ -255,7 +255,7 @@ func (list *List[T]) Insert(index int, values ...T) {
 		next.prev = before
 		before.next = next
 	}
-	list.size++
+	list.size += len(values)
 }
 
 // Sets value at specified position. Does nothing if index is out-of-bounds. Set at list.size appends an element.
