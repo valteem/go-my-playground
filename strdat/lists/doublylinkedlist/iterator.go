@@ -1,5 +1,11 @@
 package doublylinkedlist
 
+import "github.com/valteem/strdat/containers"
+
+// Assert implementation of Iterator interfaces
+var _ containers.IteratorWithIndex[int] = (*Iterator[int])(nil)
+var _ containers.ReverseIteratorWithIndex[string] = (*Iterator[string])(nil)
+
 // Holds the state of the iteration
 type Iterator[T comparable] struct {
 	list    *List[T]
