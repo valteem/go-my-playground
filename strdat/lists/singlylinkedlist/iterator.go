@@ -41,7 +41,11 @@ func (iterator *Iterator[T]) Next() bool {
 
 // Returns value of the current element
 func (iterator *Iterator[T]) Value() T {
-	return iterator.element.value // what if iterator points at 'before first' or 'after last' elements (nil pointers)?
+	if iterator.index < 0 || iterator.index >= iterator.list.size {
+		var t T
+		return t
+	}
+	return iterator.element.value
 }
 
 // Returns index of the current element
