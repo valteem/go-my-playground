@@ -5,8 +5,12 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/valteem/strdat/lists"
 	"github.com/valteem/strdat/utils"
 )
+
+// Assert List implementation
+var _ lists.List[any] = (*List[any])(nil)
 
 type element[T comparable] struct {
 	value T
