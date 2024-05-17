@@ -407,3 +407,207 @@ func TestListSet(t *testing.T) {
 		}
 	}
 }
+
+func TestListEach(t *testing.T) {
+	tests := []struct {
+		input []int
+		f     func(i, v int)
+	}{
+		{
+			input: []int{0, 1, 2, 3, 4},
+			f: func(i, v int) {
+				if i != v {
+					t.Errorf("Each(): get %d != %d", i, v)
+				}
+			},
+		},
+		{
+			input: []int{1, 2, 3, 4, 5},
+			f: func(i, v int) {
+				if (i + 1) != v {
+					t.Errorf("Each(): get %d != %d", (i + 1), v)
+				}
+			},
+		},
+		{
+			input: []int{1, 4, 9, 16, 25},
+			f: func(i, v int) {
+				if a := (i + 1) * (i + 1); a != v {
+					t.Errorf("Each(): get %d != %d", a, v)
+				}
+			},
+		},
+	}
+	for _, tst := range tests {
+		l := New[int](tst.input...)
+		l.Each(tst.f)
+	}
+}
+
+func TestListMap(t *testing.T) {
+	tests := []struct {
+		input  []int
+		f      func(i, v int) int
+		output []int
+	}{
+		{
+			input:  []int{1, 2, 3, 4, 5},
+			f:      func(i, v int) int { return i * i },
+			output: []int{0, 1, 4, 9, 16},
+		},
+		{
+			input:  []int{1, 2, 3, 4, 5},
+			f:      func(i, v int) int { return v * v },
+			output: []int{1, 4, 9, 16, 25},
+		},
+		{
+			input:  []int{1, 2, 3, 4, 5},
+			f:      func(i, v int) int { return 2 * i },
+			output: []int{0, 2, 4, 6, 8},
+		}, {
+			input:  []int{1, 2, 3, 4, 5},
+			f:      func(i, v int) int { return 2 * v },
+			output: []int{2, 4, 6, 8, 10},
+		},
+		{
+			input:  []int{1, 2, 3, 4, 5},
+			f:      func(i, v int) int { return i * v },
+			output: []int{0, 2, 6, 12, 20},
+		},
+	}
+	for _, tst := range tests {
+		l := New[int](tst.input...)
+		m := l.Map(tst.f)
+		if output := m.Values(); !cmp.Equal(output, tst.output) {
+			t.Errorf("Map(): get %v, expect %v", output, tst.output)
+		}
+	}
+}
+
+func TestListSelect(t *testing.T) {
+	tests := []struct {
+		input  []int
+		f      func(i, v int) bool
+		output []int
+	}{
+		{
+			input: []int{1, 2, 3, 4, 5, 6, 7, 8},
+			f: func(i, v int) bool {
+				return (v/2)*2 == v
+			},
+			output: []int{2, 4, 6, 8},
+		},
+		{
+			input: []int{1, 2, 3, 4, 5, 6, 7, 8},
+			f: func(i, v int) bool {
+				return (v/2)*2 != v
+			},
+			output: []int{1, 3, 5, 7},
+		},
+		{
+			input: []int{1, 2, 4, 5, 16, 17, 36, 37},
+			f: func(i, v int) bool {
+				return i*i == v
+			},
+			output: []int{4, 16, 36},
+		},
+	}
+	for _, tst := range tests {
+		l := New[int](tst.input...)
+		s := l.Select(tst.f)
+		if output := s.Values(); !cmp.Equal(output, tst.output) {
+			t.Errorf("Select(): get %v, expect %v", output, tst.output)
+		}
+	}
+}
+
+func TestListAny(t *testing.T) {
+	tests := []struct {
+		input  []int
+		f      func(i, v int) bool
+		output bool
+	}{
+		{
+			input: []int{0, 1, 4, 5, 7},
+			f: func(i, v int) bool {
+				return i*i == v
+			},
+			output: true,
+		},
+		{
+			input: []int{1, 2, 3, 4, 5},
+			f: func(i, v int) bool {
+				return i*i == v
+			},
+			output: false,
+		},
+	}
+	for _, tst := range tests {
+		l := New[int](tst.input...)
+		if output := l.Any(tst.f); output != tst.output {
+			t.Errorf("Any() on %v: get %t, expect %t", tst.input, output, tst.output)
+		}
+	}
+}
+
+func TestListAll(t *testing.T) {
+	tests := []struct {
+		input  []int
+		f      func(i, v int) bool
+		output bool
+	}{
+		{
+			input: []int{0, 1, 4, 9, 16},
+			f: func(i, v int) bool {
+				return i*i == v
+			},
+			output: true,
+		},
+		{
+			input: []int{0, 1, 4, 9, 17},
+			f: func(i, v int) bool {
+				return i*i == v
+			},
+			output: false,
+		},
+	}
+	for _, tst := range tests {
+		l := New[int](tst.input...)
+		if output := l.All(tst.f); output != tst.output {
+			t.Errorf("Any() on %v: get %t, expect %t", tst.input, output, tst.output)
+		}
+	}
+}
+
+func TestListFind(t *testing.T) {
+	tests := []struct {
+		input       []int
+		f           func(i, v int) bool
+		outputIndex int
+		outputValue int
+	}{
+		{
+			input: []int{1, 2, 4, 9, 16},
+			f: func(i, v int) bool {
+				return i*i == v
+			},
+			outputIndex: 2,
+			outputValue: 4,
+		},
+		{
+			input: []int{1, 2, 3, 4, 5},
+			f: func(i, v int) bool {
+				return i*i == v
+			},
+			outputIndex: -1,
+			outputValue: 0,
+		},
+	}
+	for _, tst := range tests {
+		l := New[int](tst.input...)
+		outputIndex, outputValue := l.Find(tst.f)
+		if outputIndex != tst.outputIndex || outputValue != tst.outputValue {
+			t.Errorf("Find() : get (%d, %d), expect (%d, %d)", outputIndex, outputValue, tst.outputIndex, tst.outputValue)
+		}
+	}
+}
