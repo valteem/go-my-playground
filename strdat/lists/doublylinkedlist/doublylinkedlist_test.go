@@ -611,3 +611,156 @@ func TestListFind(t *testing.T) {
 		}
 	}
 }
+
+func TestListIteratorNextonEmpty(t *testing.T) {
+	l := New[string]()
+	it := l.Iterator()
+	for it.Next() {
+		t.Errorf("Should not iterate over empty list")
+	}
+}
+
+func TestListIteratorNext(t *testing.T) {
+	tests := []struct {
+		input   []string
+		indices []int
+		values  []string
+	}{
+		{
+			input: []string{"a", "b", "c", "u", "v", "w"},
+		},
+	}
+	for _, tst := range tests {
+		l := New[string](tst.input...)
+		it := l.Iterator()
+		ri := 0
+		for it.Next() {
+			if i, v := it.Index(), it.Value(); i != ri || v != tst.input[ri] {
+				t.Errorf("Next(): get (%d, %s), expect (%d, %s)", i, v, ri, tst.values[ri])
+			}
+			ri++
+		}
+	}
+}
+
+func TestListIteratorPrevOnEmpty(t *testing.T) {
+	l := New[string]()
+	it := l.Iterator()
+	for it.Prev() {
+		t.Errorf("should not iterate over empty list")
+	}
+}
+
+func TestListIteratorPrev(t *testing.T) {
+	tests := []struct {
+		input   []string
+		indices []int
+		values  []string
+	}{
+		{
+			input: []string{"a", "b", "c", "u", "v", "w"},
+		},
+	}
+	for _, tst := range tests {
+		l := New[string](tst.input...)
+		it := l.Iterator()
+		it.End()
+		ri := 5
+		for it.Prev() {
+			if i, v := it.Index(), it.Value(); i != ri || v != tst.input[ri] {
+				t.Errorf("Next(): get (%d, %s), expect (%d, %s)", i, v, ri, tst.values[ri])
+			}
+			ri--
+		}
+	}
+}
+
+func TestListIteratorBeginEndFirstLast(t *testing.T) {
+	l := New[string]("apples", "pears", "cucumbers", "onions", "potatoes")
+	it := l.Iterator()
+	it.Begin()
+	if i, v := it.Index(), it.Value(); i != -1 || v != "" {
+		t.Errorf("Begin(): get (%d, %s), expect (%d, %s)", i, v, -1, "")
+	}
+	it.First()
+	if i, v := it.Index(), it.Value(); i != 0 || v != "apples" {
+		t.Errorf("Begin(): get (%d, %s), expect (%d, %s)", i, v, 0, "apples")
+	}
+	it.End()
+	if i, v := it.Index(), it.Value(); i != 5 || v != "" {
+		t.Errorf("Begin(): get (%d, %s), expect (%d, %s)", i, v, 6, "")
+	}
+	it.Last()
+	if i, v := it.Index(), it.Value(); i != 4 || v != "potatoes" {
+		t.Errorf("Begin(): get (%d, %s), expect (%d, %s)", i, v, 4, "potatoes")
+	}
+}
+
+func TestListIteratorNextTo(t *testing.T) {
+	tests := []struct {
+		input []string
+		index int
+		value string
+		f     func(i int, v string) bool
+	}{
+		{
+			input: []string{"apples", "pears", "cucumbers", "onions", "potatoes"},
+			index: 3,
+			value: "onions",
+			f: func(i int, v string) bool {
+				return v == "onions"
+			},
+		},
+		{
+			input: []string{"apples", "pears", "cucumbers", "onions", "potatoes"},
+			index: 1,
+			value: "pears",
+			f: func(i int, v string) bool {
+				return i == 1
+			},
+		},
+	}
+	for _, tst := range tests {
+		l := New[string](tst.input...)
+		it := l.Iterator()
+		it.NextTo(tst.f)
+		if i, v := it.Index(), it.Value(); i != tst.index || v != tst.value {
+			t.Errorf("NextTo(): get (%d, %s), expect (%d, %s)", i, v, tst.index, tst.value)
+		}
+	}
+}
+
+func TestListIteratorPrevTo(t *testing.T) {
+	tests := []struct {
+		input []string
+		index int
+		value string
+		f     func(i int, v string) bool
+	}{
+		{
+			input: []string{"apples", "pears", "cucumbers", "onions", "potatoes"},
+			index: 3,
+			value: "onions",
+			f: func(i int, v string) bool {
+				return v == "onions"
+			},
+		},
+		{
+			input: []string{"apples", "pears", "cucumbers", "onions", "potatoes"},
+			index: 1,
+			value: "pears",
+			f: func(i int, v string) bool {
+				return i == 1
+			},
+		},
+	}
+	for _, tst := range tests {
+		l := New[string](tst.input...)
+		it := l.Iterator()
+		it.End()
+		it.PrevTo(tst.f)
+		if i, v := it.Index(), it.Value(); i != tst.index || v != tst.value {
+			t.Errorf("NextTo(): get (%d, %s), expect (%d, %s)", i, v, tst.index, tst.value)
+		}
+	}
+}
