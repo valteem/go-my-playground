@@ -800,3 +800,12 @@ func TestListSerialization(t *testing.T) {
 	assert()
 
 }
+
+func TestListString(t *testing.T) {
+	input := []string{"apples", "pears", "cherries", "berries", "potatoes"}
+	l := New[string](input...)
+	expectedOutput := "DoublyLinkedList\napples, pears, cherries, berries, potatoes"
+	if actualOutput := l.String(); actualOutput != expectedOutput {
+		t.Errorf("String(): get %s, expect %s", actualOutput, expectedOutput)
+	}
+}
