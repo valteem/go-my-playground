@@ -1,6 +1,7 @@
 package doublylinkedlist
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -763,4 +764,39 @@ func TestListIteratorPrevTo(t *testing.T) {
 			t.Errorf("NextTo(): get (%d, %s), expect (%d, %s)", i, v, tst.index, tst.value)
 		}
 	}
+}
+
+func TestListSerialization(t *testing.T) {
+
+	input := []string{"apples", "pears", "cherries", "berries", "potatoes"}
+
+	l := New[string](input...)
+
+	var err error
+	assert := func() {
+		if actualOutput, expectedOutput := l.Values(), input; !cmp.Equal(actualOutput, expectedOutput) {
+			t.Errorf("Values(): get %v, expect %v", actualOutput, expectedOutput)
+		}
+		if actualOutput, expectedOutput := l.Size(), 5; actualOutput != expectedOutput {
+			t.Errorf("Size(): get %d, expect %d", actualOutput, expectedOutput)
+		}
+		if err != nil {
+			t.Errorf("%v", err)
+		}
+	}
+
+	assert()
+
+	bytes, err := l.ToJSON()
+	assert()
+
+	err = l.FromJSON(bytes)
+	assert()
+
+	_, err = json.Marshal([]any{"onions", l}) // uses MarshalJSON()
+	assert()
+
+	err = json.Unmarshal([]byte(`["apples", "pears", "cherries", "berries", "potatoes"]`), l) // uses UnmarshalJSON()
+	assert()
+
 }
