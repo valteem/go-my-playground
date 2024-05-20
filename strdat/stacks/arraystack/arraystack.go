@@ -5,7 +5,10 @@ import (
 	"strings"
 
 	"github.com/valteem/strdat/lists/arraylist"
+	"github.com/valteem/strdat/stacks"
 )
+
+var _ stacks.Stack[string] = (*Stack[string])(nil)
 
 // Holds stack elements in an arraylist
 type Stack[T comparable] struct {
