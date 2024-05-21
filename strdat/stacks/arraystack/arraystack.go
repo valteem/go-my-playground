@@ -66,7 +66,7 @@ func (stack *Stack[T]) Values() []T {
 func (stack *Stack[T]) String() string {
 	output := "ArrayStack\n"
 	values := []string{}
-	for _, v := range stack.list.Values() {
+	for _, v := range stack.Values() { // stack.list.Values() in GoDS
 		values = append(values, fmt.Sprintf("%v", v))
 	}
 	output += strings.Join(values, ", ")

@@ -31,6 +31,18 @@ func TestStackPushPeekPop(t *testing.T) {
 	}
 }
 
+func TestStackString(t *testing.T) {
+	input := []string{"apples", "pears", "cherries", "berries", "potatoes"}
+	s := New[string]()
+	for _, v := range input {
+		s.Push(v)
+	}
+	expectedOutput := "ArrayStack\npotatoes, berries, cherries, pears, apples"
+	if actualOutput := s.String(); actualOutput != expectedOutput {
+		t.Errorf("String(): get %s, expect %s", actualOutput, expectedOutput)
+	}
+}
+
 func TestStackIterator(t *testing.T) {
 	input := []string{"apples", "pears", "cherries", "berries", "potatoes"}
 	s := New[string]()
