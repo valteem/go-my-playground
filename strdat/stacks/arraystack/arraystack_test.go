@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestPushPeekPop(t *testing.T) {
+func TestStackPushPeekPop(t *testing.T) {
 	input := []string{"apples", "pears", "cherries", "berries", "potatoes"}
 	s := New[string]()
 
@@ -31,7 +31,7 @@ func TestPushPeekPop(t *testing.T) {
 	}
 }
 
-func TestListIterator(t *testing.T) {
+func TestStackIterator(t *testing.T) {
 	input := []string{"apples", "pears", "cherries", "berries", "potatoes"}
 	s := New[string]()
 	it := s.Iterator()
@@ -58,7 +58,7 @@ func TestListIterator(t *testing.T) {
 	}
 }
 
-func TestNextToPrevTo(t *testing.T) {
+func TestStackNextToPrevTo(t *testing.T) {
 	input := []string{"apples", "pears", "cherries", "berries", "potatoes"}
 	s := New[string]()
 	for _, v := range input {
