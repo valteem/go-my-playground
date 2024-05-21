@@ -1,7 +1,10 @@
 package arraystack
 
 import (
+	"encoding/json"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestStackPushPeekPop(t *testing.T) {
@@ -101,4 +104,40 @@ func TestStackNextToPrevTo(t *testing.T) {
 	if i, v := it.Index(), it.Value(); i != -1 || v != "" {
 		t.Errorf("NextTo(): get (%d, %s), expect (%d, %s)", i, v, -1, "")
 	}
+}
+
+func TestStackSerialization(t *testing.T) {
+	input := []string{"apples", "pears", "cherries", "berries", "potatoes"}
+	output := []string{"potatoes", "berries", "cherries", "pears", "apples"}
+	s := New[string]()
+	for _, v := range input {
+		s.Push(v)
+	}
+
+	var err error
+	assert := func() {
+		if values := s.Values(); !cmp.Equal(values, output) {
+			t.Errorf("Values(): get %v, expect %v", values, output)
+		}
+		if size := s.Size(); size != 5 {
+			t.Errorf("Size(): get %d, expect %d", size, 5)
+		}
+		if err != nil {
+			t.Errorf("%v", err)
+		}
+	}
+
+	assert()
+
+	b, err := s.ToJSON()
+	assert()
+
+	err = s.FromJSON(b)
+	assert()
+
+	_, err = json.Marshal([]any{s, "onions"})
+	assert()
+
+	err = json.Unmarshal([]byte(`["apples", "pears", "cherries", "berries", "potatoes"]`), s)
+	assert()
 }
