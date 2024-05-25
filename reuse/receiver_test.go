@@ -80,3 +80,19 @@ func TestComply(t *testing.T) {
 	}
 
 }
+
+// definde in q_format_test.go:
+// type labelName string
+
+func (ln *labelName) UnmarshalString(s string) {
+	*ln = labelName(s)
+}
+
+func TestUnmarshalString(t *testing.T) {
+	var ln labelName
+	s := "label"
+	ln.UnmarshalString(s)
+	if sln := string(ln); sln != s {
+		t.Errorf("UnmarshalString(): get %s, expect %s", sln, s)
+	}
+}
