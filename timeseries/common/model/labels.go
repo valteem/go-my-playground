@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"unicode/utf8"
@@ -33,4 +34,17 @@ func (ln LabelName) IsValid() bool {
 		panic(fmt.Sprintf("Invalid name validation scheme: %d", NameValidationScheme))
 	}
 	return true
+}
+
+func (ln *LabelName) UnmarshalJSON(input []byte) error {
+	var s string
+	if e := json.Unmarshal(input, &s); e != nil {
+		return e
+	}
+	l := LabelName(s)
+	if !l.IsValid() {
+		return fmt.Errorf("%q is not a valid label name", s)
+	}
+	*ln = l
+	return nil
 }

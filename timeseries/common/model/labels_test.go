@@ -52,3 +52,33 @@ func TestLabelNameIsValid(t *testing.T) {
 		}
 	}
 }
+
+func TestUnmarshalJSON(t *testing.T) {
+	tests := []struct {
+		input          []byte
+		isErr          bool
+		expectedString string
+	}{
+		{
+			input:          []byte(`"custom_label"`),
+			isErr:          false,
+			expectedString: "custom_label",
+		},
+		{
+			input:          []byte(`"1label"`),
+			isErr:          true,
+			expectedString: "",
+		},
+	}
+	for _, tst := range tests {
+		var ln LabelName
+		e := ln.UnmarshalJSON(tst.input)
+		if e != nil && !tst.isErr {
+			t.Errorf("UnmarshalJSON() on %q: get %e", tst.expectedString, e)
+		} else {
+			if str := string(ln); str != tst.expectedString {
+				t.Errorf("UnmarshalJSON(): get %q, expect %q", str, tst.expectedString)
+			}
+		}
+	}
+}
