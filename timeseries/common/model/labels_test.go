@@ -1,7 +1,10 @@
 package model
 
 import (
+	"sort"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestLabelNameIsValid(t *testing.T) {
@@ -80,5 +83,52 @@ func TestUnmarshalJSON(t *testing.T) {
 				t.Errorf("UnmarshalJSON(): get %q, expect %q", str, tst.expectedString)
 			}
 		}
+	}
+}
+
+func TestSortLabelPairs(t *testing.T) {
+
+	inputLabelPairs := LabelPairs{
+		{
+			Name:  "Good",
+			Value: "apples",
+		},
+		{
+			Name:  "Good",
+			Value: "pears",
+		},
+		{
+			Name:  "Excellent",
+			Value: "potatoes",
+		},
+		{
+			Name:  "Excellent",
+			Value: "cherries",
+		},
+	}
+
+	expectedLabelPairs := LabelPairs{
+		{
+			Name:  "Excellent",
+			Value: "cherries",
+		},
+		{
+			Name:  "Excellent",
+			Value: "potatoes",
+		},
+		{
+			Name:  "Good",
+			Value: "apples",
+		},
+		{
+			Name:  "Good",
+			Value: "pears",
+		},
+	}
+
+	sort.Sort(inputLabelPairs)
+
+	if !cmp.Equal(inputLabelPairs, expectedLabelPairs) {
+		t.Errorf("Get %v, expect %v", inputLabelPairs, expectedLabelPairs)
 	}
 }
