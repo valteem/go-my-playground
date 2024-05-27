@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	amin, amid, amax = 1, 8, 16
+	rmin, rmid, rmax = 1, 512 * 1024, 1024 * 1024
 )
 
 func String(nmin, nmax int) (string, string) {
@@ -27,9 +27,9 @@ func String(nmin, nmax int) (string, string) {
 }
 
 func main() {
-	s1, s2 := String(amin, amax)
-	s1a, s2a := String(amin, amid)
-	s1b, s2b := String(amid+1, amax)
+	s1, s2 := String(rmin, rmax)
+	s1a, s2a := String(rmin, rmid)
+	s1b, s2b := String(rmid+1, rmax)
 	s1x, s2x := s1a+","+s1b, s2a+","+s2b
 	fmt.Println(s1 == s1x, s2 == s2x)
 }
