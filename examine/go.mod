@@ -3,6 +3,7 @@ module github.com/valteem/examine
 go 1.22.1
 
 require (
+	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
 	github.com/emirpasic/gods/v2 v2.0.0-alpha
 	github.com/hashicorp/go-immutable-radix/v2 v2.1.0
 	github.com/hibiken/asynq v0.24.1
