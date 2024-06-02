@@ -15,6 +15,9 @@ func TestNewRequest(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error running http client: %v", err)
 	}
+	// The caller must close the response body when finished with it
+	// https://pkg.go.dev/net/http#:~:text=The%20caller%20must%20close%20the%20response%20body%20when%20finished%20with%20it
+	defer res.Body.Close()
 	b, err := io.ReadAll(res.Body)
 	if err != nil {
 		t.Errorf("Error reading response body: %v", err)
