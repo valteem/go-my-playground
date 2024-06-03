@@ -9,8 +9,8 @@ import (
 	"time"
 )
 
-func TestNewRequest(t *testing.T) {
-	req, err := http.NewRequest("GET", "https://google.com/", nil)
+func sendRequestgetAndCheckResponse(t *testing.T, method string, URL string) {
+	req, err := http.NewRequest(method, URL, nil)
 	if err != nil {
 		t.Errorf("Error setting up new request: %v", err)
 	}
@@ -29,6 +29,9 @@ func TestNewRequest(t *testing.T) {
 		t.Errorf("Empty response body")
 	}
 }
+func TestRequestToExternalSrever(t *testing.T) {
+	sendRequestgetAndCheckResponse(t, "GET", "https://google.com/")
+}
 
 func TestLocalHttpServer(t *testing.T) {
 	portNum := "3000"
@@ -41,24 +44,11 @@ func TestLocalHttpServer(t *testing.T) {
 		Handler: http.HandlerFunc(handleFunc),
 	}
 	go func() {
-		log.Fatal(srv.ListenAndServe())
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatal(err)
+		}
 	}()
 	time.Sleep(1 * time.Second) // allow some time for the server to start
-	req, err := http.NewRequest("GET", "http://localhost:"+portNum, nil)
-	if err != nil {
-		t.Errorf("Error setting up new request: %v", err)
-	}
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		t.Errorf("Error running http client: %v", err)
-	}
-	defer res.Body.Close()
-	b, err := io.ReadAll(res.Body)
-	if err != nil {
-		t.Errorf("Error reading response body: %v", err)
-	}
-	if s := string(b); len(s) == 0 {
-		t.Errorf("Empty response body")
-	}
+	sendRequestgetAndCheckResponse(t, "GET", "http://localhost:"+portNum)
 	srv.Shutdown(context.Background())
 }
