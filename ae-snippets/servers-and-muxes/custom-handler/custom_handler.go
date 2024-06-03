@@ -7,7 +7,7 @@ import (
 )
 
 type timeHandler struct {
-	format string	
+	format string
 }
 
 func (th timeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {

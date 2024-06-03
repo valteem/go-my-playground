@@ -22,4 +22,5 @@ func main() {
 	log.Println("Listening ...")
 
 	http.ListenAndServe(":3000", mux)
+
 }
