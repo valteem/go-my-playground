@@ -1,9 +1,12 @@
 package reuse_test
 
 import (
+	"context"
 	"io"
+	"log"
 	"net/http"
 	"testing"
+	"time"
 )
 
 func TestNewRequest(t *testing.T) {
@@ -25,4 +28,37 @@ func TestNewRequest(t *testing.T) {
 	if s := string(b); len(s) == 0 {
 		t.Errorf("Empty response body")
 	}
+}
+
+func TestLocalHttpServer(t *testing.T) {
+	portNum := "3000"
+	responseMessage := "Local response"
+	handleFunc := func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(responseMessage))
+	}
+	srv := &http.Server{
+		Addr:    ":" + portNum,
+		Handler: http.HandlerFunc(handleFunc),
+	}
+	go func() {
+		log.Fatal(srv.ListenAndServe())
+	}()
+	time.Sleep(1 * time.Second) // allow some time for the server to start
+	req, err := http.NewRequest("GET", "http://localhost:"+portNum, nil)
+	if err != nil {
+		t.Errorf("Error setting up new request: %v", err)
+	}
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Errorf("Error running http client: %v", err)
+	}
+	defer res.Body.Close()
+	b, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Errorf("Error reading response body: %v", err)
+	}
+	if s := string(b); len(s) == 0 {
+		t.Errorf("Empty response body")
+	}
+	srv.Shutdown(context.Background())
 }
