@@ -32,7 +32,7 @@ func main() {
 
 	path := "/p1/mycal/p2/myevent"
 	pattern := "/p1/+/p2/+"
-	
+
 	params := make([]string, 2)
 
 	result := match(path, pattern, params)
@@ -40,5 +40,5 @@ func main() {
 		fmt.Println(params)
 	} else {
 		fmt.Println("no match found")
-	}	
+	}
 }
