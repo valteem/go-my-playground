@@ -5,10 +5,10 @@ import (
 	"sort"
 )
 
-type LabesSet map[LabelName]LabelValue
+type LabelSet map[LabelName]LabelValue
 
 // Return `nil` if all label names and values are valid
-func (ls LabesSet) Validate() error {
+func (ls LabelSet) Validate() error {
 	for ln, lv := range ls {
 		if !ln.IsValid() {
 			return fmt.Errorf("invalid label name %q", ln) // %q escapes strings and adds quotes
@@ -21,7 +21,7 @@ func (ls LabesSet) Validate() error {
 }
 
 // Returns `true` if all key/value pairs in both label sets are the same
-func (ls LabesSet) Equal(ls1 LabesSet) bool {
+func (ls LabelSet) Equal(ls1 LabelSet) bool {
 	if len(ls) != len(ls1) {
 		return false
 	}
@@ -38,7 +38,7 @@ func (ls LabesSet) Equal(ls1 LabesSet) bool {
 }
 
 // Compares two label sets
-func (ls LabesSet) Before(ls1 LabesSet) bool {
+func (ls LabelSet) Before(ls1 LabelSet) bool {
 	if len(ls) < len(ls1) {
 		return true
 	} else if len(ls) > len(ls1) {
@@ -70,4 +70,25 @@ func (ls LabesSet) Before(ls1 LabesSet) bool {
 		}
 	}
 	return false // ls is not before ls1 if all names and values are equal
+}
+
+// Returns a copy of the label set
+func (ls LabelSet) Clone() LabelSet {
+	ls1 := make(LabelSet, len(ls))
+	for ln, lv := range ls {
+		ls1[ln] = lv
+	}
+	return ls1
+}
+
+// Merges two label sets
+func (ls LabelSet) Merge(ls1 LabelSet) LabelSet {
+	lsnew := make(LabelSet, len(ls))
+	for ln, lv := range ls {
+		lsnew[ln] = lv
+	}
+	for ln, lv := range ls1 {
+		lsnew[ln] = lv // value from ls1 overrides value for the same name in ls
+	}
+	return lsnew
 }
