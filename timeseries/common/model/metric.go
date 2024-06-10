@@ -1,5 +1,7 @@
 package model
 
+import "regexp"
+
 var (
 	NameValidationScheme = LegacyValidation
 )
@@ -26,3 +28,17 @@ const (
 	// Replaces single underscores with double underscores
 	ValueEncodingEscaping
 )
+
+const (
+	// Defines how metric and label names are to be escaped. Set in Accept or Content-Type header.
+	EscapingKey = "escaping"
+
+	// Possible values for EscapingKey:
+	AllowUTF8         = "allow-utf-8" // no escaping
+	EscapeUnderscores = "underscores"
+	EscapeDots        = "dots"
+	EscapeValues      = "values"
+)
+
+// Valid metric names
+var MetricNameRE = regexp.MustCompile("`^[a-zA-Z_:][a-zA-Z0-9_:]*$`")
