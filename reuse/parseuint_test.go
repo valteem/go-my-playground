@@ -78,10 +78,10 @@ func TestParseUint(t *testing.T) {
 	}
 
 	// https://go.dev/ref/spec#Integer_literals
-	var ordinary_int_represenatation uint64 = 12141618
-	var literal_int_represenation uint64 = 12_14_16_18
-	if literal_int_represenation != ordinary_int_represenatation {
-		t.Errorf("%d %d", literal_int_represenation, ordinary_int_represenatation)
+	var ordinary_int_repr uint64 = 12141618
+	var literal_int_repr uint64 = 12_14_16_18
+	if literal_int_repr != ordinary_int_repr {
+		t.Errorf("%d %d", literal_int_repr, ordinary_int_repr)
 	}
 
 }
