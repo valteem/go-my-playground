@@ -69,3 +69,44 @@ func labelSetToFastFingerprint(ls LabelSet) Fingerprint {
 	}
 	return Fingerprint(result)
 }
+
+// Takes a metric as input argument, returns signature for certain labels only
+func SignatureForLabels(m Metric, labels ...LabelName) uint64 {
+	if len(labels) == 0 {
+		return emptyLabelSignature
+	}
+	sort.Sort(LabelNames(labels)) // conversion
+	sum := hashNew()
+	for _, label := range labels {
+		sum = hashAdd(sum, string(label))
+		sum = hashAddByte(sum, SeparatorByte)
+		sum = hashAdd(sum, string(m[label]))
+		sum = hashAddByte(sum, SeparatorByte)
+	}
+	return sum
+}
+
+// Excludes certain labels from Metric signature
+func SignatureWithoutLabels(m Metric, labels map[LabelName]struct{}) uint64 {
+	if len(m) == 0 {
+		return emptyLabelSignature
+	}
+	labelNames := make(LabelNames, 0, len(m))
+	for labelName := range m {
+		if _, ok := labels[labelName]; !ok {
+			labelNames = append(labelNames, labelName)
+		}
+	}
+	if len(labelNames) == 0 {
+		return emptyLabelSignature
+	}
+	sort.Sort(labelNames)
+	sum := hashNew()
+	for _, label := range labelNames {
+		sum = hashAdd(sum, string(label))
+		sum = hashAddByte(sum, SeparatorByte)
+		sum = hashAdd(sum, string(m[label]))
+		sum = hashAddByte(sum, SeparatorByte)
+	}
+	return sum
+}

@@ -157,3 +157,86 @@ func TestCompareFingerprints(t *testing.T) {
 		}
 	}
 }
+
+func TestSignatureForlabels(t *testing.T) {
+	tests := []struct {
+		name   string
+		m      Metric
+		labels LabelNames
+		subset map[string]string
+	}{
+		{
+			name:   "partial subset",
+			m:      Metric{"label1": "value1", "label2": "value2", "label3": "value3", "label4": "value3"},
+			labels: LabelNames{"label1", "label3"},
+			subset: map[string]string{"label1": "value1", "label3": "value3"},
+		},
+		{
+			name:   "full subset",
+			m:      Metric{"label1": "value1", "label2": "value2", "label3": "value3", "label4": "value3"},
+			labels: LabelNames{"label1", "label2", "label3", "label4"},
+			subset: map[string]string{"label1": "value1", "label2": "value2", "label3": "value3", "label4": "value3"},
+		},
+		{
+			name:   "empty Metric and subset",
+			m:      Metric{},
+			labels: LabelNames{},
+			subset: map[string]string{},
+		},
+	}
+	for _, tc := range tests {
+		signatureMetric := SignatureForLabels(tc.m, tc.labels...)
+		signatureSubset := labelsToSignatureStd(tc.subset)
+		if signatureMetric != signatureSubset {
+			t.Errorf("%s: expect equal signatures, get %d for metric, %d for its subset", tc.name, signatureMetric, signatureSubset)
+		}
+	}
+}
+
+func TestSignatureWithoutlabels(t *testing.T) {
+	tests := []struct {
+		name      string
+		m         Metric
+		labels    map[LabelName]struct{}
+		refSubset map[string]string
+	}{
+		// settings.json:
+		// "gopls": {
+		// 	"ui.diagnostic.analyses": {
+		// 		"simplifycompositelit": false
+		// 	}
+		// },
+		// removes warning about redundant struct{}{}
+		{
+			name:      "partial labels subset",
+			m:         Metric{"label1": "value1", "label2": "value2", "label3": "value3", "label4": "value3"},
+			labels:    map[LabelName]struct{}{"label2": struct{}{}, "label4": struct{}{}},
+			refSubset: map[string]string{"label1": "value1", "label3": "value3"},
+		},
+		{
+			name:      "full labels subset",
+			m:         Metric{"label1": "value1", "label2": "value2", "label3": "value3", "label4": "value3"},
+			labels:    map[LabelName]struct{}{"label1": struct{}{}, "label2": struct{}{}, "label3": struct{}{}, "label4": struct{}{}},
+			refSubset: map[string]string{},
+		},
+		{
+			name:      "empty labels subset",
+			m:         Metric{"label1": "value1", "label2": "value2", "label3": "value3", "label4": "value3"},
+			labels:    map[LabelName]struct{}{},
+			refSubset: map[string]string{"label1": "value1", "label2": "value2", "label3": "value3", "label4": "value3"},
+		},
+		{
+			name:      "empty Metric and subset",
+			m:         Metric{},
+			labels:    map[LabelName]struct{}{},
+			refSubset: map[string]string{},
+		},
+	}
+	for _, tc := range tests {
+		signatureMetric := SignatureWithoutLabels(tc.m, tc.labels)
+		signatureSubset := labelsToSignatureStd(tc.refSubset)
+		if signatureMetric != signatureSubset {
+			t.Errorf("%s: expect equal signatures, get %d for metric, %d for subset with excluded labels", tc.name, signatureMetric, signatureSubset)
+		}
+	}
+}

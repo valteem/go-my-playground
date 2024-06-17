@@ -42,3 +42,6 @@ const (
 
 // Valid metric names
 var MetricNameRE = regexp.MustCompile("`^[a-zA-Z_:][a-zA-Z0-9_:]*$`")
+
+// Metricis a singleton, refers to one particular stream of samples
+type Metric LabelSet
