@@ -1,6 +1,11 @@
 package model
 
-import "regexp"
+import (
+	"fmt"
+	"regexp"
+	"sort"
+	"strings"
+)
 
 var (
 	NameValidationScheme = LegacyValidation
@@ -45,3 +50,48 @@ var MetricNameRE = regexp.MustCompile("`^[a-zA-Z_:][a-zA-Z0-9_:]*$`")
 
 // Metricis a singleton, refers to one particular stream of samples
 type Metric LabelSet
+
+// Compares two metrics
+func (m Metric) Equal(a Metric) bool {
+	return LabelSet(m).Equal(LabelSet(a))
+}
+
+// Compare underlying label sets
+func (m Metric) Before(a Metric) bool {
+	return LabelSet(m).Before(LabelSet(a))
+}
+
+// Returns a copy of the Metric
+func (m Metric) Clone() Metric {
+	clone := make(Metric, len(m)) // use direct assignment instead of adding new label paira
+	for key, value := range m {
+		clone[key] = value
+	}
+	return clone
+}
+
+// Returns string representation of the Metric
+func (m Metric) String() string {
+	metricName, hasName := m[MetricNameLabel]
+	numLabels := len(m)
+	if hasName {
+		numLabels = numLabels - 1
+	}
+	labelStrings := make([]string, 0, numLabels)
+	for label, value := range m {
+		if label != MetricNameLabel {
+			labelStrings = append(labelStrings, fmt.Sprintf("%s=%q", label, value))
+		}
+	}
+	switch numLabels {
+	case 0:
+		if hasName {
+			return string(metricName)
+		}
+		return "{}"
+	default:
+		sort.Strings(labelStrings)
+		return fmt.Sprintf("%s{%s}", metricName, strings.Join(labelStrings, ", "))
+	}
+
+}

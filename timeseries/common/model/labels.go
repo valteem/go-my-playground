@@ -8,7 +8,9 @@ import (
 	"unicode/utf8"
 )
 
-const ()
+const (
+	MetricNameLabel = "__name__"
+)
 
 // IsValid() does the same but faster
 var LabelNameRE = regexp.MustCompile("^[a-zA-Z_][a-zA-Z0-9_]*$") // * - zero or more characters
