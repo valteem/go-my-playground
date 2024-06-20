@@ -92,3 +92,13 @@ func (ls LabelSet) Merge(ls1 LabelSet) LabelSet {
 	}
 	return lsnew
 }
+
+// Returns Fingerprint of the LabelSet
+func (ls LabelSet) Fingerprint() Fingerprint {
+	return labelSetToFingerprint(ls)
+}
+
+// Returns FastFingerprint of the LabelSet (faster, but more prone to hash collisions)
+func (ls LabelSet) FastFingerprint() Fingerprint {
+	return labelSetToFastFingerprint(ls)
+}

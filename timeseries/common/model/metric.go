@@ -95,3 +95,13 @@ func (m Metric) String() string {
 	}
 
 }
+
+// Returns Fingerprint of the Metric
+func (m Metric) Fingerprint() Fingerprint {
+	return LabelSet(m).Fingerprint()
+}
+
+// Returns FastFingerprint of the Metric (faster, but prone to hash collisions)
+func (m Metric) FastFingerprint() Fingerprint {
+	return LabelSet(m).FastFingerprint()
+}
