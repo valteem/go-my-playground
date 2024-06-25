@@ -124,3 +124,28 @@ func TestMetricString(t *testing.T) {
 		}
 	}
 }
+
+func TestMetricNameValidationLegacy(t *testing.T) {
+	tests := []struct {
+		name   LabelValue
+		output bool
+	}{
+		{
+			name:   LabelValue("validName_;12"),
+			output: true,
+		},
+		{
+			name:   LabelValue("0invalidName"),
+			output: false,
+		},
+		{
+			name:   LabelValue("invalidNameĂŴÑ"),
+			output: false,
+		},
+	}
+	for _, tst := range tests {
+		if output := IsValidMetricName(tst.name); output != tst.output {
+			t.Errorf("IsValidMetricName(%s): get %t, expect %t", tst.name, output, tst.output)
+		}
+	}
+}

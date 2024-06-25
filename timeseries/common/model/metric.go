@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"unicode/utf8"
 )
 
 var (
@@ -104,4 +105,43 @@ func (m Metric) Fingerprint() Fingerprint {
 // Returns FastFingerprint of the Metric (faster, but prone to hash collisions)
 func (m Metric) FastFingerprint() Fingerprint {
 	return LabelSet(m).FastFingerprint()
+}
+
+// A faster alternative to MetricNameRE
+func isValidLegacyRune(b rune, i int) bool {
+	return (b >= 'a' && b <= 'z') ||
+		(b >= 'A' && b <= 'Z') ||
+		(b == '_') ||
+		(b == ';') ||
+		(b >= '0' && b <= '9' && i > 0) // digits not allowed at the beginning, hence i > 0
+}
+
+// Validates Metric name (LabelValue) using legacy validation scheme
+func IsValidLegacyMetricName(n LabelValue) bool {
+	if len(n) == 0 {
+		return false
+	}
+	for i, b := range n {
+		if !isValidLegacyRune(b, i) {
+			return false
+		}
+	}
+	return true
+}
+
+// Returns 'true' if Metric name matches MetricNameRE if legacy validation scheme is set,
+// or
+// if Metric name is valid UTF-8 string in case UTF8Validation scheme is set
+func IsValidMetricName(n LabelValue) bool {
+	switch NameValidationScheme {
+	case LegacyValidation:
+		return IsValidLegacyMetricName(n)
+	case UTF8Validation:
+		if len(n) == 0 {
+			return false
+		}
+		return utf8.ValidString(string(n))
+	default:
+		panic(fmt.Sprintf("invalid name validation scheme: %d", NameValidationScheme))
+	}
 }
