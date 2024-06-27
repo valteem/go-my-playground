@@ -52,3 +52,23 @@ func TestLocalHttpServer(t *testing.T) {
 	sendRequestgetAndCheckResponse(t, "GET", "http://localhost:"+portNum)
 	srv.Shutdown(context.Background())
 }
+
+type stubHandler struct{}
+
+func (s stubHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {}
+
+func TestPatternConflic(t *testing.T) {
+
+	defer func() {
+		r := recover()
+		if r == nil {
+			t.Errorf("two conflicting pattern should panic")
+		}
+	}()
+
+	mux := http.NewServeMux()
+	pattern := "/some_pattern"
+	mux.Handle(pattern, stubHandler{})
+	mux.Handle(pattern, stubHandler{})
+
+}
