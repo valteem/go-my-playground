@@ -29,7 +29,7 @@ func sendRequestgetAndCheckResponse(t *testing.T, method string, URL string) {
 		t.Errorf("Empty response body")
 	}
 }
-func TestRequestToExternalSrever(t *testing.T) {
+func TestRequestToExternalServer(t *testing.T) {
 	sendRequestgetAndCheckResponse(t, "GET", "https://google.com/")
 }
 
@@ -57,7 +57,7 @@ type stubHandler struct{}
 
 func (s stubHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {}
 
-func TestPatternConflic(t *testing.T) {
+func TestPatternConflict(t *testing.T) {
 
 	defer func() {
 		r := recover()
