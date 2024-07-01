@@ -19,6 +19,17 @@ func AddRoutes(mux *http.ServeMux) {
 		qty := r.PathValue("qty")
 		io.WriteString(w, "model: "+modelId+", quantity: "+qty)
 	})
+	// Wildcards must be full path segments: they must be preceded by a slash
+	// and followed by either a slash or the end of the string
+	// https://pkg.go.dev/net/http#ServeMux.ServeHTTP
+
+	/*
+		mux.HandleFunc("/?model={model_id}&qty={qty}", func(w http.ResponseWriter, r *http.Request) {
+			modelId := r.PathValue("model_id")
+			qty := r.PathValue("qty")
+			io.WriteString(w, "model: "+modelId+", quantity: "+qty)
+		})
+	*/
 }
 
 func setup() {
@@ -33,22 +44,36 @@ func setup() {
 func TestResponseBody(t *testing.T) {
 	setup()
 
-	path := "/model/myModel/qty/1234"
-	req, err = http.NewRequest("GET", path, nil)
-	if err != nil {
-		t.Fatal("Creating 'GET /model/myModel/qty/1234' request failed!")
+	tests := []struct {
+		path   string
+		output string
+	}{
+		{path: "/model/myModel/qty/1234",
+			output: "model: myModel, quantity: 1234",
+		},
+
+		{path: "/?model=myModel&qty=1234",
+			output: "404 page not found\n",
+		},
 	}
 
-	m.ServeHTTP(respRec, req)
+	for _, tc := range tests {
+		req, err = http.NewRequest("GET", tc.path, nil)
+		if err != nil {
+			t.Errorf("Creating 'GET %s' request failed!", tc.path)
+		}
 
-	buf := new(strings.Builder)
-	_, e := io.Copy(buf, respRec.Body)
-	if e != nil {
-		t.Errorf("Error reading response body: %q", e)
+		m.ServeHTTP(respRec, req)
+
+		buf := new(strings.Builder)
+		_, e := io.Copy(buf, respRec.Body)
+		if e != nil {
+			t.Errorf("Error reading response body: %q", e)
+		}
+
+		if output := buf.String(); output != tc.output {
+			t.Errorf("Response body: get %s, expect %s", output, tc.output)
+		}
 	}
 
-	expectedRespBody := "model: myModel, quantity: 1234"
-	if respBody := buf.String(); respBody != expectedRespBody {
-		t.Errorf("Response body: get %s, expect %s", respBody, expectedRespBody)
-	}
 }
