@@ -1,6 +1,6 @@
 package reuse
 
-type Node struct{
+type Node struct {
 	Key int
 }
 
@@ -14,4 +14,8 @@ type Tree struct {
 
 func NewTree(root Node) Tree {
 	return Tree{Root: root}
+}
+
+func NewNodeP(key int) *Node {
+	return &Node{Key: key}
 }
