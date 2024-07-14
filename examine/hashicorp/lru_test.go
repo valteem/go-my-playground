@@ -156,3 +156,24 @@ func TestLRUContainsOrAdd(t *testing.T) {
 		t.Fatalf("ContainsOrAdd(1, 11) after Add(3, 3): expect (false, true), get (%t, %t) for (ok, evicted)", ok, evicted)
 	}
 }
+
+func TestResize(t *testing.T) {
+
+	evictCounter := 0
+	onEviction := func(k, v int) {
+		evictCounter++
+	}
+
+	l, _ := lru.NewWithEvict(3, onEviction)
+
+	l.Add(1, 1)
+	l.Add(2, 2)
+	l.Add(3, 3)
+
+	l.Resize(1)
+
+	if evictCounter != 2 {
+		t.Fatalf("evict count: get %d, expect 2", evictCounter)
+	}
+
+}
