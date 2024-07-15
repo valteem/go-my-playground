@@ -177,3 +177,45 @@ func TestResize(t *testing.T) {
 	}
 
 }
+
+func TestRemoveOldest(t *testing.T) {
+
+	evictCounter := 0
+	onEviction := func(k, v int) {
+		evictCounter++
+	}
+
+	l, _ := lru.NewWithEvict(2, onEviction)
+
+	l.Add(1, 1)
+	l.Add(2, 2)
+
+	l.RemoveOldest()
+
+	if _, ok := l.Get(1); ok {
+		t.Fatalf("key should have been removed")
+	}
+}
+
+func TestGetOldest(t *testing.T) {
+
+	lastEvictedKey, lastEvictedValue := 0, 0
+	onEviction := func(k, v int) {
+		lastEvictedKey, lastEvictedValue = k, v
+	}
+
+	l, _ := lru.NewWithEvict(2, onEviction)
+
+	l.Add(1, 1)
+	l.Add(2, 2)
+
+	key, value, ok := l.GetOldest()
+	if key != 1 || value != 1 || !ok {
+		t.Fatalf("GetOldest() - ")
+	}
+
+	l.Add(3, 3)
+	if lastEvictedKey != 1 || lastEvictedValue != 1 {
+		t.Fatalf("GetOldest() should have not changed \"recently updated\" status: (%d, %d)", lastEvictedKey, lastEvictedValue)
+	}
+}
