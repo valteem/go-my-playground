@@ -47,3 +47,24 @@ func ReverseDigits(input int) int {
 	}
 	return output
 }
+
+func myMin(a, b int) int {
+	if a > b {
+		return b
+	}
+	return a
+}
+
+func AppendAndDelete(s string, t string, k int32) string {
+	rs, rt := []rune(s), []rune(t)
+	index := 0
+	for index < myMin(len(rs), len(rt)) && rs[index] == rt[index] {
+		index++
+	}
+	count := len(rs) + len(rt) - 2*index
+	if count <= int(k) && ((int(k)-count)%2 == 0 || len(rs)+len(rt) <= int(k)) {
+		return "Yes"
+	} else {
+		return "No"
+	}
+}

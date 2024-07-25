@@ -192,3 +192,28 @@ func TestReverseDigits(t *testing.T) {
 		}
 	}
 }
+
+func TestAppendAndDelete(t *testing.T) {
+
+	tests := []struct {
+		input1 string
+		input2 string
+		moves  int32
+		output string
+	}{
+		{"abcklm", "abcuvw", 6, "Yes"},
+		{"abcklm", "abc", 3, "Yes"},
+		{"abcklm", "abc", 2, "No"},
+		{"abc", "uvw", 6, "Yes"},
+		{"abc", "uvw", 5, "No"},
+		{"y", "yu", 2, "No"},
+		{"hackerhappy", "hackerrank", 9, "Yes"},
+	}
+
+	for _, tc := range tests {
+		output := reuse.AppendAndDelete(tc.input1, tc.input2, tc.moves)
+		if output != tc.output {
+			t.Errorf("For input %s/%s/%d get %q, expect %q", tc.input1, tc.input2, tc.moves, output, tc.output)
+		}
+	}
+}
