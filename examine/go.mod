@@ -10,6 +10,7 @@ require (
 	github.com/hashicorp/golang-lru/v2 v2.0.7
 	github.com/hibiken/asynq v0.24.1
 	github.com/prometheus/client_golang v1.19.1
+	golang.org/x/tools v0.13.0
 )
 
 require (
