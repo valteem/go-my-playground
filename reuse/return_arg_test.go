@@ -53,7 +53,8 @@ func TestReturnSlice(t *testing.T) {
 	// apply same steps to append()
 	a := []int{0}
 	aAddrBefore := fmt.Sprintf("%p", &s[0])
-	a = append(a, 1) // returns same slice
+	//lint:ignore SA4006 returns same slice
+	a = append(a, 1)
 	aAddrAfter := fmt.Sprintf("%p", &s[0])
 	if aAddrAfter != aAddrBefore {
 		t.Errorf("append(): expect no new slice allocation, get new pointer %s and old one %s", aAddrAfter, aAddrBefore)
