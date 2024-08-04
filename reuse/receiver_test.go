@@ -12,7 +12,8 @@ type Wrapper[T any] struct {
 }
 
 func (w Wrapper[T]) ClearV() {
-	w.values = []T{} //lint:ignore SA4005 for demonstration purposes
+	//lint:ignore SA4005 for demonstration purposes
+	w.values = []T{}
 }
 
 func (w *Wrapper[T]) ClearP() {
@@ -81,7 +82,7 @@ func TestComply(t *testing.T) {
 
 }
 
-// definde in q_format_test.go:
+// defined in q_format_test.go:
 // type labelName string
 
 func (ln *labelName) UnmarshalString(s string) {
