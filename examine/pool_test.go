@@ -165,7 +165,8 @@ func BenchmarkSyncPoolVsZeropool(b *testing.B) {
 		p := &sync.Pool{New: func() any { return make([]int, 128) }}
 
 		s := p.Get().([]int)
-		p.Put(s)
+		//lint:ignore SA6002 for test purposes only
+		p.Put(s) // argument should be pointer-like to avoid allocations
 
 		b.ResetTimer()
 
@@ -173,7 +174,8 @@ func BenchmarkSyncPoolVsZeropool(b *testing.B) {
 			s := p.Get().([]int)
 			// When passing a value that is not a pointer to a function that accepts an interface,
 			// the value needs to be placed on the heap, which means an additional allocation
-			p.Put(s) // SA6002
+			//lint:ignore SA6002 for test purposes only
+			p.Put(s) // argument should be pointer-like to avoid allocations
 		}
 	})
 
