@@ -5,6 +5,7 @@ go 1.22.1
 require (
 	github.com/colega/zeropool v0.0.0-20230505084239-6fb4a4f75381
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
+	github.com/davecgh/go-spew v1.1.1
 	github.com/emirpasic/gods/v2 v2.0.0-alpha
 	github.com/hashicorp/go-immutable-radix/v2 v2.1.0
 	github.com/hashicorp/golang-lru/v2 v2.0.7
