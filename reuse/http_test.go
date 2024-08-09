@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func sendRequestgetAndCheckResponse(t *testing.T, method string, URL string) {
+func sendRequestgetAndCheckResponse(t *testing.T, method string, URL string) string {
 	req, err := http.NewRequest(method, URL, nil)
 	if err != nil {
 		t.Errorf("Error setting up new request: %v", err)
@@ -23,11 +23,13 @@ func sendRequestgetAndCheckResponse(t *testing.T, method string, URL string) {
 	defer res.Body.Close()
 	b, err := io.ReadAll(res.Body)
 	if err != nil {
-		t.Errorf("Error reading response body: %v", err)
+		t.Fatalf("Error reading response body: %v", err)
 	}
-	if s := string(b); len(s) == 0 {
+	s := string(b[:])
+	if len(s) == 0 {
 		t.Errorf("Empty response body")
 	}
+	return s
 }
 func TestRequestToExternalServer(t *testing.T) {
 	sendRequestgetAndCheckResponse(t, "GET", "https://google.com/")
@@ -49,7 +51,10 @@ func TestLocalHttpServer(t *testing.T) {
 		}
 	}()
 	time.Sleep(1 * time.Second) // allow some time for the server to start
-	sendRequestgetAndCheckResponse(t, "GET", "http://localhost:"+portNum)
+	respMsg := sendRequestgetAndCheckResponse(t, "GET", "http://localhost:"+portNum)
+	if respMsg != responseMessage {
+		t.Errorf("response message: get %q, expect %q", respMsg, responseMessage)
+	}
 	srv.Shutdown(context.Background())
 }
 
