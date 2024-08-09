@@ -12,11 +12,11 @@ import (
 func sendRequestgetAndCheckResponse(t *testing.T, method string, URL string) string {
 	req, err := http.NewRequest(method, URL, nil)
 	if err != nil {
-		t.Errorf("Error setting up new request: %v", err)
+		t.Fatalf("Error setting up new request: %v", err)
 	}
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		t.Errorf("Error running http client: %v", err)
+		t.Fatalf("Error running http client: %v", err)
 	}
 	// The caller must close the response body when finished with it
 	// https://pkg.go.dev/net/http#:~:text=The%20caller%20must%20close%20the%20response%20body%20when%20finished%20with%20it
