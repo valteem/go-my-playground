@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"strconv"
 	"sync"
 
 	"github.com/labstack/echo/v4"
@@ -30,4 +31,43 @@ func CreateItem(c echo.Context) error {
 	items[it.ID] = it
 	seq++
 	return c.JSON(http.StatusCreated, it)
+}
+
+func GetItem(c echo.Context) error {
+	lock.Lock()
+	defer lock.Unlock()
+	id, _ := strconv.Atoi(c.Param("id"))
+	it, ok := items[id]
+	if ok {
+		return c.JSON(http.StatusOK, it)
+	} else {
+		return c.JSON(http.StatusNotFound, nil)
+	}
+}
+
+func UpdateItem(c echo.Context) error {
+	lock.Lock()
+	defer lock.Unlock()
+	id, _ := strconv.Atoi(c.Param("id"))
+	it, ok := items[id]
+	if ok {
+		if err := c.Bind(it); err != nil {
+			return err
+		}
+		items[id] = it
+		return c.JSON(http.StatusOK, it)
+	}
+	return c.JSON(http.StatusNotFound, nil)
+}
+
+func DeleteItem(c echo.Context) error {
+	lock.Lock()
+	defer lock.Unlock()
+	id, _ := strconv.Atoi(c.Param("id"))
+	_, ok := items[id]
+	if ok {
+		delete(items, id)
+		return c.NoContent(http.StatusNoContent)
+	}
+	return c.JSON(http.StatusNotFound, nil)
 }
