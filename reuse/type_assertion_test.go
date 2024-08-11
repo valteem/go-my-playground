@@ -58,3 +58,22 @@ func TestAssertType(t *testing.T) {
 	//	fmt.Println(reflect.TypeOf(reflect.TypeOf(as))) // *reflect.rtype (type.go::317)
 
 }
+
+func TestInterfaceTypeAssertion(t *testing.T) {
+
+	tests := []struct {
+		input  any
+		output string
+	}{
+		{reuse.TestObjectA{ID: 1}, "TypeObjectA"},
+		{reuse.TestObjectB{ID: 1}, "TypeObjectB"},
+		{"text", "Unknown"},
+	}
+
+	for _, tc := range tests {
+		if output := reuse.TellObjectType(tc.input); output != tc.output {
+			t.Errorf("get %s, expect %s", output, tc.output)
+		}
+	}
+
+}
