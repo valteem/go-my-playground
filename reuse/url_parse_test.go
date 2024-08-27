@@ -51,3 +51,18 @@ func TestURLParse(t *testing.T) {
 	}
 
 }
+
+func TestParseRequestURI(t *testing.T) {
+
+	// parsing malformed URL query string
+	addr := `http://a.b:80/pp1/pv1?qp1=qv1&qp2=qv2/pp2/pv2`
+	rawQueryExpected := `qp1=qv1&qp2=qv2`
+	u, err := url.ParseRequestURI(addr)
+	if err != nil {
+		t.Errorf("error parsing address %s: %v", addr, err)
+	}
+	// fails, everything after question mark (including slashes) is included in raw query string
+	if u.RawQuery != rawQueryExpected {
+		t.Errorf("query string is expected to be\n%s\nget\n%s", rawQueryExpected, u.RawQuery)
+	}
+}
