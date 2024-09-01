@@ -26,7 +26,7 @@ func BenchmarkDeclLock(b *testing.B) {
 		m := sync.Mutex{}
 		for i := 0; i < b.N; i++ {
 			go func() {
-				var key int //lint:ignore S1021
+				var key int
 				m.Lock()
 				key = i
 				m.Unlock()
