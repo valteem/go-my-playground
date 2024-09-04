@@ -30,7 +30,8 @@ func TestBufRead(t *testing.T) {
 	io.Copy(buf, reader)
 	outputActual := buf.String()
 	outputExpected := "{\"ID\":1001,\"Desc\":\"Some Name\"}"
+	// TODO: filter non-JSON part, use bufio.Scanner
 	if outputActual != outputExpected {
-		t.Errorf("get %s, expect %s", outputActual, outputExpected)
+		t.Errorf("get\n%s\nexpect\n%s", outputActual, outputExpected)
 	}
 }
