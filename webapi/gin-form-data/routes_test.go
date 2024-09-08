@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -19,11 +18,7 @@ func TestRoutesPerson(t *testing.T) {
 
 	g.ServeHTTP(res, req)
 
-	bytes, err := io.ReadAll(res.Body)
-	if err != nil {
-		t.Errorf("error reading output: %v", err)
-	}
-	JSONactual := string(bytes)
+	JSONactual := res.Body.String()
 	JSONexpected := `{"age":33,"name":"somename"}`
 	if JSONactual != JSONexpected {
 		t.Errorf("JSON output: get %s, expect %s", JSONactual, JSONexpected)

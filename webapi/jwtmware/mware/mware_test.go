@@ -2,7 +2,6 @@ package mware
 
 import (
 	"context"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -39,11 +38,7 @@ func TestJWTHandler(t *testing.T) {
 
 	mux.ServeHTTP(resp, req)
 
-	outputBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		t.Fatalf("failed to read response body")
-	}
-	output := string(outputBytes)
+	output := resp.Body.String()
 	if len(output) == 0 {
 		t.Errorf("get empty output")
 	}

@@ -1,7 +1,7 @@
 package reuse_test
 
 import (
-	"io"
+	//"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -80,12 +80,14 @@ func TestMiddlewareChain(t *testing.T) {
 		}
 	}
 
-	responseBodyByte, err := io.ReadAll(resp.Body)
-	if err != nil {
-		t.Fatalf("error reading response body: %v", err)
-	}
-	responseBody := string(responseBodyByte)
-	if responseBody != exampleBody {
+	/*
+		responseBodyByte, err := io.ReadAll(resp.Body)
+		if err != nil {
+			t.Fatalf("error reading response body: %v", err)
+		}
+		responseBody := string(responseBodyByte)
+	*/
+	if responseBody := resp.Body.String(); responseBody != exampleBody {
 		t.Errorf("response body: get %s, expect %s", responseBody, exampleBody)
 	}
 
