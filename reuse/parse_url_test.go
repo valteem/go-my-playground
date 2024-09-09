@@ -3,6 +3,7 @@ package reuse
 import (
 	"net"
 	"net/url"
+	"reflect"
 	"strings"
 
 	"testing"
@@ -72,4 +73,31 @@ func TestQuery(t *testing.T) {
 	if p, _ := u.User.Password(); p != "somepassword" {
 		t.Errorf("wrong password %s", p)
 	}
+}
+
+func TestMultipleQueryParamValues(t *testing.T) {
+
+	tests := []struct {
+		input  string
+		output url.Values
+	}{
+		{
+			input:  "http://example.org:8080/query_params?id=101&id=102&qty=50",
+			output: url.Values{"id": {"101", "102"}, "qty": {"50"}},
+		},
+		{
+			input:  "http://example.org:8080/query_params?id=101,102&qty=50",
+			output: url.Values{"id": {"101,102"}, "qty": {"50"}},
+		},
+	}
+
+	for _, tc := range tests {
+		u, _ := url.Parse(tc.input)
+		var values url.Values // map[string][]string
+		values, _ = url.ParseQuery(u.RawQuery)
+		if !reflect.DeepEqual(values, tc.output) {
+			t.Fatalf("error parsing input\n%s:\nget\n%v\nexpect\n%v", tc.input, values, tc.output)
+		}
+	}
+
 }
