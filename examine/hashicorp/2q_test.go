@@ -33,5 +33,5 @@ func Test2Q(t *testing.T) {
 
 	// Both Add(key, value) and Get(key) move the key/value pair from `recent` to `frequent` queue
 	// after just one more call except initial,
-	// so that `frequent` actually means 'referred to (Add()/Get()) more than just once
+	// so that `frequent` actually means 'referred to (Add()/Get()) more than just once'
 }
