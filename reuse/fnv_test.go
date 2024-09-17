@@ -10,7 +10,7 @@ import (
 
 const (
 	separatorByte = 255
-	base64        = 14695981039346656037
+	base64base    = 14695981039346656037
 )
 
 func MapToFNV(m map[string]string) uint64 {
@@ -39,7 +39,7 @@ func TestMapToFNV(t *testing.T) {
 	}{
 		{
 			input:  map[string]string{},
-			output: base64,
+			output: base64base,
 		},
 		{
 			input:  map[string]string{"name": "garland, briggs", "fear": "love is not enough"},
