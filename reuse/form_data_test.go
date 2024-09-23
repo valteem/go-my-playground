@@ -1,6 +1,8 @@
 package reuse_test
 
 import (
+	"bytes"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -78,5 +80,37 @@ func TestFormDataEncode(t *testing.T) {
 
 	if !reflect.DeepEqual(formData, req.Form) {
 		t.Errorf("parsing form data:\nget\n%v\nexpect\n%v", req.Form, formData)
+	}
+}
+
+func TestFormDataContentType(t *testing.T) {
+
+	input := map[string]any{"client_id": "id0123", "token": "0123456789abc"}
+
+	var buf bytes.Buffer
+	mp := multipart.NewWriter(&buf)
+	for k, v := range input {
+		s, ok := v.(string)
+		if !ok {
+			t.Fatalf("failed convert field value to string:%v", v)
+		}
+		mp.WriteField(k, s)
+	}
+	mp.Close()
+
+	req := httptest.NewRequest(http.MethodPost, "/form", &buf)
+	req.Header.Set("Content-Type", mp.FormDataContentType()) // "multipart/form-data" + boundary
+	resp := httptest.NewRecorder()
+
+	mux := http.NewServeMux()
+	mux.Handle("/form", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r.ParseMultipartForm(1 << 8)
+		w.Write([]byte(r.MultipartForm.Value["client_id"][0] + ":" + r.MultipartForm.Value["token"][0]))
+	}))
+	mux.ServeHTTP(resp, req)
+
+	outputActual, outputExpected := resp.Body.String(), "id0123:0123456789abc"
+	if outputActual != outputExpected {
+		t.Errorf("get\n%q\nexpect\n%q", outputActual, outputExpected)
 	}
 }
