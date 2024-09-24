@@ -19,6 +19,8 @@ func TestChannelRead(t *testing.T) {
 		}
 	}
 
+	// trying to read from empty (but not yet closed) channel blocks goroutine
+
 	close(c)
 
 	for i := 0; i < 5; i++ {
