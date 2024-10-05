@@ -31,3 +31,27 @@ func TestSliceCopy(t *testing.T) {
 	}
 
 }
+
+func sumOfSlice(input []int) int {
+	input = append(input, 0) // replaces input[4] for 0 if invoked as sumOfSlice(input[0:4])
+	s := 0
+	for input[0] > 0 {
+		s += input[0]
+		input = input[1:]
+	}
+	return s
+}
+func TestAppendInFunction(t *testing.T) {
+
+	input := []int{1, 1, 1, 1, 1}
+
+	if outputActual, outputExpected := sumOfSlice(input[0:4]), 4; outputActual != outputExpected {
+		t.Errorf("[0:4]: get %d, expect %d", outputActual, outputExpected)
+	}
+	// input: [1, 1, 1, 1, 0]
+
+	if outputActual, outputExpected := sumOfSlice(input[2:5]), 2; outputActual != outputExpected {
+		t.Errorf("[0:4]: get %d, expect %d", outputActual, outputExpected)
+	}
+
+}
