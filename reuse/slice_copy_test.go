@@ -55,3 +55,21 @@ func TestAppendInFunction(t *testing.T) {
 	}
 
 }
+
+func TestCopySlice(t *testing.T) {
+
+	a := []int{0, 1, 2, 3}
+
+	var b []int
+	count := copy(b, a)
+	if count > 0 {
+		t.Errorf("expect 0 elements copied, get %d", count)
+	}
+
+	c := make([]int, 3)
+	count = copy(c, a)
+	if count != 3 {
+		t.Errorf("expect %d elements copied, get %d", len(c), count)
+	}
+
+}
