@@ -13,7 +13,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer resp.Body.Close()
-	w.Header().Set("x-sidecar-response", "sidecar-response")
+	w.Header().Set("X-Sidecar-Response", "sidecar-response")
 	w.WriteHeader(resp.StatusCode)
 
 	io.Copy(w, resp.Body)
