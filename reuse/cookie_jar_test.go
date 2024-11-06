@@ -24,8 +24,8 @@ func readCookie(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.Write([]byte(cookie.Name + " " + cookie.Value))
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(cookie.Name + " " + cookie.Value))
 
 }
 
