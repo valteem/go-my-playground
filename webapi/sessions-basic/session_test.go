@@ -68,7 +68,6 @@ func TestSessionBasic(t *testing.T) {
 	jar, err := cookiejar.New(nil) //no options
 	if err != nil {
 		t.Fatalf("failed to create new coockie jar: %v", err)
-
 	}
 
 	client := &http.Client{
