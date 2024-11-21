@@ -19,7 +19,17 @@ func TestParseAnyJSON(t *testing.T) {
 	}
 
 	p := output.(map[string]any)
-	if p["age"] != float64(42) || p["name"] != "somename" {
+	/*
+		https://pkg.go.dev/encoding/json#Unmarshal
+		To unmarshal JSON into an interface value, Unmarshal stores one of these in the interface value:
+			bool,                   for JSON booleans
+			float64,                for JSON numbers
+			string,                 for JSON strings
+			[]interface{},          for JSON arrays
+			map[string]interface{}, for JSON objects
+			nil,                    for JSON null
+	*/
+	if int(p["age"].(float64)) != 42 || p["name"] != "somename" {
 		t.Errorf("get %v, expect {\"somename\", 42}", p)
 	}
 
