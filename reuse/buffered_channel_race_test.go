@@ -6,15 +6,15 @@ import (
 )
 
 const (
-	numWriters = 100
-	numWrites  = 10000
-	bufSize    = numWriters * numWrites
+	numWriters       = 1000
+	numWrites        = 1000
+	numReadsExpected = numWriters * numWrites
 )
 
 // Buffered channels are not subject to data race and can be used instead of mutexes in certain scanarios
 func TestBufferedChannelRace(t *testing.T) {
 
-	ch := make(chan int, bufSize)
+	ch := make(chan int, numWriters)
 
 	var numReads int
 
@@ -28,7 +28,7 @@ func TestBufferedChannelRace(t *testing.T) {
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(bufSize)
+	wg.Add(numReadsExpected)
 
 	go func() {
 		for range ch {
@@ -39,8 +39,8 @@ func TestBufferedChannelRace(t *testing.T) {
 
 	wg.Wait()
 
-	if numReads != bufSize {
-		t.Errorf("get %d, expect %d", numReads, bufSize)
+	if numReads != numReadsExpected {
+		t.Errorf("get %d, expect %d", numReads, numReadsExpected)
 	}
 
 }
