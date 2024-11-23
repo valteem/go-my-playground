@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -42,7 +43,13 @@ func TestErrgroupCtx(t *testing.T) {
 
 	cancel()
 
-	eg.Wait()
+	err := eg.Wait()
+	if err != nil {
+		if !errors.Is(err, context.Canceled) {
+			t.Errorf("errgroup.Wait(): get %q, expect %q", err.Error(), context.Canceled.Error())
+		}
+	}
+
 	close(chAfter)
 	close(chDone)
 
