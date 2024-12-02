@@ -1,15 +1,19 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
+	"os"
 	"testing"
 	"time"
 
+	"github.com/alexedwards/scs/pgxstore"
 	"github.com/alexedwards/scs/v2"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 const (
@@ -75,6 +79,33 @@ func TestSessions(t *testing.T) {
 	sm.Lifetime = 24 * time.Hour
 
 	go runServer(sm)
+
+	msg, err := runClient()
+	if err != nil {
+		t.Fatalf("failed to run client part: %v", err)
+	}
+	if msg != msgBody {
+		t.Errorf("response message: get %q, expect %q", msg, msgBody)
+	}
+
+}
+
+func TestSessionsWithPGXStore(t *testing.T) {
+
+	connStr := os.Getenv("PGXSTORE_CONN")
+	pool, err := pgxpool.New(context.Background(), connStr)
+	if err != nil {
+		t.Fatalf("failed to connect to database: %v", err)
+	}
+	defer pool.Close()
+
+	sm := scs.New()
+	sm.Store = pgxstore.New(pool)
+	sm.Lifetime = 24 * time.Hour
+
+	go runServer(sm)
+
+	time.Sleep(1 * time.Second) // allow server some time to start
 
 	msg, err := runClient()
 	if err != nil {
