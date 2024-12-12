@@ -227,6 +227,8 @@ func TestPostFormArray(t *testing.T) {
 	}
 }
 
+// https://stackoverflow.com/a/7946494
+// Looks like sort of leftover from PHP
 func TestPostFormMap(t *testing.T) {
 
 	tests := []struct {
