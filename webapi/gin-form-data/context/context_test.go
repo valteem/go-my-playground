@@ -226,3 +226,43 @@ func TestPostFormArray(t *testing.T) {
 
 	}
 }
+
+func TestPostFormMap(t *testing.T) {
+
+	tests := []struct {
+		formData string
+		varname  string
+		output   map[string]string
+	}{
+		{
+			formData: "food[vegs]=onion&food[fruits]=apples",
+			varname:  "food",
+			output:   map[string]string{"vegs": "onion", "fruits": "apples"},
+		},
+		{
+			formData: "color[green]=grass&color[red]=rose&color[violet]=",
+			varname:  "color",
+			output:   map[string]string{"green": "grass", "red": "rose", "violet": ""},
+		},
+	}
+
+	for _, tc := range tests {
+
+		req := httptest.NewRequest(http.MethodPost, "http://localhost/form", strings.NewReader(tc.formData))
+		req.Header.Set("content-type", "application/x-www-form-urlencoded")
+		resp := httptest.NewRecorder()
+
+		output := make(map[string]string)
+		g := gin.Default()
+		g.POST("/form", func(c *gin.Context) {
+			output = c.PostFormMap(tc.varname)
+		})
+
+		g.ServeHTTP(resp, req)
+
+		if !reflect.DeepEqual(output, tc.output) {
+			t.Errorf("get\n%v\nexpect\n%v", output, tc.output)
+		}
+
+	}
+}
