@@ -3,6 +3,7 @@ package context
 import (
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"slices"
 	"strconv"
 	"strings"
@@ -179,6 +180,48 @@ func TestQuery(t *testing.T) {
 
 		if !slices.Equal(values, tc.values) {
 			t.Errorf("Query(): URL %q\nget\n%v\nexpect\n%v", tc.url, values, tc.values)
+		}
+
+	}
+}
+
+func TestPostFormArray(t *testing.T) {
+
+	tests := []struct {
+		formData string
+		varnames []string
+		output   map[string][]string
+	}{
+		{
+			formData: "var1=value1_1&var1=value1_2&var2=value2&var3=value3_1&var3=value3_2",
+			varnames: []string{"var1", "var2", "var3"},
+			output:   map[string][]string{"var1": []string{"value1_1", "value1_2"}, "var2": []string{"value2"}, "var3": []string{"value3_1", "value3_2"}},
+		},
+		{
+			formData: "var1=value1&var2=",
+			varnames: []string{"var1", "var2"},
+			output:   map[string][]string{"var1": []string{"value1"}, "var2": []string{""}},
+		},
+	}
+
+	for _, tc := range tests {
+
+		req := httptest.NewRequest(http.MethodPost, "http://localhost/form", strings.NewReader(tc.formData))
+		req.Header.Set("content-type", "application/x-www-form-urlencoded")
+		resp := httptest.NewRecorder()
+
+		output := make(map[string][]string)
+		g := gin.Default()
+		g.POST("/form", func(c *gin.Context) {
+			for _, varname := range tc.varnames {
+				output[varname] = c.PostFormArray(varname)
+			}
+		})
+
+		g.ServeHTTP(resp, req)
+
+		if !reflect.DeepEqual(output, tc.output) {
+			t.Errorf("get\n%v\nexpect\n%v", output, tc.output)
 		}
 
 	}
