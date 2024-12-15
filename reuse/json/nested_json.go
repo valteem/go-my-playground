@@ -67,7 +67,7 @@ func (o *Order) UnmarshalJSON(b []byte) error {
 		if !ok {
 			return fmt.Errorf("item %q not found", ror.Item)
 		}
-		qty, err := strconv.Atoi(ror.Quantity)
+		qty, err := strconv.Atoi(ror.Quantity) // converting string to int - actually not required for proper JSON
 		if err != nil {
 			return fmt.Errorf("incorrect quantity format: %q", ror.Quantity)
 		}
@@ -75,4 +75,9 @@ func (o *Order) UnmarshalJSON(b []byte) error {
 	}
 
 	return nil
+}
+
+type OrderNoPreFill struct {
+	Order string      `json:"order"`
+	Rows  []*OrderRow `json:"rows"`
 }

@@ -44,3 +44,33 @@ func TestOrderID(t *testing.T) {
 	}
 
 }
+
+// do not need custom unmarshal for creating all nested objects
+// instead of looking for existing ones (no pre-filled storage)
+func TestUnmarshalStd(t *testing.T) {
+
+	orderInput := `{"order":"0001","rows":[{"item":{"name":"i001", "description":"item #001"},"quantity":1000},{"item":{"name":"i002", "description":"item #002"},"quantity":2000}]}`
+
+	order := OrderNoPreFill{}
+
+	err := json.Unmarshal([]byte(orderInput), &order)
+	if err != nil {
+		t.Fatalf("failed to unmarshal JSON: %v", err)
+	}
+
+	if order.Order != "0001" {
+		t.Errorf("order ID: get %q, expect %q", order.Order, "0001")
+	}
+
+	if len(order.Rows) != 2 {
+		t.Errorf("number of rows in order: get %d, expect %d", len(order.Rows), 2)
+	}
+
+	if name, qty := order.Rows[0].Item.Name, order.Rows[0].Quantity; name != "i001" || qty != 1000 {
+		t.Errorf("order row #0 (name, quantity): get (%q, %d), expect (%q, %d)", name, qty, "i001", 1000)
+	}
+	if name, qty := order.Rows[1].Item.Name, order.Rows[1].Quantity; name != "i002" || qty != 2000 {
+		t.Errorf("order row #0 (name, quantity): get (%q, %d), expect (%q, %d)", name, qty, "i002", 2000)
+	}
+
+}
