@@ -70,6 +70,9 @@ func TestShouldBindHeader(t *testing.T) {
 		if resp.StatusCode == http.StatusOK {
 
 			var store *Store
+			// buf := make([]byte, 4)
+			// resp.Body.Read(buf)
+
 			err = json.NewDecoder(resp.Body).Decode(&store)
 			if err != nil {
 				t.Fatalf("failed to decode response body to JSON: %v", err)
