@@ -63,6 +63,8 @@ func TestAtomicCounter(t *testing.T) {
 
 }
 
+// escape analysis
+// go test -gcflags "-m" <filename>
 func BenchmarkCounter(b *testing.B) {
 
 	b.Run("mutex", func(b *testing.B) {
