@@ -1,0 +1,21 @@
+[
+    {
+        "var":"ENV_URL1",
+        "conn":
+        {
+            "proto":"http",
+            "host":"localhost",
+            "port":"3001",
+            "path":["segment1","segment2","segment3"]
+        }
+    },
+    {
+        "var":"ENV_URL2",
+        "conn":
+        {
+            "proto":"https",
+            "host":"example.com",
+            "path":["pathvar1","value1","pathvar2","value2"]    
+        }
+    }
+]
