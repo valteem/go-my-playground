@@ -10,7 +10,7 @@ func TestSetEnv(t *testing.T) {
 	envVarValue := "TRUE"
 	err := os.Setenv(envVarName, envVarValue)
 	if err != nil {
-		t.Errorf("Failes to set env variable: %q", err)
+		t.Fatalf("failed to set env variable: %q", err)
 	}
 	actualEnvVarValue := os.Getenv(envVarName)
 	if actualEnvVarValue != envVarValue {
