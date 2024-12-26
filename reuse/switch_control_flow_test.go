@@ -20,7 +20,7 @@ func switchNumberRange(input int) []string {
 	return output
 }
 
-func TestSwitchNaumberRange(t *testing.T) {
+func TestSwitchNumberRange(t *testing.T) {
 
 	tests := []struct {
 		input  int
