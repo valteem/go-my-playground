@@ -51,3 +51,14 @@ func TestCustomErrors(t *testing.T) {
 		}
 	}
 }
+
+func TestNestedError(t *testing.T) {
+
+	var nested errNested
+
+	_ = errors.As(errWrapper, &nested)
+	if actual, expected := nested.Error(), "invalid input abc"; actual != expected {
+		t.Errorf("nested error: get %q, expect %q", actual, expected)
+	}
+
+}
