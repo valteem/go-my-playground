@@ -36,3 +36,20 @@ func TestSwitchNumberRange(t *testing.T) {
 	}
 
 }
+
+func TestSwitchBreak(t *testing.T) {
+
+	index, level := 0, 10
+loop:
+	for {
+		switch {
+		case index >= level:
+			break loop
+		default:
+			index++
+		}
+	}
+	if index != level {
+		t.Errorf("running index: get %d, expect %d", index, level)
+	}
+}
