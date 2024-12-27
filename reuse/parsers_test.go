@@ -155,3 +155,37 @@ func TestParseTokens(t *testing.T) {
 		}
 	}
 }
+
+type customHeaderKV struct {
+	key   string
+	value string
+}
+
+type customHeader struct {
+	headers []customHeaderKV
+}
+
+func (h *customHeader) Add(key, value string) {
+	h.headers = append(h.headers, customHeaderKV{key: key, value: value})
+}
+
+type customHeaderValue *customHeader
+
+func NewCHV() customHeaderValue {
+	return &customHeader{}
+}
+
+func TestStructTypeConversion(t *testing.T) {
+
+	ch := NewCHV()
+
+	key, value := "Header-Key", "header-value"
+
+	// ch.Add(key, value) // ch.Add() undefined
+	(*customHeader)(ch).Add(key, value) // type conversion, same as int(int32)
+
+	if headerKey, headerValue := ch.headers[0].key, ch.headers[0].value; headerKey != key || headerValue != value {
+		t.Errorf("header key/value: get %s/%s, expect %s/%s", headerKey, headerValue, key, value)
+	}
+
+}
