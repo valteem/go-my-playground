@@ -33,3 +33,8 @@ func HandleNewStore(c *gin.Context) {
 	c.JSON(http.StatusOK, store)
 
 }
+
+type Person struct {
+	Name string `header:"Name"`
+	Age  int    `header:"Age"`
+}

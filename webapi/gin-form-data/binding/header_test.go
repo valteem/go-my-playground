@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -84,6 +85,36 @@ func TestShouldBindHeader(t *testing.T) {
 
 		}
 
+	}
+
+}
+
+func TestRequestHeaderBind(t *testing.T) {
+
+	tests := []struct {
+		input  http.Header
+		output *Person
+	}{
+		{
+			input:  http.Header{"Name": []string{"SomeName"}, "Age": []string{"42"}},
+			output: &Person{Name: "SomeName", Age: 42},
+		},
+		{
+			input:  http.Header{"Name": []string{"SomeName"}, "Address": []string{"SomeAddress"}},
+			output: &Person{Name: "SomeName", Age: 0},
+		},
+	}
+
+	for _, tc := range tests {
+		c := gin.Context{}
+		req := &http.Request{}
+		req.Header = tc.input
+		c.Request = req
+		output := &Person{}
+		c.ShouldBindHeader(output)
+		if !reflect.DeepEqual(output, tc.output) {
+			t.Errorf("get\n%v\nexpect\n%v\n", output, tc.output)
+		}
 	}
 
 }
