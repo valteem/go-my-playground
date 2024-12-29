@@ -77,3 +77,22 @@ func TestInterfaceTypeAssertion(t *testing.T) {
 	}
 
 }
+
+func TestCanSet(t *testing.T) {
+
+	tests := []struct {
+		input  any
+		output bool
+	}{
+		{42, false},
+		{"world", false},
+		{true, false},
+	}
+
+	for _, tc := range tests {
+		if output := reflect.ValueOf(tc.input).CanSet(); output != tc.output {
+			t.Errorf("%v: get %t, expect %t", tc.input, output, tc.output)
+		}
+	}
+
+}
