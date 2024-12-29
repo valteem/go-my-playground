@@ -111,7 +111,9 @@ func TestRequestHeaderBind(t *testing.T) {
 		req.Header = tc.input
 		c.Request = req
 		output := &Person{}
-		c.ShouldBindHeader(output)
+		if err := c.ShouldBindHeader(output); err != nil {
+			t.Fatalf("failed to bind headers: %v", err)
+		}
 		if !reflect.DeepEqual(output, tc.output) {
 			t.Errorf("get\n%v\nexpect\n%v\n", output, tc.output)
 		}
