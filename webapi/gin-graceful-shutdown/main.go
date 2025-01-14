@@ -46,7 +46,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), timeoutSec*time.Second)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
-		log.Fatalf("failed to shut dwon server: %v\n", err)
+		log.Fatalf("failed to shut down server: %v\n", err)
 	}
 	now := time.Now()
 
