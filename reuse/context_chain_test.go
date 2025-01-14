@@ -70,3 +70,22 @@ func TestContextChain(t *testing.T) {
 		t.Errorf("response body: get %s, expect %s", bodyActual, bodyExpected)
 	}
 }
+
+func TestContextTimeout(t *testing.T) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	/*
+		ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+		// defer cancel()
+	*/
+	// cancel() does not invoke <-ctx.Done(), this happens inside context itself
+	// cancel() releases resources associated with the context
+	now := time.Now()
+
+	<-ctx.Done()
+	since := time.Since(now).Seconds()
+	if since < 5.0 {
+		t.Errorf("time.Since(): get %f, expect >%f", since, 5.0)
+	}
+}
