@@ -1,6 +1,7 @@
 package reuse_test
 
 import (
+	"sync"
 	"testing"
 )
 
@@ -26,5 +27,20 @@ func TestAddArgs(t *testing.T) {
 	if actual, expected := mergeTwo("actually", "works", fAdded), "simple closure actually works"; actual != expected {
 		t.Errorf("Get %s, expect %s", actual, expected)
 	}
+
+}
+
+func TestSyncWaitGroupClosure(t *testing.T) {
+
+	var wg sync.WaitGroup
+	wg.Add(10)
+
+	for i := 0; i < 10; i++ {
+		go func() {
+			defer wg.Done()
+		}()
+	}
+
+	wg.Wait()
 
 }
