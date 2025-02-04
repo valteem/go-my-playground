@@ -54,3 +54,18 @@ func TestLoopBreak(t *testing.T) {
 	}
 
 }
+
+func TestBreakFor(t *testing.T) {
+
+	counter := 0
+	for i := 0; i < 10; i++ {
+		if (i > 3) && (i < 8) {
+			break // terminates for loop altogether
+		}
+		counter++
+	}
+
+	if counter != 4 {
+		t.Errorf("get %d, expect %d", counter, 4)
+	}
+}
