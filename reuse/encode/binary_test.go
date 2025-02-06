@@ -45,3 +45,37 @@ func TestPutUint(t *testing.T) {
 	}
 
 }
+
+func TestDecodeUInt(t *testing.T) {
+
+	tests := []struct {
+		input    []byte
+		outputBE uint32
+		outputLE uint32
+	}{
+		{
+			input:    []byte{0, 0, 0, 1},
+			outputBE: 1,
+			outputLE: 1 << 24, // initial position 1 + shift 24 = position 25
+		},
+		{
+			input:    []byte{0, 0, 1, 0},
+			outputBE: 1 << 8,
+			outputLE: 1 << 16,
+		},
+	}
+
+	for _, tc := range tests {
+
+		outputBE := binary.BigEndian.Uint32(tc.input)
+		if outputBE != tc.outputBE {
+			t.Errorf("Big Endian, decoding %v:\nget\n%d\nexpect\n%d\n", tc.input, outputBE, tc.outputBE)
+		}
+
+		outputLE := binary.LittleEndian.Uint32(tc.input)
+		if outputLE != tc.outputLE {
+			t.Errorf("Little Endian, decoding %v:\nget\n%d\nexpect\n%d\n", tc.input, outputLE, tc.outputLE)
+		}
+	}
+
+}
