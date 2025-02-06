@@ -3,6 +3,7 @@ package reuse_test
 
 import (
 	"reflect"
+	"slices"
 	"testing"
 )
 
@@ -42,6 +43,23 @@ func TestArrayForRange(t *testing.T) {
 	outputExpectedWithPointer := []int{1, 2, 7, 8}
 	if !reflect.DeepEqual(outputActualWithPointer, outputExpectedWithPointer) {
 		t.Errorf("output for range with pointer:\nget\n%v\nexpect\n%v\n", outputActualWithPointer, outputExpectedWithPointer)
+	}
+
+}
+
+func TestArraySlicing(t *testing.T) {
+
+	a := [4]byte{1, 2, 4, 8}
+	b := a[:] // []byte
+	if actual, expected := len(b), 4; actual != expected {
+		t.Errorf("array slicing - length: get %d, expect %d", actual, expected)
+	}
+
+	sender := []int{1, 2, 3, 4}
+	var receiver [8]int
+	copy(receiver[:4], sender)
+	if actual, expected := receiver[:], []int{1, 2, 3, 4, 0, 0, 0, 0}; !slices.Equal(actual, expected) {
+		t.Errorf("copy slice to sliced array:\nget\n%v\nexpect\n%v", actual, expected)
 	}
 
 }
