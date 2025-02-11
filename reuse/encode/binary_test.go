@@ -2,7 +2,9 @@ package encode
 
 import (
 	"encoding/binary"
+	"math"
 	"slices"
+	"strconv"
 	"testing"
 )
 
@@ -131,6 +133,116 @@ func TestPutUvarint(t *testing.T) {
 		binary.PutUvarint(output, tc.input)
 		if !slices.Equal(output, tc.output) {
 			t.Errorf("PutUvarint(%s):\nget\n%v\nexpect\n%v", tc.descr, output, tc.output)
+		}
+	}
+
+}
+
+func TestPutVarint(t *testing.T) {
+
+	tests := []struct {
+		descr  string
+		input  int64
+		output []byte
+	}{
+		{"8", 8, []byte{8, 0, 0, 0}},
+		{"-8", -8, []byte{8, 0, 0, 0}},
+	}
+
+	for _, tc := range tests {
+		output := make([]byte, 4)
+		binary.PutVarint(output, tc.input)
+		if !slices.Equal(output, tc.output) {
+			t.Errorf("PutVarint(%s):\nget\n%v\nexpect\n%v\n", tc.descr, output, tc.output)
+		}
+	}
+
+}
+
+func TestBinaryXOR(t *testing.T) {
+
+	tests := []struct {
+		descr                      string
+		input                      int64
+		outputBinaryRepresentation string
+		outputXOR                  int64
+	}{
+		{"8", 8, "1000", -9},
+		{"-8", -8, "-1000", 7},
+	}
+
+	for _, tc := range tests {
+		outputBinaryRepresentation := strconv.FormatInt(tc.input, 2)
+		if outputBinaryRepresentation != tc.outputBinaryRepresentation {
+			t.Errorf("binary representation of %q\nget\n%s\nexpect\n%s\n", tc.descr, outputBinaryRepresentation, tc.outputBinaryRepresentation)
+		}
+		outputXOR := ^tc.input
+		if outputXOR != tc.outputXOR {
+			t.Errorf("XOR of %q: get %d, expect %d", tc.descr, outputXOR, tc.outputXOR)
+		}
+	}
+}
+
+func TestBitwiseComplementInt64(t *testing.T) {
+
+	tests := []struct {
+		input int64
+	}{
+		{8},
+		{-8},
+	}
+
+	for _, tc := range tests {
+		outputUnary := ^tc.input
+		outputBinary := (-1) ^ tc.input
+
+		if outputBinary != outputUnary {
+			t.Errorf("expect same bitwise XOR result for %d, get %d for binary and %d for unary",
+				tc.input,
+				outputBinary,
+				outputUnary)
+		}
+	}
+
+}
+
+func TestBitwiseComplementUint64(t *testing.T) {
+
+	tests := []struct {
+		input  uint64
+		output uint64
+	}{
+		{1, math.MaxUint64 - 1},
+	}
+
+	for _, tc := range tests {
+		output := ^tc.input
+
+		if output != tc.output {
+			t.Errorf("expect same bitwise XOR result for %d, get %d expect %d",
+				tc.input,
+				output,
+				tc.output)
+		}
+	}
+
+}
+
+func TestAllBitsTo1(t *testing.T) {
+
+	tests := []struct {
+		input  uint64
+		output uint64
+	}{
+		{7, 7},
+		{8, 15},
+		{16, 31},
+		{33, 63},
+	}
+
+	for _, tc := range tests {
+		if output := AllSignificantBitsTo1(tc.input); output != tc.output {
+			t.Errorf("AllBitsTo1(%d): get %d, expect %d", tc.input, output, tc.output)
 		}
 	}
 
