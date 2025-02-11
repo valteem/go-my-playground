@@ -79,3 +79,59 @@ func TestDecodeUInt(t *testing.T) {
 	}
 
 }
+
+func TestPutUvarint(t *testing.T) {
+
+	tests := []struct {
+		descr  string
+		input  uint64
+		output []byte
+	}{
+		{"8", 8, []byte{8, 0, 0, 0}}, // Little Endian
+		{"256", 256, []byte{128, 2, 0, 0}},
+		/*
+				Step 0, input in binary format:
+			        (00000001)(00000000)
+				Step 1, divide input to 7-bit segments:
+				    (0000010)(0000000)
+				Step 2, reverse segment order:
+					(0000000)(0000010)
+				Step 4, add leading bit with 1 to every segment other the last one, bit with 0 to the last
+				    (10000000)(00000010)
+				Step 5 (representation only), convert output to sequence of bytes
+				    (128)(2)
+		*/
+		{"257", 257, []byte{129, 2, 0, 0}},
+		/*
+			(00000001)(00000001)
+			(0000010)(0000001)
+			(0000001)(0000010)
+			(10000001)(00000010)
+			(129)(2)
+		*/
+		{"128*3", 128 * 3, []byte{128, 3, 0, 0}},
+		{"128*3 + 64", 128*3 + 64, []byte{192, 3, 0, 0}},
+		{"128 * 4 - 1", 128*4 - 1, []byte{255, 3, 0, 0}},
+		{"512", 512, []byte{128, 4, 0, 0}}, // 128 * 4
+		{"128 * 3", 128 * 3, []byte{128, 3, 0, 0}},
+		{"128 * 128 * 2", 128 * 128 * 2, []byte{128, 128, 2, 0}},
+		{"128 * 128 * 128 * 127", 128 * 128 * 128 * 127, []byte{128, 128, 128, 127}},
+		{"128 * 128 * 128 * 128 - 1", 128*128*128*128 - 1, []byte{255, 255, 255, 127}},
+		/*
+				(00001111)(11111111)(11111111)(11111111)
+				(1111111)(1111111)(1111111)(1111111)
+				(1111111)(1111111)(1111111)(1111111)
+				(11111111)(11111111)(11111111)(01111111)
+			    (255)(255)(255)(127)
+		*/
+	}
+
+	for _, tc := range tests {
+		output := make([]byte, 4) // PutUvarint() panics if receiving buffer is too small
+		binary.PutUvarint(output, tc.input)
+		if !slices.Equal(output, tc.output) {
+			t.Errorf("PutUvarint(%s):\nget\n%v\nexpect\n%v", tc.descr, output, tc.output)
+		}
+	}
+
+}
