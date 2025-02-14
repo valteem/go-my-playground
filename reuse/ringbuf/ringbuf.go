@@ -4,13 +4,17 @@
 package ringbuf
 
 import (
-// "sync"
+	"errors"
 )
 
 const (
 	initialSize  = 2
 	extendFactor = 2
 	shrinkFactor = 2
+)
+
+var (
+	ErrRingBufEmpty = errors.New("ring buffer is empty")
 )
 
 type RingBuf[T any] struct {
@@ -28,14 +32,22 @@ func NewRingBuf[T any]() *RingBuf[T] {
 	return &RingBuf[T]{buf: make([]T, initialSize), size: initialSize}
 }
 
-func (rb *RingBuf[T]) Add(t T) {
-
+func (rb *RingBuf[T]) Write(t T) {
 	if (rb.head+1)%rb.size == rb.tail {
 		rb.extend()
 	}
 	rb.buf[rb.head] = t
 	rb.head = (rb.head + 1) % rb.size
+}
 
+func (rb *RingBuf[T]) Read() (T, error) {
+	if rb.tail == rb.head {
+		var t T
+		return t, ErrRingBufEmpty
+	}
+	r := rb.buf[rb.tail]
+	rb.tail = (rb.tail + 1) % rb.size
+	return r, nil
 }
 
 func (rb *RingBuf[T]) Buf() []T {

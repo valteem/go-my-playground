@@ -5,17 +5,32 @@ import (
 	"testing"
 )
 
-func TestAdd(t *testing.T) {
+func TestRingBufWriteRead(t *testing.T) {
 
 	rb := NewRingBuf[int]()
 
 	for i := 0; i < 5; i++ {
-		rb.Add(i)
+		rb.Write(i)
 	}
 
 	bufExpected := []int{0, 1, 2, 3, 4, 0, 0, 0}
 	if !slices.Equal(rb.Buf(), bufExpected) {
 		t.Errorf("ring buffer content:\nget\n%v\nexpect\n%v\n", rb.Buf(), bufExpected)
+	}
+
+	for i := 0; i < 5; i++ {
+		v, err := rb.Read()
+		if v != i || err != nil {
+			t.Errorf("reading from ring buffer (value/error):\nget (%d, %v)\nexpect (%d, %v)",
+				v, err, i, nil)
+		}
+	}
+
+	// Read from empty buffer
+	v, err := rb.Read()
+	if v != 0 || err != ErrRingBufEmpty {
+		t.Errorf("reading from empty ring buffer (value, error):\nget (%d, %v)\n expect (%d, %v)",
+			v, err, 0, ErrRingBufEmpty)
 	}
 
 }
