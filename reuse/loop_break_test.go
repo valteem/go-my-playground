@@ -69,3 +69,25 @@ func TestBreakFor(t *testing.T) {
 		t.Errorf("get %d, expect %d", counter, 4)
 	}
 }
+
+func TestContinueInsideIf(t *testing.T) {
+
+	tests := []struct {
+		input  int
+		output string
+	}{
+		{1, "valid"},
+		{0, ""},
+		{-1, "invalid"},
+	}
+
+	for _, tc := range tests {
+		if tc.input <= 0 {
+			if tc.output == "" {
+				continue //
+			}
+			t.Errorf("expect positive input, get %d", tc.input) // fails on {-1, "invalid"} case
+		}
+	}
+
+}
