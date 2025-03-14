@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestArrInit(t *testing.T) {
+func TestArrayCustomIndexType(t *testing.T) {
 
 	for i := range 5 {
 		if squares[i] != i*i {
