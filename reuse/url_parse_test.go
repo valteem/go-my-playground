@@ -2,7 +2,6 @@ package reuse_test
 
 import (
 	"net/http"
-	"net/http/httptest"
 	"net/url"
 	"reflect"
 	"slices"
@@ -21,12 +20,15 @@ func TestURLParse(t *testing.T) {
 			input:    `http://example.com:443/collection_name/pp1/resource_name/pp2/subresource_name/pp3?query_param1=qp1&query_param2=qp2&query_param3=qp3`,
 			path:     `/collection_name/pp1/resource_name/pp2/subresource_name/pp3`,
 			rawQuery: `query_param1=qp1&query_param2=qp2&query_param3=qp3`,
-			values:   map[string][]string{"query_param1": []string{"qp1"}, "query_param2": []string{"qp2"}, "query_param3": []string{"qp3"}},
+			values:   url.Values{"query_param1": []string{"qp1"}, "query_param2": []string{"qp2"}, "query_param3": []string{"qp3"}},
 		},
 	}
 
 	for _, tc := range tests {
-		req := httptest.NewRequest(http.MethodGet, tc.input, nil)
+		req, err := http.NewRequest(http.MethodGet, tc.input, nil)
+		if err != nil {
+			t.Fatalf("failed to create new request with method %s and URL %q", http.MethodGet, tc.input)
+		}
 		u := req.URL
 		path := u.Path
 		if path != tc.path {
