@@ -1,5 +1,6 @@
 // Always prefer errors.Is and errors.As over type assertion
 // https://www.reddit.com/r/golang/comments/1bwagd1/beginner_should_i_use_errorsas_or_type_assertion/?rdt=47398
+
 package errortypeassert
 
 import (
