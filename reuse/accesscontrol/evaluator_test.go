@@ -47,6 +47,14 @@ func TestEvaluate(t *testing.T) {
 			},
 			output: true,
 		},
+		{
+			description: `action "view" and scope "external:userspace:basic"`,
+			input: PermissionEvaluator{
+				Action: "view",
+				Scopes: []string{"external:userspace:basic"}, // matches "external:userspace:*"
+			},
+			output: true,
+		},
 	}
 
 	for _, tc := range tests {

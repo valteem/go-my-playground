@@ -1,5 +1,7 @@
 package accesscontrol
 
+import "strings"
+
 // Action is evaluated user action, scopes describe where action can be performed.
 // For example:
 // Action: rules:create
@@ -24,13 +26,44 @@ func (p PermissionEvaluator) Evaluate(permissions map[string][]string) bool {
 
 	for _, target := range p.Scopes {
 		for _, scope := range userScopes {
-			// TODO: add partial scope and wildcard matching
-			if target == scope {
+			if match(scope, target) {
 				return true
 			}
 		}
 	}
 
 	return false
+
+}
+
+func ValidateScope(scope, target string) bool {
+	prefix, last := scope[:len(scope)-1], scope[len(scope)-1]
+	if len(prefix) > 0 && last == '*' {
+		lastChar := prefix[len(prefix)-1] // last symbol before asterisk should be : or /
+		if !(lastChar == ':' || lastChar == '/') {
+			return false
+		}
+	}
+	return !strings.ContainsAny(prefix, "?*")
+}
+
+func match(scope, target string) bool {
+
+	if scope == "" {
+		return false
+	}
+
+	if !ValidateScope(scope, target) {
+		return false
+	}
+
+	prefix, last := scope[:len(scope)-1], scope[len(scope)-1]
+	if last == '*' {
+		if strings.HasPrefix(target, prefix) {
+			return true
+		}
+	}
+
+	return scope == target
 
 }
