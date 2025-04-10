@@ -1,25 +1,34 @@
 package main
 
 import (
+	"reflect"
 	"testing"
 	"time"
 )
 
 func TestSetAndGetRoles(t *testing.T) {
 
-	rolesInput := "role1,role2,role3"
+	input := map[string]string{
+		"claim1": "value1",
+		"claim2": "value2",
+		"claim3": "value3",
+	}
 
-	tokenString, err := NewTokenWithRoles(rolesInput, time.Hour*24)
+	tokenString, err := NewTokenWithCustomClaims(input, time.Hour*24)
 	if err != nil {
 		t.Fatalf("failed to create token string: %v", err)
 	}
 
-	rolesOutput, err := GetRolesFromToken(tokenString)
+	output, err := GetCustomClaimsFromToken(tokenString, []string{
+		"claim1",
+		"claim2",
+		"claim3",
+	})
 	if err != nil {
 		t.Fatalf("failed to get roles from token: %v", err)
 	}
-	if rolesOutput != rolesInput {
-		t.Errorf("expect %q, get %q", rolesInput, rolesOutput)
+	if !reflect.DeepEqual(output, input) {
+		t.Errorf("expect %v, get %v", input, output)
 	}
 
 }

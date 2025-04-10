@@ -24,13 +24,20 @@ var (
 	privateKey                      = []byte(os.Getenv("JWT_PRIVATE_KEY"))
 )
 
-func NewTokenWithRoles(roles string, ttl time.Duration) (string, error) {
+func NewTokenWithCustomClaims(customClaims map[string]string, ttl time.Duration) (string, error) {
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"eat":   time.Now().Add(ttl).Unix(),
-		"iat":   time.Now(),
-		"roles": roles,
-	})
+	claims := jwt.MapClaims{
+		"eat": time.Now().Add(ttl).Unix(),
+		"iat": time.Now(),
+	}
+
+	if len(customClaims) > 0 {
+		for k, v := range customClaims {
+			claims[k] = v
+		}
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	tokenString, err := token.SignedString(privateKey)
 
@@ -38,7 +45,7 @@ func NewTokenWithRoles(roles string, ttl time.Duration) (string, error) {
 
 }
 
-func GetRolesFromToken(tokenString string) (string, error) {
+func GetCustomClaimsFromToken(tokenString string, customClaimNames []string) (map[string]string, error) {
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -48,14 +55,21 @@ func GetRolesFromToken(tokenString string) (string, error) {
 	})
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return "", ErrFailedToFetchClaimsFromToken
+		return nil, ErrFailedToFetchClaimsFromToken
 	}
 
-	return claims["roles"].(string), nil
+	output := map[string]string{}
+	for _, claimName := range customClaimNames {
+		if v, ok := claims[claimName]; ok {
+			output[claimName] = v.(string)
+		}
+	}
+
+	return output, nil
 
 }
