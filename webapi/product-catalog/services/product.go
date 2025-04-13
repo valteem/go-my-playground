@@ -10,8 +10,8 @@ type ProductService struct {
 	ProductStorage storage.Product
 }
 
-func (s *ProductService) CreateProduct(ctx context.Context, set storage.FeatureSet) (int, error) {
-	id, err := s.ProductStorage.CreateProduct(ctx, set)
+func (s *ProductService) CreateProduct(ctx context.Context, description string, fs storage.FeatureSet) (int, error) {
+	id, err := s.ProductStorage.CreateProduct(ctx, description, fs)
 	return id, err
 }
 

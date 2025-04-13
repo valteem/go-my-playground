@@ -18,7 +18,7 @@ type FeatureSet interface {
 type Product interface {
 	// CreateProduct creates a new Product based on provided FeatureSet
 	// Returns ID of new Product, or 0 if operation fails
-	CreateProduct(ctx context.Context, set FeatureSet) (int, error)
+	CreateProduct(ctx context.Context, description string, fs FeatureSet) (int, error)
 	// UpdateProduct updates existing Product with provided FeatureSet
 	// Returns error if Product with given ID does not exist
 	UpdateProduct(ctx context.Context, id int, set FeatureSet) error
