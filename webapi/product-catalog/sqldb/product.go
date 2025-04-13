@@ -27,3 +27,10 @@ func (ps *ProductStorage) CreateProduct(ctx context.Context, description string,
 	return id, nil
 
 }
+
+func (ps *ProductStorage) UpdateProduct(ctx context.Context, id int, fs storage.FeatureSet) error {
+	// add stub to comply with Product interface
+	return nil
+}
+
+var _ storage.Product = (*ProductStorage)(nil)
