@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 
+	"webapi/product-catalog/model"
 	"webapi/product-catalog/repository/impl"
 	"webapi/product-catalog/sqldb"
 )
@@ -27,6 +28,8 @@ type Product interface {
 	// UpdateProduct updates existing Product with provided FeatureSet
 	// Returns error if Product with given ID does not exist
 	UpdateProduct(ctx context.Context, id int) error
+	// GetProductById returns Product by provided id, returns error if Product is no found
+	GetProductById(ctx context.Context, id int) (*model.Product, error)
 }
 
 type Repositories struct {

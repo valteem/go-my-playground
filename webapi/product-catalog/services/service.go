@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 
+	"webapi/product-catalog/model"
 	"webapi/product-catalog/repository"
 )
 
@@ -11,6 +12,7 @@ import (
 type Product interface {
 	CreateProduct(ctx context.Context, description string) (int, error)
 	UpdateProduct(ctx context.Context, id int) error
+	GetProductById(ctx context.Context, id int) (*model.Product, error)
 }
 
 type Services struct {

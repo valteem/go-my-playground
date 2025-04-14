@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"webapi/product-catalog/model"
 	"webapi/product-catalog/sqldb"
 )
 
@@ -19,9 +20,9 @@ func NewProductRepository(pg *sqldb.PostgresDB) *ProductRepository {
 	return &ProductRepository{pg}
 }
 
-func (ps *ProductRepository) CreateProduct(ctx context.Context, description string) (int, error) {
+func (pr *ProductRepository) CreateProduct(ctx context.Context, description string) (int, error) {
 
-	rows := ps.Pool.QueryRow(ctx, "insert into product (description) values ($1) returning id", description)
+	rows := pr.Pool.QueryRow(ctx, "insert into product (description) values ($1) returning id", description)
 
 	var id int
 	if err := rows.Scan(id); err != nil {
@@ -32,7 +33,13 @@ func (ps *ProductRepository) CreateProduct(ctx context.Context, description stri
 
 }
 
-func (ps *ProductRepository) UpdateProduct(ctx context.Context, id int) error {
+func (pr *ProductRepository) UpdateProduct(ctx context.Context, id int) error {
 	// add stub to comply with Product interface
 	return nil
+}
+
+func (pr *ProductRepository) GetProductById(ctx context.Context, id int) (*model.Product, error) {
+	// stub
+	p := &model.Product{}
+	return p, nil
 }
