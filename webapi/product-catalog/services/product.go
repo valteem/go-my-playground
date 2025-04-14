@@ -3,18 +3,18 @@ package services
 import (
 	"context"
 
-	"webapi/product-catalog/storage"
+	"webapi/product-catalog/repository"
 )
 
 type ProductService struct {
-	ProductStorage storage.Product
+	ProductRepository repository.Product
 }
 
-func (s *ProductService) CreateProduct(ctx context.Context, description string, fs storage.FeatureSet) (int, error) {
-	id, err := s.ProductStorage.CreateProduct(ctx, description, fs)
+func (s *ProductService) CreateProduct(ctx context.Context, description string, fs repository.FeatureSet) (int, error) {
+	id, err := s.ProductRepository.CreateProduct(ctx, description, fs)
 	return id, err
 }
 
-func (s *ProductService) UpdateProduct(ctx context.Context, id int, set storage.FeatureSet) error {
-	return s.ProductStorage.UpdateProduct(ctx, id, set)
+func (s *ProductService) UpdateProduct(ctx context.Context, id int, set repository.FeatureSet) error {
+	return s.ProductRepository.UpdateProduct(ctx, id, set)
 }
