@@ -7,18 +7,18 @@ import (
 	"webapi/product-catalog/repository"
 )
 
-var _ repository.Product = (*ProductStorage)(nil)
+var _ repository.Product = (*ProductRepository)(nil)
 
 // ProductStorage implements storage.Product interface
-type ProductStorage struct {
+type ProductRepository struct {
 	*PostgresDB
 }
 
-func NewProductStorage(pg *PostgresDB) *ProductStorage {
-	return &ProductStorage{pg}
+func NewProductRepository(pg *PostgresDB) *ProductRepository {
+	return &ProductRepository{pg}
 }
 
-func (ps *ProductStorage) CreateProduct(ctx context.Context, description string, fs repository.FeatureSet) (int, error) {
+func (ps *ProductRepository) CreateProduct(ctx context.Context, description string, fs repository.FeatureSet) (int, error) {
 
 	rows := ps.Pool.QueryRow(ctx, "insert into product (description) values ($1) returning id", description)
 
@@ -31,7 +31,7 @@ func (ps *ProductStorage) CreateProduct(ctx context.Context, description string,
 
 }
 
-func (ps *ProductStorage) UpdateProduct(ctx context.Context, id int, fs repository.FeatureSet) error {
+func (ps *ProductRepository) UpdateProduct(ctx context.Context, id int, fs repository.FeatureSet) error {
 	// add stub to comply with Product interface
 	return nil
 }
