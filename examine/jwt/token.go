@@ -10,6 +10,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const (
+	defaultTokenTTL = time.Hour * 24
+)
+
 func init() {
 
 	if err := godotenv.Load(); err != nil {
@@ -72,4 +76,10 @@ func GetCustomClaimsFromToken(tokenString string, customClaimNames []string) (ma
 
 	return output, nil
 
+}
+
+// TokenClaims adds custom token fieild(s) and complies with jwt.Claims interface
+type TokenClaims struct {
+	jwt.RegisteredClaims
+	UserId string
 }
