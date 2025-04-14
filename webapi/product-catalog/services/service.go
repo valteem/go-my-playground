@@ -1,22 +1,22 @@
 package services
 
 import (
-	"context"
+	//	"context"
 
-	"webapi/product-catalog/model"
+	//	"webapi/product-catalog/model"
 	"webapi/product-catalog/repository"
 )
 
 // Repeating repository.Product interface here enables injecting services to api layer
 // without having to inject repository level objects too
-type Product interface {
-	CreateProduct(ctx context.Context, description string) (int, error)
-	UpdateProduct(ctx context.Context, id int) error
-	GetProductById(ctx context.Context, id int) (*model.Product, error)
-}
+// type Product interface {
+// 	CreateProduct(ctx context.Context, description string) (int, error)
+// 	UpdateProduct(ctx context.Context, id int) error
+// 	GetProductById(ctx context.Context, id int) (*model.Product, error)
+// }
 
 type Services struct {
-	Product
+	Product repository.Product
 }
 
 type ServiceDependencies struct {

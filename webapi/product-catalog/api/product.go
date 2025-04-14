@@ -8,18 +8,19 @@ import (
 
 // Used to inject service info into handler functions
 type productRoutes struct {
-	productService services.Product
+	Services services.Services
 }
 
-func newProductRoutes(g *gin.RouterGroup, productService services.Product) {
+func newProductRoutes(g *gin.RouterGroup, productService services.Services) {
 
 	pr := &productRoutes{
-		productService: productService,
+		Services: productService,
 	}
 
 	g.POST("/create", pr.create)
 }
 
 func (pr *productRoutes) create(c *gin.Context) {
-	//stub
+	// stub
+	// pr.Services.Product.CreateProduct()
 }

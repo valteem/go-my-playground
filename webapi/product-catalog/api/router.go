@@ -10,6 +10,6 @@ func NewRouter(handler *gin.Engine, services services.Services) {
 
 	api := handler.Group("/api")
 
-	newProductRoutes(api, services.Product)
+	newProductRoutes(api, services)
 
 }
