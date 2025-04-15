@@ -33,7 +33,7 @@ func (pr *ProductRepository) CreateProduct(ctx context.Context, p *model.Product
 
 }
 
-func (pr *ProductRepository) UpdateProduct(ctx context.Context, id int) error {
+func (pr *ProductRepository) UpdateProduct(ctx context.Context, p *model.Product) error {
 	// add stub to comply with Product interface
 	return nil
 }

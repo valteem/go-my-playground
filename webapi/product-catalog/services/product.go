@@ -22,8 +22,8 @@ func (s *ProductService) CreateProduct(ctx context.Context, p *model.Product) (i
 	return id, err
 }
 
-func (s *ProductService) UpdateProduct(ctx context.Context, id int) error {
-	return s.ProductRepository.UpdateProduct(ctx, id)
+func (s *ProductService) UpdateProduct(ctx context.Context, p *model.Product) error {
+	return s.ProductRepository.UpdateProduct(ctx, p)
 }
 
 func (s *ProductService) GetProductById(ctx context.Context, id int) (*model.Product, error) {

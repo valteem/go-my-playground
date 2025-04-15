@@ -26,9 +26,9 @@ type Product interface {
 	// Ignores model.Product.Id if set.
 	// Returns Id of new Product, or 0 if operation fails
 	CreateProduct(ctx context.Context, p *model.Product) (int, error)
-	// UpdateProduct updates existing Product with provided FeatureSet
-	// Returns error if Product with given ID does not exist
-	UpdateProduct(ctx context.Context, id int) error
+	// UpdateProduct updates existing Product with provided input
+	// Returns error if Product with given *model.Product.Id does not exist
+	UpdateProduct(ctx context.Context, p *model.Product) error
 	// GetProductById returns Product by provided id, returns error if Product is no found
 	GetProductById(ctx context.Context, id int) (*model.Product, error)
 }
