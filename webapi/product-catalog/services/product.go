@@ -17,8 +17,8 @@ func NewProductService(r repository.Product) *ProductService {
 	}
 }
 
-func (s *ProductService) CreateProduct(ctx context.Context, description string) (int, error) {
-	id, err := s.ProductRepository.CreateProduct(ctx, description)
+func (s *ProductService) CreateProduct(ctx context.Context, p *model.Product) (int, error) {
+	id, err := s.ProductRepository.CreateProduct(ctx, p)
 	return id, err
 }
 

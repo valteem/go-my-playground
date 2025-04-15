@@ -20,13 +20,13 @@ func NewProductRepository(pg *sqldb.PostgresDB) *ProductRepository {
 	return &ProductRepository{pg}
 }
 
-func (pr *ProductRepository) CreateProduct(ctx context.Context, description string) (int, error) {
+func (pr *ProductRepository) CreateProduct(ctx context.Context, p *model.Product) (int, error) {
 
-	rows := pr.Pool.QueryRow(ctx, "insert into product (description) values ($1) returning id", description)
+	rows := pr.Pool.QueryRow(ctx, "insert into product (description) values ($1) returning id", p.Description)
 
 	var id int
 	if err := rows.Scan(id); err != nil {
-		return 0, fmt.Errorf("failed to add %s: %w", description, err)
+		return 0, fmt.Errorf("failed to add %s: %w", p.Description, err)
 	}
 
 	return id, nil
