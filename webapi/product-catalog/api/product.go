@@ -23,10 +23,6 @@ func newProductRoutes(g *gin.RouterGroup, productService services.Services) {
 	g.POST("/create", pr.create)
 }
 
-type responseProduct struct {
-	Id int `json:"id"`
-}
-
 func (pr *productRoutes) create(c *gin.Context) {
 
 	var input model.Product
@@ -42,6 +38,10 @@ func (pr *productRoutes) create(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, responseProduct{Id: id})
+	type response struct {
+		Id int `json:"id"`
+	}
+
+	c.JSON(http.StatusCreated, response{Id: id})
 
 }
