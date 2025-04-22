@@ -13,14 +13,20 @@ func Addr(port string) Option {
 	}
 }
 
-func (s *Server) ReadTimeout(t time.Duration) {
-	s.httpserver.ReadTimeout = t
+func ReadTimeout(t time.Duration) Option {
+	return func(s *Server) {
+		s.httpserver.ReadTimeout = t
+	}
 }
 
-func (s *Server) WriteTimeout(t time.Duration) {
-	s.httpserver.WriteTimeout = t
+func WriteTimeout(t time.Duration) Option {
+	return func(s *Server) {
+		s.httpserver.WriteTimeout = t
+	}
 }
 
-func (s *Server) ShutdownTimeout(t time.Duration) {
-	s.shutdownTimeout = t
+func ShutdownTimeout(t time.Duration) Option {
+	return func(s *Server) {
+		s.shutdownTimeout = t
+	}
 }
