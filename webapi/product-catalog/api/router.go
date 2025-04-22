@@ -6,7 +6,7 @@ import (
 	"webapi/product-catalog/services"
 )
 
-func NewRouter(handler *gin.Engine, services services.Services) {
+func NewRouter(handler *gin.Engine, services *services.Services) {
 
 	api := handler.Group("/api")
 

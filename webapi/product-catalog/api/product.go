@@ -11,10 +11,10 @@ import (
 
 // Used to inject service info into handler functions
 type productRoutes struct {
-	Services services.Services
+	Services *services.Services
 }
 
-func newProductRoutes(g *gin.RouterGroup, productService services.Services) {
+func newProductRoutes(g *gin.RouterGroup, productService *services.Services) {
 
 	pr := &productRoutes{
 		Services: productService,
