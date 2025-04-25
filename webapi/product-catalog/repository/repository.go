@@ -33,6 +33,13 @@ type Product interface {
 	GetProductById(ctx context.Context, id int) (*model.Product, error)
 }
 
+type User interface {
+	CreateUser(ctx context.Context, user model.User) (int, error)
+	GetUserById(ctx context.Context, id int) (*model.User, error)
+	GetUserByName(ctx context.Context, name string) (*model.User, error)
+	GetUserByNameAndPassword(ctx context.Context, name, password string) (*model.User, error)
+}
+
 type Repositories struct {
 	Product
 }
