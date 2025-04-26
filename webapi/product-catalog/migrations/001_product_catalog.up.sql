@@ -21,7 +21,7 @@ prepare create_product(varchar(255)) as
 
 create table user (
     id          serial primary key,
-    description varchar(255) not null unique
+    name        varchar(255) not null unique
     password    varchar(255) not null
     created_at  timestamp not null default now()
 )
