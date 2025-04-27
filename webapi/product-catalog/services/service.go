@@ -15,6 +15,11 @@ import (
 // 	GetProductById(ctx context.Context, id int) (*model.Product, error)
 // }
 
+type UserInput struct {
+	Name     string
+	Password string // plain password, before hashing
+}
+
 type Services struct {
 	Product repository.Product
 }

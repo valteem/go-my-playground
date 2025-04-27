@@ -10,6 +10,7 @@ import (
 	"webapi/product-catalog/sqldb"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type UserRepository struct {
@@ -26,6 +27,15 @@ func (ur *UserRepository) CreateUser(ctx context.Context, user model.User) (int,
 
 	var id int
 	if err := rows.Scan(id); err != nil {
+		var pgErr *pgconn.PgError
+		// errors.As: 2nd argument is set to the match found (if any)
+		if ok := errors.As(err, &pgErr); ok {
+			// Class 23 — Integrity Constraint Violation
+			// 23505	unique_violation
+			if pgErr.Code == "23505" {
+				return 0, repoerr.ErrAlreadyExists
+			}
+		}
 		return 0, fmt.Errorf("failed to add %s: %w", user.Name, err)
 	}
 
