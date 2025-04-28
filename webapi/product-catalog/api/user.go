@@ -3,36 +3,35 @@ package api
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-
 	"webapi/product-catalog/model"
 	"webapi/product-catalog/services"
+
+	"github.com/gin-gonic/gin"
 )
 
-// Used to inject service info into handler functions
-type productRoutes struct {
-	Services *services.Services
+type userRoutes struct {
+	services *services.Services
 }
 
-func newProductRoutes(g *gin.RouterGroup, srv *services.Services) {
+func newUserRoutes(g *gin.RouterGroup, srv *services.Services) {
 
-	pr := &productRoutes{
-		Services: srv,
-	}
+	ur := &userRoutes{services: srv}
 
-	g.POST("/create", pr.create)
+	g.POST("/signup", ur.signup)
+
 }
 
-func (pr *productRoutes) create(c *gin.Context) {
+func (ur *userRoutes) signup(c *gin.Context) {
 
-	var input model.Product
+	var input model.User
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid request body")
 		return
+
 	}
 
-	id, err := pr.Services.Product.CreateProduct(c.Request.Context(), &input)
+	id, err := ur.services.User.CreateUser(c.Request.Context(), input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
