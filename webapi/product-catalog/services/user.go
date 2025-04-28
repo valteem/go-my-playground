@@ -38,33 +38,28 @@ func NewUserService(ur repository.User, ph hashing.Hasher, sk string, t time.Dur
 	}
 }
 
-func (us *UserService) CreateUser(ctx context.Context, input UserInput) (int, error) {
-
-	user := model.User{
-		Name:     input.Name,
-		Password: us.passwordHasher.Hash(input.Password),
-	}
+func (us *UserService) CreateUser(ctx context.Context, user model.User) (int, error) {
 
 	id, err := us.userRepo.CreateUser(ctx, user)
 	if err != nil {
 		if errors.Is(err, repoerr.ErrAlreadyExists) {
-			return 0, fmt.Errorf("user name %s already exists", input.Name)
+			return 0, fmt.Errorf("user name %s already exists", user.Name)
 		}
-		return 0, fmt.Errorf("cannot create user with name %s: %v", input.Name, err)
+		return 0, fmt.Errorf("cannot create user with name %s: %v", user.Name, err)
 	}
 
 	return id, nil
 
 }
 
-func (us *UserService) GenerateToken(ctx context.Context, input UserInput) (string, error) {
+func (us *UserService) GenerateToken(ctx context.Context, inputUser model.User) (string, error) {
 
-	user, err := us.userRepo.GetUserByNameAndPassword(ctx, input.Name, us.passwordHasher.Hash(input.Password))
+	user, err := us.userRepo.GetUserByNameAndPassword(ctx, inputUser.Name, us.passwordHasher.Hash(inputUser.Password))
 	if err != nil {
 		if errors.Is(err, repoerr.ErrNotFound) {
-			return "", fmt.Errorf("user %s not found", input.Name)
+			return "", fmt.Errorf("user %s not found", inputUser.Name)
 		}
-		return "", fmt.Errorf("failed to fetch data for user %s", input.Name)
+		return "", fmt.Errorf("failed to fetch data for user %s", inputUser.Name)
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &TokenClaims{
@@ -77,7 +72,7 @@ func (us *UserService) GenerateToken(ctx context.Context, input UserInput) (stri
 
 	tokenSigned, err := token.SignedString([]byte(us.signKey))
 	if err != nil {
-		return "", fmt.Errorf("cannot sign token for user %s", input.Name)
+		return "", fmt.Errorf("cannot sign token for user %s", inputUser.Name)
 	}
 
 	return tokenSigned, nil
@@ -104,4 +99,20 @@ func (us *UserService) ParseToken(token string) (int, error) {
 
 	return claims.UserId, nil
 
+}
+
+func (us *UserService) GetUserById(ctx context.Context, id int) (*model.User, error) {
+	user, err := us.userRepo.GetUserById(ctx, id)
+	return user, err
+}
+
+func (us *UserService) GetUserByName(ctx context.Context, name string) (*model.User, error) {
+	user, err := us.userRepo.GetUserByName(ctx, name)
+	return user, err
+
+}
+
+func (us *UserService) GetUserByNameAndPassword(ctx context.Context, name, password string) (*model.User, error) {
+	user, err := us.userRepo.GetUserByNameAndPassword(ctx, name, password)
+	return user, err
 }

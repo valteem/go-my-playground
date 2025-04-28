@@ -34,7 +34,7 @@ type Product interface {
 }
 
 type User interface {
-	CreateUser(ctx context.Context, user model.User) (int, error)
+	CreateUser(ctx context.Context, input model.User) (int, error)
 	GetUserById(ctx context.Context, id int) (*model.User, error)
 	GetUserByName(ctx context.Context, name string) (*model.User, error)
 	GetUserByNameAndPassword(ctx context.Context, name, password string) (*model.User, error)
@@ -42,11 +42,13 @@ type User interface {
 
 type Repositories struct {
 	Product
+	User
 }
 
 // Link to database layer
 func NewRepositories(pg *sqldb.PostgresDB) *Repositories {
 	return &Repositories{
 		Product: impl.NewProductRepository(pg),
+		User:    impl.NewUserRepository(pg),
 	}
 }

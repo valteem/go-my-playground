@@ -4,6 +4,8 @@ import (
 	//	"context"
 
 	//	"webapi/product-catalog/model"
+	"time"
+	"webapi/product-catalog/hashing"
 	"webapi/product-catalog/repository"
 )
 
@@ -22,14 +24,20 @@ type UserInput struct {
 
 type Services struct {
 	Product repository.Product
+	User    repository.User
 }
 
 type ServiceDependencies struct {
 	Repositories *repository.Repositories
+	Hasher       *hashing.Hasher
+
+	SignKey  string
+	TokenTTL time.Duration
 }
 
 func NewServices(deps *ServiceDependencies) *Services {
 	return &Services{
 		Product: NewProductService(deps.Repositories.Product),
+		User:    NewUserService(deps.Repositories.User, *deps.Hasher, deps.SignKey, deps.TokenTTL),
 	}
 }
