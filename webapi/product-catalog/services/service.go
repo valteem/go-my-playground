@@ -1,11 +1,11 @@
 package services
 
 import (
-	//	"context"
-
-	//	"webapi/product-catalog/model"
+	"context"
 	"time"
+
 	"webapi/product-catalog/hashing"
+	"webapi/product-catalog/model"
 	"webapi/product-catalog/repository"
 )
 
@@ -22,9 +22,23 @@ type UserInput struct {
 	Password string // plain password, before hashing
 }
 
+type Product interface {
+	CreateProduct(ctx context.Context, p *model.Product) (int, error)
+	UpdateProduct(ctx context.Context, p *model.Product) error
+	GetProductById(ctx context.Context, id int) (*model.Product, error)
+}
+
+type User interface {
+	CreateUser(ctx context.Context, input model.User) (int, error)
+	GetUserById(ctx context.Context, id int) (*model.User, error)
+	GetUserByName(ctx context.Context, name string) (*model.User, error)
+	GetUserByNameAndPassword(ctx context.Context, name, password string) (*model.User, error)
+}
+
+// Product, User interfaces enable decoupling API and Repository layers
 type Services struct {
-	Product repository.Product
-	User    repository.User
+	Product
+	User
 }
 
 type ServiceDependencies struct {
