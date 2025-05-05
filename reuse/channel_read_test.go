@@ -107,3 +107,48 @@ func TestReadFromClosedBufferedChannel(t *testing.T) {
 	}
 
 }
+
+func TestReadFromChanClose(t *testing.T) {
+
+	fn := func(n int) <-chan int {
+		c := make(chan int)
+		i := 0
+		wg := sync.WaitGroup{}
+		wg.Add(n)
+		for i < n {
+			j := i // capturing current index value
+			i++
+			go func() {
+				c <- j
+				wg.Done()
+			}()
+		}
+		go func() {
+			wg.Wait()
+			close(c)
+		}()
+		return c
+	}
+
+	outer := func(n int) int {
+		c := fn(n)
+		sum := 0
+		for i := range c {
+			sum += i
+		}
+		return sum
+	}
+
+	expectedOutcome := func(n int) int {
+
+		return n * (n - 1) / 2 // arithmetic progression 0 ... (n-1)
+	}
+
+	tests := []int{10, 100}
+	for _, tc := range tests {
+		if actual, expected := outer(tc), expectedOutcome(tc); actual != expected {
+			t.Errorf("get %d, expect %d", actual, expected)
+		}
+	}
+
+}
