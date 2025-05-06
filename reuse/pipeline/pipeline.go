@@ -99,32 +99,6 @@ func ServeFoodBounded(n int, numCookers int) <-chan foodRecord {
 	return output
 }
 
-func Merge(inputs ...<-chan string) <-chan string {
-
-	var wg sync.WaitGroup
-	output := make(chan string)
-
-	out := func(input <-chan string) {
-		for s := range input {
-			output <- s
-		}
-		wg.Done()
-	}
-
-	wg.Add(len(inputs))
-	for _, c := range inputs {
-		out(c)
-	}
-
-	go func() {
-		wg.Wait()
-		close(output)
-	}()
-
-	return output
-
-}
-
 func randStr(length int) []byte {
 	s := make([]byte, length)
 	for i := range s {
@@ -329,4 +303,59 @@ func SquaresBounded(n int, workers int) int {
 		}
 	}
 	return output
+}
+
+func Split[T any](input chan T, n int) []chan T {
+
+	var wg sync.WaitGroup
+	output := make([]chan T, n)
+	for i := range output {
+		output[i] = make(chan T)
+	}
+
+	wg.Add(1)
+	go func() {
+		for _, out := range output {
+			for inp := range input {
+				out <- inp
+			}
+
+		}
+		wg.Done()
+	}()
+
+	go func() {
+		wg.Wait()
+		for _, out := range output {
+			close(out)
+		}
+	}()
+
+	return output
+
+}
+
+func Merge[T any](inputs ...chan T) <-chan T {
+
+	var wg sync.WaitGroup
+	output := make(chan T)
+
+	wg.Add(len(inputs))
+	go func() {
+		for _, inp := range inputs {
+			for v := range inp {
+				output <- v
+			}
+			wg.Done()
+
+		}
+	}()
+
+	go func() {
+		wg.Wait()
+		close(output)
+	}()
+
+	return output
+
 }

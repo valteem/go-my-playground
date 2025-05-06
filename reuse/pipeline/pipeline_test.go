@@ -174,3 +174,32 @@ func BenchmarkSquaresPipeline(b *testing.B) {
 	})
 
 }
+
+func TestSplitMerge(t *testing.T) {
+
+	var numMsg = 10
+	c := make(chan int)
+
+	split := Split(c, 2)
+
+	merge := Merge(split...)
+
+	go func() {
+		for i := range numMsg {
+			c <- i
+		}
+		close(c)
+	}()
+
+	count, sum := 0, 0
+
+	for v := range merge {
+		sum += v
+		count++
+	}
+
+	if count != numMsg || sum != (numMsg)*(numMsg-1)/2 {
+		t.Errorf("get sum/count %d/%d, expect %d/%d", sum, count, (numMsg)*(numMsg-1)/2, numMsg)
+	}
+
+}
