@@ -1,0 +1,13 @@
+services:
+  adapter:
+    container_name: compose-network-adapter
+    build: ./adapter
+    ports:
+      - 3001:3001
+    depends_on:
+      - supplier
+  supplier:
+    container_name: compose-network-supplier
+    build: ./supplier
+    ports:
+      - 3002:3002
