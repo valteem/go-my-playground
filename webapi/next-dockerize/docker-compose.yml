@@ -1,0 +1,6 @@
+services:
+  app:
+    container_name: next-app
+    build: .
+    ports:
+      - 3001:3001
