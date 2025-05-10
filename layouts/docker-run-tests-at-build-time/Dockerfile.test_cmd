@@ -1,0 +1,5 @@
+FROM golang:alpine3.21 AS builder
+COPY . .
+
+FROM builder AS test_runner
+CMD ["/bin/sh"]

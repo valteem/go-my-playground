@@ -1,0 +1,6 @@
+FROM golang:alpine3.21 AS builder
+COPY . /app
+WORKDIR /app
+
+FROM builder AS test_runner
+RUN go test -v ./...

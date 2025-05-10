@@ -1,0 +1,8 @@
+services:
+  app:
+    container_name: chain-handler
+    build:
+        context: .
+        dockerfile: Dockerfile.test_stage
+    ports:
+      - 3001:3001

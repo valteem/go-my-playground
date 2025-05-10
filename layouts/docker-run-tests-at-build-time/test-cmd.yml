@@ -1,0 +1,10 @@
+services:
+  app:
+    container_name: chain-handler-test-cmd
+    build:
+        context: .
+        dockerfile: Dockerfile.test_cmd
+    ports:
+      - 3001:3001
+    command:
+      /bin/sh test.sh
