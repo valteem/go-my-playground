@@ -4,13 +4,19 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 )
 
-var client *http.Client
+var (
+	client            *http.Client
+	supplierURLPrefix string
+)
 
 func init() {
 
 	client = &http.Client{}
+
+	supplierURLPrefix = os.Getenv("SUPPLIER_URL_PREFIX")
 
 }
 
@@ -18,7 +24,7 @@ func handleInput(w http.ResponseWriter, r *http.Request) {
 
 	input := r.PathValue("input")
 
-	req, err := http.NewRequest(http.MethodGet, "http://supplier:3002/checksum/"+input, nil)
+	req, err := http.NewRequest(http.MethodGet, "http://"+supplierURLPrefix+"/checksum/"+input, nil)
 	if err != nil {
 		w.Write([]byte(fmt.Sprintf("internal error: %v", err)))
 		w.WriteHeader(http.StatusInternalServerError)

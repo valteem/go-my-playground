@@ -2,6 +2,8 @@ services:
   adapter:
     container_name: compose-network-adapter
     build: ./adapter
+    env_file:
+      - .env
     ports:
       - 3001:3001
     depends_on:
