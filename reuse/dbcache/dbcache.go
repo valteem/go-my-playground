@@ -8,6 +8,7 @@ type db[K comparable, V any] interface {
 type Cache[K comparable, V any] interface {
 	Find(key K) (V, bool)
 	UpdateCacheValue(key K, value V)
+	// TODO: add cache eviction
 }
 
 type Repository[K comparable, V any] struct {
