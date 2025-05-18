@@ -18,7 +18,7 @@ func TestUserId(t *testing.T) {
 	})
 
 	go r.Run(":3001")
-	time.Sleep(100 * time.Millisecond) // allow test server some time to sleep
+	time.Sleep(100 * time.Millisecond) // allow test server some time to start
 
 	resp, err := http.Post("http://localhost:3001/auth/login", "application/json", nil)
 	if err != nil {
