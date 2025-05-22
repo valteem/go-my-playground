@@ -11,6 +11,7 @@ func serveFile(w http.ResponseWriter, r *http.Request) {
 	if path == "/" {
 		path = "./assets/index.html"
 	}
+	// else no path substitution happens, and we are open to serving whichever path client requests
 	http.ServeFile(w, r, path)
 }
 
