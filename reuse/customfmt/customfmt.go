@@ -31,3 +31,21 @@ func (b Building) GoString() string {
 		b.TotalArea,
 		b.NumberOfFloors)
 }
+
+// https://github.com/golang/go/issues/51195
+
+type Help struct {
+	Cmd string
+}
+
+func (h Help) Format(s fmt.State, r rune) {
+	switch r {
+	case 'h':
+		fmt.Fprintf(s, "Help yourself: %s", h.Cmd)
+	case 'm':
+		fmt.Fprintf(s, "Maybe: %s", h.Cmd)
+	default:
+		fmtDir := fmt.FormatString(s, r)
+		fmt.Fprintf(s, fmtDir, h.Cmd)
+	}
+}

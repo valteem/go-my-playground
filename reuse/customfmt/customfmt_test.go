@@ -33,3 +33,35 @@ func TestGoString(t *testing.T) {
 	}
 
 }
+
+func TestFormatter(t *testing.T) {
+
+	tests := []struct {
+		input  Help
+		fmtStr string
+		output string
+	}{
+		{
+			input:  Help{"run"},
+			fmtStr: "%h",
+			output: "Help yourself: run",
+		},
+		{
+			input:  Help{"run"},
+			fmtStr: "%m",
+			output: "Maybe: run",
+		},
+		{
+			input:  Help{"run"},
+			fmtStr: "%s",
+			output: "run",
+		},
+	}
+
+	for _, tc := range tests {
+		if output := fmt.Sprintf(tc.fmtStr, tc.input); output != tc.output {
+			t.Errorf("get\n%s\nexpect\n%s\n", output, tc.output)
+		}
+	}
+
+}
