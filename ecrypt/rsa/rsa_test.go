@@ -1,6 +1,7 @@
 package rsa
 
 import (
+	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
@@ -83,6 +84,49 @@ func TestEncryptDecryptPKCS1v15(t *testing.T) {
 		label, msg := strDecrypted[:len(tc.label)], strDecrypted[len(tc.label):]
 		if label != tc.label || msg != tc.msg {
 			t.Errorf("decrypting message %q with label %q: get %q and %q instead", tc.msg, tc.label, msg, label)
+		}
+
+	}
+
+}
+
+func TestSignVerifyPSS(t *testing.T) {
+
+	tests := []struct {
+		msg   string
+		label string
+	}{
+		{"apples, cherries and pears", "fruits"},
+		{"garlics, potatoes and onions", "vegetables"},
+		{"tables, chairs and beds", "furniture"},
+	}
+
+	for _, tc := range tests {
+
+		privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
+		if err != nil {
+			t.Errorf("failed to generate private key: %v", err)
+			continue
+		}
+		publicKey := privateKey.PublicKey
+
+		msgHash := sha256.New()
+		_, err = msgHash.Write([]byte(tc.msg))
+		if err != nil {
+			t.Errorf("failed to hash message %q: %v", tc.msg, err)
+			continue
+		}
+		msgHashDigest := msgHash.Sum(nil)
+
+		signature, err := rsa.SignPSS(rand.Reader, privateKey, crypto.SHA256, msgHashDigest, nil)
+		if err != nil {
+			t.Errorf("failed to sign message %q: %v", tc.msg, err)
+			continue
+		}
+
+		err = rsa.VerifyPSS(&publicKey, crypto.SHA256, msgHashDigest, signature, nil)
+		if err != nil {
+			t.Errorf("failed to verify message %q: %v", tc.msg, err)
 		}
 
 	}
