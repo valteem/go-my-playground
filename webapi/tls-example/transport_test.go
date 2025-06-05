@@ -30,13 +30,19 @@ func serve(addr string) {
 
 }
 
-func newClient() *http.Client {
+func newClient() (*http.Client, error) {
 
-	certRaw, _ := os.ReadFile("cert.pem")
+	certRaw, err := os.ReadFile("cert.pem")
+	if err != nil {
+		return nil, err
+	}
 
 	block, _ := pem.Decode(certRaw)
 
-	cert, _ := x509.ParseCertificate(block.Bytes)
+	cert, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		return nil, err
+	}
 
 	certPool := x509.NewCertPool()
 	certPool.AddCert(cert)
@@ -47,7 +53,7 @@ func newClient() *http.Client {
 
 	client := &http.Client{Transport: transport}
 
-	return client
+	return client, nil
 
 }
 
@@ -57,7 +63,10 @@ func TestTransportTLS(t *testing.T) {
 
 	time.Sleep(100 * time.Millisecond) // allow server some time to start properly
 
-	client := newClient()
+	client, err := newClient()
+	if err != nil {
+		t.Fatalf("failed to create new TLS client: %v", err)
+	}
 
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://localhost%s/info", port), nil)
 	if err != nil {
