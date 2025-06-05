@@ -102,7 +102,7 @@ func newSkipClient() *http.Client {
 
 }
 
-func TestSkipCient(t *testing.T) {
+func TestSkipClient(t *testing.T) {
 
 	go serve(port)
 
