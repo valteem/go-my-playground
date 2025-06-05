@@ -89,3 +89,45 @@ func TestTransportTLS(t *testing.T) {
 	}
 
 }
+
+func newSkipClient() *http.Client {
+
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	client := &http.Client{Transport: transport}
+
+	return client
+
+}
+
+func TestSkipCient(t *testing.T) {
+
+	go serve(port)
+
+	time.Sleep(100 * time.Millisecond) // allow server some time to start properly
+
+	client := newSkipClient()
+
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("https://localhost%s/info", port), nil)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("failed to fetch response: %v", err)
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("failed to read response body: %v", err)
+	}
+
+	if body := string(bodyBytes); body != responseMsg {
+		t.Errorf("response body: get %q, expect %q", body, responseMsg)
+	}
+
+}
