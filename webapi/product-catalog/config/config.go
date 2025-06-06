@@ -22,7 +22,7 @@ type PG struct {
 }
 
 type JWT struct {
-	SignKey string `yaml:"jwt_sign_keY"`
+	SignKey string `yaml:"jwt_sign_key"`
 }
 
 func Load(s string) (*Config, error) {
