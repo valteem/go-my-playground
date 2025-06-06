@@ -21,6 +21,7 @@ func newProductRoutes(g *gin.RouterGroup, srv *services.Services) {
 	}
 
 	g.POST("/create", pr.create)
+	g.DELETE("/delete", pr.delete)
 }
 
 func (pr *productRoutes) create(c *gin.Context) {
@@ -43,5 +44,26 @@ func (pr *productRoutes) create(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, response{Id: id})
+
+}
+
+type productDelete struct {
+	Id int `json:"id"`
+}
+
+// https://stackoverflow.com/questions/4088350/is-rest-delete-really-idempotent
+func (pr *productRoutes) delete(c *gin.Context) {
+
+	var product productDelete
+
+	if err := c.ShouldBindJSON(&product); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	_, err := pr.Services.Product.DeleteProduct(c.Request.Context(), product.Id)
+	if err != nil {
+		newErrorResponse(c, http.StatusNotFound, "product not found")
+	}
 
 }

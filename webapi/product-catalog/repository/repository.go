@@ -31,6 +31,10 @@ type Product interface {
 	UpdateProduct(ctx context.Context, p *model.Product) error
 	// GetProductById returns Product by provided id, returns error if Product is no found
 	GetProductById(ctx context.Context, id int) (*model.Product, error)
+	// DeleteProduct attempts to delete Product record
+	// Returns id of deleted product and nil if the Product with given the id exists,
+	// 0 and errNotFound if no Product exist with the given id
+	DeleteProduct(ctx context.Context, id int) (int, error)
 }
 
 type User interface {

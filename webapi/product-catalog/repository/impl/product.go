@@ -5,7 +5,10 @@ import (
 	"fmt"
 
 	"webapi/product-catalog/model"
+	"webapi/product-catalog/repository/repoerr"
 	"webapi/product-catalog/sqldb"
+
+	"github.com/jackc/pgx/v5"
 )
 
 // TODO: add back implementation check (commented out for now to avoid import cycle)
@@ -42,4 +45,20 @@ func (pr *ProductRepository) GetProductById(ctx context.Context, id int) (*model
 	// stub
 	p := &model.Product{}
 	return p, nil
+}
+
+func (pr *ProductRepository) DeleteProduct(ctx context.Context, id int) (int, error) {
+
+	var idDeleted int
+	err := pr.Pool.QueryRow(ctx, "delete from product where id=($1) returning id", id).Scan(idDeleted)
+
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return 0, repoerr.ErrNotFound
+		}
+		return 0, err
+	}
+
+	return idDeleted, nil
+
 }

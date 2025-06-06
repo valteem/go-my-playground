@@ -30,3 +30,8 @@ func (s *ProductService) GetProductById(ctx context.Context, id int) (*model.Pro
 	p, err := s.ProductRepository.GetProductById(ctx, id)
 	return p, err
 }
+
+func (s *ProductService) DeleteProduct(ctx context.Context, id int) (int, error) {
+	id, err := s.ProductRepository.DeleteProduct(ctx, id)
+	return id, err
+}

@@ -21,6 +21,7 @@ type Product interface {
 	CreateProduct(ctx context.Context, p *model.Product) (int, error)
 	UpdateProduct(ctx context.Context, p *model.Product) error
 	GetProductById(ctx context.Context, id int) (*model.Product, error)
+	DeleteProduct(ctx context.Context, id int) (int, error)
 }
 
 type User interface {
