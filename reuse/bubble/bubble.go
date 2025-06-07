@@ -1,6 +1,6 @@
 package bubble
 
-// In-place bubble sort
+// This looks rather like insertion sort
 func Sort(input []int) {
 	if len(input) < 2 {
 		return
@@ -13,4 +13,24 @@ func Sort(input []int) {
 			}
 		}
 	}
+}
+
+// Bubble sort: len(input) full-slice-length passes
+func Bubble(input []int) {
+
+	if len(input) < 2 {
+		return
+	}
+
+	var j int
+	for range len(input) - 1 {
+		j = 0
+		for j < len(input)-1 {
+			if input[j] > input[j+1] {
+				input[j], input[j+1] = input[j+1], input[j]
+			}
+			j++
+		}
+	}
+
 }

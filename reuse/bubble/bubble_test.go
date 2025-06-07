@@ -18,6 +18,25 @@ func sorted(input []int) bool {
 	return true
 
 }
+
+func TestBubbleB(t *testing.T) {
+
+	tests := []struct {
+		input []int
+	}{
+		{[]int{7, 5, 8, 2, 1, 5, 4}},
+		{[]int{5, 5, 4, 4, 3, 2, 2, 2, 11, 10}},
+		{[]int{1, 11, 12, 2, 4, 14, 15, 5, 7, 17}},
+	}
+
+	for _, tc := range tests {
+		Bubble(tc.input)
+		if !sorted(tc.input) {
+			t.Errorf("expect sorted slice, get %v", tc.input)
+		}
+	}
+
+}
 func TestBubble(t *testing.T) {
 
 	tests := []struct {
