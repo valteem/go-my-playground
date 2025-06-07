@@ -1,52 +1,39 @@
 package config
 
 import (
-	"os"
+	"context"
 
-	"gopkg.in/yaml.v3"
+	"github.com/sethvargo/go-envconfig"
 )
 
 type Config struct {
-	HTTP `yaml:"http"`
-	PG   `yaml:"postgres"`
-	JWT  `yaml:"jwt"`
+	HTTP
+	PG
+	JWT
 }
 
 type HTTP struct {
-	Port string `yaml:"http_port"`
+	Port string `env:"PRODUCT_CATALOG_HTTP_PORT"`
 }
 
 type PG struct {
-	MaxPoolSize int    `yaml:"max_pool_size"`
-	URL         string `yaml:"url"`
+	MaxPoolSize int    `env:"PRODUCT_CATALOG_PG_MAX_POOL_SIZE"`
+	URL         string `env:"PRODUCT_CATALOG_PG_URL"`
 }
 
 type JWT struct {
-	SignKey string `yaml:"jwt_sign_key"`
+	SignKey string `env:"PRODUCT_CATALOG_JWT_SIGN_KEY"`
 }
 
-func Load(s string) (*Config, error) {
+func Load(ctx context.Context) (*Config, error) {
 
 	cfg := &Config{}
 
-	err := yaml.Unmarshal([]byte(s), cfg)
+	err := envconfig.Process(ctx, &cfg)
 	if err != nil {
 		return nil, err
 	}
 
 	return cfg, nil
-
-}
-
-func LoadFile(path string) (*Config, error) {
-
-	b, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
-	cfg, err := Load(string(b))
-
-	return cfg, err
 
 }

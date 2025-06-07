@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"log"
 	"os"
 	"os/signal"
@@ -16,9 +17,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Run(configPath string) {
+func Run(ctx context.Context) {
 
-	cfg, err := config.Load(configPath)
+	cfg, err := config.Load(ctx)
 	if err != nil {
 		log.Fatalf("failed to load config info: %v", err)
 	}
