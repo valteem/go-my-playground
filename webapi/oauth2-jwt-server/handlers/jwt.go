@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"crypto/rsa"
 
 	"github.com/go-oauth2/oauth2/v4"
@@ -12,7 +13,7 @@ var privateKey *rsa.PrivateKey
 
 type JwtAccessTokenGen struct{}
 
-func (j *JwtAccessTokenGen) Token(ctx oauth2.Context, data *oauth2.TokenInfo) (string, error) {
+func (j *JwtAccessTokenGen) Token(ctx context.Context, data *oauth2.TokenInfo) (string, error) {
 	now := time.Now()
 
 	claims := jwtlib.MapClaims{

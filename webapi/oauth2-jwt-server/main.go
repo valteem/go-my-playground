@@ -4,6 +4,8 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"fmt"
+	"log"
+
 	//	"github.com/go-oauth2/oauth2/v4"
 	"github.com/go-oauth2/oauth2/v4/manage"
 	"github.com/go-oauth2/oauth2/v4/models"
@@ -31,7 +33,11 @@ func main() {
 	config.ConnectDB()
 
 	manager := manage.NewDefaultManager()
-	manager.MapTokenStorage(store.NewMemoryTokenStore())
+	tokenStore, err := store.NewMemoryTokenStore()
+	if err != nil {
+		log.Fatalf("failed to create new token store: %v", err)
+	}
+	manager.MapTokenStorage(tokenStore)
 	manager.MapAccessGenerate(&handlers.JwtAccessTokenGen{})
 
 	clientStore := store.NewClientStore()
