@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"crypto/rsa"
+
 	"github.com/go-oauth2/oauth2/v4"
 	jwtlib "github.com/golang-jwt/jwt/v5"
 	"time"
