@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"net/http"
+	"runtime"
 	"runtime/pprof"
 	"time"
 
@@ -14,6 +15,8 @@ const (
 )
 
 func main() {
+
+	runtime.SetCPUProfileRate(1_000_000) // just to make it work for this toy example
 
 	chReloadSimple, chShutdownSimple, countSimple := make(chan struct{}), make(chan struct{}), 0
 	chReloadTicker, chShutdownTicker, countTicker := make(chan struct{}), make(chan struct{}), 0
