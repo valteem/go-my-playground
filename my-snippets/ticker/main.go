@@ -2,38 +2,63 @@ package main
 
 import (
 	"context"
-	"net/http"
+	"fmt"
+	"log"
+	"os"
 	"runtime"
 	"runtime/pprof"
+	"sync"
 	"time"
-
-	_ "net/http/pprof"
 )
 
 const (
-	topLimit = 10_000
+	topLimit               = 1_000_000
+	uptimeMilliSec         = 1000
+	tickerIntervalMilliSec = 200
+	reloadIntervalMilliSec = 50
+	profileRateHz          = 10_000
 )
 
 func main() {
 
-	runtime.SetCPUProfileRate(1_000_000) // just to make it work for this toy example
+	f, err := os.Create("cpu.prof.pb.gz")
+	if err != nil {
+		log.Fatalf("failed to create profile file")
+	}
+	defer f.Close()
 
-	chReloadSimple, chShutdownSimple, countSimple := make(chan struct{}), make(chan struct{}), 0
-	chReloadTicker, chShutdownTicker, countTicker := make(chan struct{}), make(chan struct{}), 0
+	runtime.SetCPUProfileRate(profileRateHz) // standard 100 Hz is not enough
 
-	ticker := time.NewTicker(1 * time.Second)
+	if err := pprof.StartCPUProfile(f); err != nil {
+		log.Fatalf("failed to start profiling: %v", err)
+	}
+	defer pprof.StopCPUProfile()
 
-	pprof.Do(context.Background(), pprof.Labels("signal", "ticker"), func(_ context.Context) {
+	payloadSimple, payloadTicker := 0, 0
+	countReloadSimple, countReloadTicker := 0, 0
+
+	ticker := time.NewTicker(tickerIntervalMilliSec * time.Millisecond)
+	tickerReloadWithTicker := time.NewTicker(reloadIntervalMilliSec * time.Millisecond)
+	tickerReloadSimple := time.NewTicker(reloadIntervalMilliSec * time.Millisecond)
+	tickerUptimeWithTicker := time.NewTicker(uptimeMilliSec * time.Millisecond)
+	tickerUptimeSimple := time.NewTicker(uptimeMilliSec * time.Millisecond)
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	pprof.Do(context.Background(), pprof.Labels("signal", "with ticker"), func(_ context.Context) {
 		go func() {
+			defer wg.Done()
 			for {
 				select {
-				case <-chShutdownTicker:
+				case <-tickerUptimeWithTicker.C:
 					return
 				case <-ticker.C:
 					select {
-					case <-chReloadTicker:
-						reload(&countTicker)
-					case <-chShutdownTicker:
+					case <-tickerReloadWithTicker.C:
+						reload(&payloadTicker)
+						countReloadTicker++
+					case <-tickerUptimeWithTicker.C:
 						return
 					}
 				}
@@ -43,37 +68,33 @@ func main() {
 
 	pprof.Do(context.Background(), pprof.Labels("signal", "simple"), func(_ context.Context) {
 		go func() {
+			defer wg.Done()
 			for {
 				select {
-				case <-chReloadSimple:
-					reload(&countSimple)
-				case <-chShutdownSimple:
+				case <-tickerReloadSimple.C:
+					reload(&payloadSimple)
+					countReloadSimple++
+				case <-tickerUptimeSimple.C:
 					return
 				}
 			}
 		}()
 	})
 
-	go func() {
-		for {
-			time.Sleep(50 * time.Millisecond)
-			chReloadSimple <- struct{}{}
-			chReloadTicker <- struct{}{}
-		}
-	}()
+	wg.Wait()
 
-	http.ListenAndServe(":6060", nil)
+	fmt.Printf("ticker reloaded %d times, simple reloaded %d times\n", countReloadTicker, countReloadSimple)
 
 }
 
-func reload(count *int) {
+func reload(payload *int) {
 
 	for {
-		if *count == topLimit {
-			*count = 0
+		if *payload == topLimit {
+			*payload = 0
 			return
 		}
-		*count++
+		*payload++
 	}
 
 }
