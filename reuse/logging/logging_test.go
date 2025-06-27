@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
 	"log/slog"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -73,6 +75,39 @@ func TestStderrRedirect(t *testing.T) {
 
 	if output := buf.String(); output != msg {
 		t.Errorf("log message:\nget\n%s\nexpect\n%s\n", output, msg)
+	}
+
+}
+func TestLogSerialize(t *testing.T) {
+
+	msgs := []string{
+		"some message",
+		"some other message",
+		"some other random message",
+		"some other not-so-random message",
+	}
+
+	buf := bytes.Buffer{}
+	logger := log.New(&buf, "logger: ", log.Ldate|log.Ltime|log.LUTC|log.Lshortfile)
+
+	var wg sync.WaitGroup
+	wg.Add(len(msgs))
+
+	for _, msg := range msgs {
+		lmsg := msg // loop variable capture
+		go func() {
+			logger.Print(lmsg)
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
+
+	output := buf.String()
+	for _, msg := range msgs {
+		if !strings.Contains(output, msg) {
+			t.Errorf("log output: missing message %q", msg)
+		}
 	}
 
 }
