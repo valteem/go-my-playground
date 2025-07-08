@@ -22,6 +22,7 @@ func TestRouting(t *testing.T) {
 		"/account/",
 		"/account/active",
 		"/account/active/",
+		"/account/B001/entity/E001",
 	}
 
 	for _, route := range routes {

@@ -1,6 +1,7 @@
 package tree
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -27,6 +28,9 @@ func buildServer() *gin.Engine {
 	})
 	engine.GET("/account/retired", func(c *gin.Context) {
 		responseWithMsg(c, "/account/retired")
+	})
+	engine.GET("/account/:aid/entity/:eid", func(c *gin.Context) {
+		responseWithMsg(c, fmt.Sprintf("account %s for entity %s", c.Param("aid"), c.Param("eid")))
 	})
 
 	engine.GET("/product", func(c *gin.Context) {
