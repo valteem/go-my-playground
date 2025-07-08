@@ -18,7 +18,7 @@ func NewSHA1Hasher(salt string) *SHA1Hasher {
 }
 
 func (h *SHA1Hasher) Hash(input string) string {
-	
+
 	hash := sha1.New()
 	hash.Write([]byte(input))
 

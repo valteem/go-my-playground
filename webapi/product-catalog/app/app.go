@@ -9,6 +9,7 @@ import (
 
 	"webapi/product-catalog/api"
 	"webapi/product-catalog/config"
+	"webapi/product-catalog/hashing"
 	"webapi/product-catalog/repository"
 	"webapi/product-catalog/server"
 	"webapi/product-catalog/services"
@@ -34,10 +35,11 @@ func Run(ctx context.Context) {
 
 	deps := &services.ServiceDependencies{
 		Repositories: repo,
+		Hasher:       hashing.NewSHA1Hasher(cfg.Salt),
 	}
 	services := services.NewServices(deps)
 
-	handler := &gin.Engine{}
+	handler := gin.Default()
 	api.NewRouter(handler, services)
 
 	server := server.New(handler, server.Addr(cfg.HTTP.Port))

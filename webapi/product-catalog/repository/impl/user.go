@@ -23,7 +23,7 @@ func NewUserRepository(pg *sqldb.PostgresDB) *UserRepository {
 
 func (ur *UserRepository) CreateUser(ctx context.Context, user model.User) (int, error) {
 
-	rows := ur.Pool.QueryRow(ctx, "insert into user (name, password) values ($1, $2) returning id", user.Name, user.Password)
+	rows := ur.Pool.QueryRow(ctx, "insert into users (name, password) values ($1, $2) returning id", user.Name, user.Password)
 
 	var id int
 	if err := rows.Scan(id); err != nil {
@@ -47,7 +47,7 @@ func (ur *UserRepository) GetUserByNameAndPassword(ctx context.Context, name, pa
 
 	user := model.User{}
 
-	rows, err := ur.Pool.Query(ctx, "select id, name, password, created_at from user where name = $1 and password = $2", name, password)
+	rows, err := ur.Pool.Query(ctx, "select id, name, password, created_at from users where name = $1 and password = $2", name, password)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return &model.User{}, repoerr.ErrNotFound
@@ -68,7 +68,7 @@ func (ur *UserRepository) GetUserById(ctx context.Context, id int) (*model.User,
 
 	user := model.User{}
 
-	rows, err := ur.Pool.Query(ctx, "select id, name, password, created_at from user where id = $1", id)
+	rows, err := ur.Pool.Query(ctx, "select id, name, password, created_at from users where id = $1", id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return &model.User{}, repoerr.ErrNotFound
@@ -89,7 +89,7 @@ func (ur *UserRepository) GetUserByName(ctx context.Context, name string) (*mode
 
 	user := model.User{}
 
-	rows, err := ur.Pool.Query(ctx, "select id, name, password, created_at from user where name = $1", name)
+	rows, err := ur.Pool.Query(ctx, "select id, name, password, created_at from users where name = $1", name)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return &model.User{}, repoerr.ErrNotFound

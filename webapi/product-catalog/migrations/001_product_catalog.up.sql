@@ -19,7 +19,7 @@ prepare create_product(varchar(255)) as
     insert into product values ($1);
 */
 
-create table user (
+create table users (
     id          serial primary key,
     name        varchar(255) not null unique
     password    varchar(255) not null

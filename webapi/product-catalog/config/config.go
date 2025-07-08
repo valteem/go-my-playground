@@ -10,6 +10,7 @@ type Config struct {
 	HTTP
 	PG
 	JWT
+	HASH
 }
 
 type HTTP struct {
@@ -25,11 +26,15 @@ type JWT struct {
 	SignKey string `env:"PRODUCT_CATALOG_JWT_SIGN_KEY"`
 }
 
+type HASH struct {
+	Salt string `env:"PRODUCT_CATALOG_HASH_SALT"`
+}
+
 func Load(ctx context.Context) (*Config, error) {
 
 	cfg := &Config{}
 
-	err := envconfig.Process(ctx, &cfg)
+	err := envconfig.Process(ctx, cfg)
 	if err != nil {
 		return nil, err
 	}

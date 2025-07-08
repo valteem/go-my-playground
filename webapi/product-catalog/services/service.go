@@ -39,7 +39,7 @@ type Services struct {
 
 type ServiceDependencies struct {
 	Repositories *repository.Repositories
-	Hasher       *hashing.Hasher
+	Hasher       hashing.Hasher
 
 	SignKey  string
 	TokenTTL time.Duration
@@ -48,6 +48,6 @@ type ServiceDependencies struct {
 func NewServices(deps *ServiceDependencies) *Services {
 	return &Services{
 		Product: NewProductService(deps.Repositories.Product),
-		User:    NewUserService(deps.Repositories.User, *deps.Hasher, deps.SignKey, deps.TokenTTL),
+		User:    NewUserService(deps.Repositories.User, deps.Hasher, deps.SignKey, deps.TokenTTL),
 	}
 }
