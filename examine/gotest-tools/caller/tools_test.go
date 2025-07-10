@@ -50,3 +50,30 @@ func TestChangeWorkDir(t *testing.T) {
 
 	}
 }
+
+func TestPatchAll(t *testing.T) {
+
+	tests := []struct {
+		patches map[string]string
+	}{
+		{
+			map[string]string{"PATCH_FRUITS": "APPLES", "PATCH_VEGS": "ONIONS", "PATCH_OTHER": "CHEESE"},
+		},
+		{map[string]string{"PATCH_FRUITS": "PEARS", "PATCH_VEGS": "TOMATOES", "PATCH_OTHER": "SALAMI"}},
+	}
+
+	for _, tc := range tests {
+
+		unpatch := env.PatchAll(t, tc.patches)
+
+		for k, v := range tc.patches {
+			if actual, expected := os.Getenv(k), v; actual != expected {
+				t.Errorf("%q: get %q, expect %q", k, actual, expected)
+			}
+		}
+
+		unpatch()
+
+	}
+
+}
