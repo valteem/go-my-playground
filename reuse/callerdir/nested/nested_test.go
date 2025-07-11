@@ -1,7 +1,6 @@
 package nested
 
 import (
-	"log"
 	"os"
 
 	"testing"
@@ -12,7 +11,7 @@ import (
 func TestReadConfig(t *testing.T) {
 
 	cwd, _ := os.Getwd()
-	log.Println(cwd)
+	t.Log(cwd)
 
 	b, err := os.ReadFile("config/config.json") // path from reuse/ folder
 	if err != nil {

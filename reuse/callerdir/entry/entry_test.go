@@ -1,7 +1,6 @@
 package entry
 
 import (
-	"log"
 	"os"
 
 	"testing"
@@ -16,7 +15,7 @@ func TestConfigDirAccess(t *testing.T) {
 	}
 
 	fpath, _ := os.Executable()
-	log.Println(fpath)
+	t.Log(fpath)
 
 	if len(b) == 0 {
 		t.Errorf("config file empty")
