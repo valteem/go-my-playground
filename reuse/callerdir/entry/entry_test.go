@@ -1,6 +1,7 @@
 package entry
 
 import (
+	"log"
 	"os"
 
 	"testing"
@@ -13,6 +14,9 @@ func TestConfigDirAccess(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to read config file: %v", err)
 	}
+
+	fpath, _ := os.Executable()
+	log.Println(fpath)
 
 	if len(b) == 0 {
 		t.Errorf("config file empty")
