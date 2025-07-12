@@ -23,6 +23,21 @@ lbin:
 	@echo "\nrunning executable from /sibling directory ..."
 	cd sibling && ./../bin/a.out
 
-,PHONY: clean
+.PHONY: clean
 clean:
 	@rm -rf bin
+	@rm -rf sibling
+
+.PHONY: targets
+targets:
+	mkdir -p targets
+	@go build -o ./targets/a.out ./folders/src/main.go
+	@cp ./folders/assets/config.txt ./targets/
+	cd targets && ./a.out
+	@mkdir -p targets/nested
+	@cp ./targets/*.* ./targets/nested/
+	cd targets/nested && ./a.out
+
+.PHONY: clean-targets
+clean-targets:
+	@rm -rf targets
