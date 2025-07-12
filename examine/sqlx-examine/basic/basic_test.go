@@ -2,7 +2,8 @@ package basic
 
 import (
 	"testing"
-	// "github.com/jmoiron/sqlx"
+
+	_ "examine/sqlx-examine/env"
 )
 
 func TestBasic(t *testing.T) {

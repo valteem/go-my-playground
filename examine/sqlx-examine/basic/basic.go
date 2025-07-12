@@ -7,7 +7,6 @@ import (
 	"github.com/jmoiron/sqlx"
 
 	"examine/sqlx-examine/config"
-	_ "examine/sqlx-examine/env"
 )
 
 type Location struct {
