@@ -3,7 +3,7 @@ package env
 import (
 	"log"
 	"os"
-	"path"
+	"path/filepath"
 	"runtime"
 
 	"github.com/joho/godotenv"
@@ -19,7 +19,7 @@ func init() {
 	if !ok {
 		log.Fatalf("failed to get caller filename")
 	}
-	err = os.Chdir(path.Dir(filename))
+	err = os.Chdir(filepath.Dir(filename))
 	if err != nil {
 		log.Fatalf("failed to change directory: %v", err)
 	}
