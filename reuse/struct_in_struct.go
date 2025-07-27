@@ -3,6 +3,7 @@ package reuse
 import (
 	"runtime"
 )
+
 type Platform struct {
 	OS string
 }
@@ -16,13 +17,13 @@ type Builder struct {
 }
 
 func NewPlatform() *Platform {
-	return &Platform{OS:runtime.GOOS}
+	return &Platform{OS: runtime.GOOS}
 }
 
-func NewCompile() *Compile{
+func NewCompile() *Compile {
 	return &Compile{*NewPlatform()}
 }
 
-func NewBuilder() *Builder { 
+func NewBuilder() *Builder {
 	return &Builder{*NewCompile()}
 }
