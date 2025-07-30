@@ -4,6 +4,8 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"path/filepath"
+	"runtime"
 	"strings"
 
 	"testing"
@@ -42,6 +44,16 @@ func TestWithStackTrace(t *testing.T) {
 	output := string(buf)
 	if !strings.Contains(output, errMsg) {
 		t.Errorf("response body does not contain handler error message")
+	}
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatalf("failed to extract path to source code file")
+	}
+
+	path := filepath.Dir(filename)
+	if !strings.Contains(output, path+"/trace.go") {
+		t.Errorf("response body should contain path to source code file")
 	}
 
 }
