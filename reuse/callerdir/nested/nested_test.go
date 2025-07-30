@@ -13,7 +13,7 @@ func TestReadConfig(t *testing.T) {
 	cwd, _ := os.Getwd()
 	t.Log(cwd)
 
-	b, err := os.ReadFile("config/config.json") // path from reuse/ folder
+	b, err := os.ReadFile("config/config.json") // path from callerdir/ folder
 	if err != nil {
 		t.Fatalf("failed to read config file from root project dir: %v", err)
 	}
