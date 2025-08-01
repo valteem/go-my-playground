@@ -56,6 +56,32 @@ func TestAppendInFunction(t *testing.T) {
 
 }
 
+func TestSeqAppend(t *testing.T) {
+
+	t.Run("append on pointer to slice", func(t *testing.T) {
+		s := make([]int, 0)
+		f := func(s *[]int, i int) {
+			*s = append(*s, i)
+		}
+		for i := range 16 {
+			f(&s, i)
+			fmt.Println(s, len(s), cap(s))
+		}
+	})
+
+	t.Run("append on slice", func(t *testing.T) {
+		s := make([]int, 0)
+		f := func(s []int, i int) {
+			s = append(s, i)
+		}
+		for i := range 16 {
+			f(s, i)
+			fmt.Println(s, len(s), cap(s))
+		}
+	})
+
+}
+
 func TestCopySlice(t *testing.T) {
 
 	a := []int{0, 1, 2, 3}
@@ -71,5 +97,42 @@ func TestCopySlice(t *testing.T) {
 	if count != 3 {
 		t.Errorf("expect %d elements copied, get %d", len(c), count)
 	}
+
+}
+
+func TestSliceRange(t *testing.T) {
+
+	type Food struct {
+		name    string
+		expired bool
+	}
+
+	t.Run("slice of struct values", func(t *testing.T) {
+		f := []Food{{"apples", false}, {"cherries", false}, {"onions", false}}
+
+		for _, foodItem := range f {
+			foodItem.expired = true
+		}
+
+		for _, foodItem := range f {
+			if foodItem.expired {
+				t.Errorf("%q are not expected to expire", foodItem.name)
+			}
+		}
+	})
+
+	t.Run("slice of struct pointers", func(t *testing.T) {
+		f := []*Food{{"apples", false}, {"cherries", false}, {"onions", false}}
+
+		for _, foodItem := range f {
+			foodItem.expired = true
+		}
+
+		for _, foodItem := range f {
+			if !foodItem.expired {
+				t.Errorf("%q are expected to expire", foodItem.name)
+			}
+		}
+	})
 
 }
