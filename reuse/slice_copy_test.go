@@ -72,6 +72,7 @@ func TestSeqAppend(t *testing.T) {
 	t.Run("append on slice", func(t *testing.T) {
 		s := make([]int, 0)
 		f := func(s []int, i int) {
+			//lint:ignore SA4006 for test purposes only
 			s = append(s, i)
 		}
 		for i := range 16 {
@@ -123,6 +124,51 @@ func TestSliceRange(t *testing.T) {
 
 	t.Run("slice of struct pointers", func(t *testing.T) {
 		f := []*Food{{"apples", false}, {"cherries", false}, {"onions", false}}
+
+		for _, foodItem := range f {
+			foodItem.expired = true
+		}
+
+		for _, foodItem := range f {
+			if !foodItem.expired {
+				t.Errorf("%q are expected to expire", foodItem.name)
+			}
+		}
+	})
+
+}
+
+func TestMapRange(t *testing.T) {
+
+	type food struct {
+		name    string
+		expired bool
+	}
+
+	t.Run("map values as struct values", func(t *testing.T) {
+		f := map[int]food{
+			1: {"apples", false},
+			2: {"cherries", false},
+			3: {"onions", false},
+		}
+
+		for _, foodItem := range f {
+			foodItem.expired = true
+		}
+
+		for _, foodItem := range f {
+			if foodItem.expired {
+				t.Errorf("%q are not expected to expire", foodItem.name)
+			}
+		}
+	})
+
+	t.Run("map values as struct pointers", func(t *testing.T) {
+		f := map[int]*food{
+			1: {"apples", false},
+			2: {"cherries", false},
+			3: {"onions", false},
+		}
 
 		for _, foodItem := range f {
 			foodItem.expired = true
