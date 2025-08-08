@@ -1,4 +1,4 @@
-module examine/prometheus/client_model
+module examine/prometheus/client
 
 go 1.23.2
 
