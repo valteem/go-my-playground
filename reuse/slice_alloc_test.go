@@ -25,3 +25,16 @@ func TestSliceAlloc(t *testing.T) {
 	}
 
 }
+
+func TestAllocated(t *testing.T) {
+	s := make([]int32, 0, 1<<25)
+	for i := range 1 << 25 {
+		s = append(s, int32(i))
+		if actual, expected := len(s), i+1; actual != expected {
+			t.Errorf("step %d: get slice length %d, expect %d", i, actual, expected)
+		}
+		if actual, expected := cap(s), 1<<25; actual != expected {
+			t.Errorf("step %d: get slice capacity %d, expect %d", i, actual, expected)
+		}
+	}
+}
