@@ -58,7 +58,8 @@ func BenchmarkMemoryAccessReadWrite(b *testing.B) {
 	b.Run("pre-allocate", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			b.StopTimer()
-			m := make([]int32, 0, 1<<25+1)
+			// m := make([]int32, 0, 38500352) // same as "resize result"
+			m := make([]int32, 0, 2<<25)
 			for range 1 << 25 {
 				m = append(m, rand.Int31())
 			}
@@ -130,6 +131,81 @@ Cache hierarchy implementation
 Memory channel configuration (single vs dual-channel)
 */
 
+func augmentMemoryAllocations(size int) {
+	m := make([]int32, 0, 2<<size)
+	for range 2 << size {
+		m = append(m, rand.Int31())
+	}
+	m[0] += 1
+	m[2<<size-1] += 1
+}
+
+func BenchmarkMemoryAccessReadWriteAugmented(b *testing.B) {
+
+	b.Run("pre-allocate", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			b.StopTimer()
+			// m := make([]int32, 0, 38500352) // same as "resize result"
+			m := make([]int32, 0, 2<<25)
+			for range 1 << 25 {
+				m = append(m, rand.Int31())
+			}
+			augmentMemoryAllocations(27)
+			b.StartTimer()
+			for j := range m {
+				m[j] += 1
+			}
+		}
+	})
+
+	b.Run("set-direct", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			b.StopTimer()
+			m := make([]int32, 1<<25)
+			for j := range 1 << 25 {
+				m[j] = rand.Int31()
+			}
+			augmentMemoryAllocations(27)
+			b.StartTimer()
+			for j := range m {
+				m[j] += 1
+			}
+		}
+	})
+
+	b.Run("resize", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			b.StopTimer()
+			var m []int32
+			for range 1 << 25 {
+				m = append(m, rand.Int31())
+			}
+			augmentMemoryAllocations(27)
+			b.StartTimer()
+			for j := range m {
+				m[j] += 1
+			}
+		}
+	})
+
+	b.Run("resize-modify", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			b.StopTimer()
+			var m []int32
+			for range 1 << 25 {
+				m = append(m, rand.Int31())
+			}
+			m[0] += 1 // reset memory controller buffers
+			m[0] -= 1
+			augmentMemoryAllocations(27)
+			b.StartTimer()
+			for j := range m {
+				m[j] += 1
+			}
+		}
+	})
+
+}
 func BenchmarkMemoryPopulate(b *testing.B) {
 
 	b.Run("pre-allocate", func(b *testing.B) {
