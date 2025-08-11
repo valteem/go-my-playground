@@ -1,21 +1,49 @@
 package voidtags
 
-type header struct {
+type Header struct {
 	Key    string
 	Values []string
 }
 
-type request struct {
+type Request struct {
 	Paths   []string
-	Headers []header
+	Headers []Header
 }
 
-type peer struct {
+type Peer struct {
 	Principals []string
 }
 
-type rule struct {
+type Rule struct {
 	Name    string
-	Source  peer
-	Request request
+	Source  Peer
+	Request Request
+}
+
+type RuleOption func(*Rule)
+
+func RuleName(s string) RuleOption {
+	return func(r *Rule) {
+		r.Name = s
+	}
+}
+
+func RuleSource(p Peer) RuleOption {
+	return func(r *Rule) {
+		r.Source = p
+	}
+}
+
+func RuleRequest(req Request) RuleOption {
+	return func(r *Rule) {
+		r.Request = req
+	}
+}
+
+func NewRule(opts ...RuleOption) Rule {
+	r := Rule{}
+	for _, opt := range opts {
+		opt(&r)
+	}
+	return r
 }
