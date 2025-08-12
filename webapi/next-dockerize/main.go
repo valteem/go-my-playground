@@ -38,6 +38,7 @@ func handleNext(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// Just a casual comment from inside DevContainer
 func main() {
 
 	http.Handle("/next", http.HandlerFunc(handleNext))
