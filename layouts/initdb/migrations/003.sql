@@ -1,0 +1,1 @@
+insert into products (description) values ('apples'), ('cherries'), ('onions'), ('potatoes');
