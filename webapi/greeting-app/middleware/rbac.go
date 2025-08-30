@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"slices"
 
 	"greeting-app/database"
 	//	"greeting-app/models"
@@ -65,11 +66,8 @@ func RoleMiddleware(allowedRoles ...string) gin.HandlerFunc {
 
 		// Check if user has one of the allowed roles
 		allowed := false
-		for _, role := range allowedRoles {
-			if userRole == role {
-				allowed = true
-				break
-			}
+		if slices.Contains(allowedRoles, userRole) {
+			allowed = true
 		}
 
 		if !allowed {
