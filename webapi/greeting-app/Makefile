@@ -1,0 +1,13 @@
+.PHONY: test test-cover test-race
+
+test:
+	go test -v ./...
+
+test-cover:
+	go test -cover ./...
+
+test-race:
+	go test -race ./...
+
+test-all:
+	go test -v -cover -race ./...
