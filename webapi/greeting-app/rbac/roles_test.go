@@ -1,8 +1,9 @@
 package rbac
 
 import (
-	"greeting-app/models"
 	"testing"
+
+	"greeting-app/models"
 )
 
 func TestHasPermission(t *testing.T) {

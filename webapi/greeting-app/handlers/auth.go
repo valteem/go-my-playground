@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"context"
+	"net/http"
+
 	"greeting-app/config"
 	"greeting-app/database"
 	"greeting-app/models"
 	"greeting-app/rbac"
 	"greeting-app/utils"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"

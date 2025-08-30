@@ -1,11 +1,12 @@
 package middleware
 
 import (
+	"net/http"
+	"strings"
+
 	"greeting-app/config"
 	"greeting-app/database"
 	"greeting-app/utils"
-	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,8 +1,9 @@
 package utils
 
 import (
-	"greeting-app/config"
 	"time"
+
+	"greeting-app/config"
 
 	"github.com/golang-jwt/jwt/v5"
 )

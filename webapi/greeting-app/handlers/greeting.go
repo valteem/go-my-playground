@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"context"
-	"greeting-app/database"
-	"greeting-app/models"
 	"math/rand"
 	"net/http"
 	"time"
+
+	"greeting-app/database"
+	"greeting-app/models"
 
 	"github.com/gin-gonic/gin"
 )

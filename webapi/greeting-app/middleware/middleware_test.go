@@ -1,8 +1,9 @@
 package middleware
 
 import (
-	"greeting-app/config"
 	"testing"
+
+	"greeting-app/config"
 
 	"github.com/gin-gonic/gin"
 )

@@ -3,8 +3,9 @@ package database
 import (
 	"context"
 	"fmt"
-	"greeting-app/config"
 	"log"
+
+	"greeting-app/config"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
