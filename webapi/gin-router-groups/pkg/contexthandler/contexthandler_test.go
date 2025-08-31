@@ -10,14 +10,12 @@ func TestContextHandler(t *testing.T) {
 
 	customHeader := "Added-Context-Value" // canonical format
 
-	ch := ContextHandler{http.DefaultServeMux}
-
-	mux := http.DefaultServeMux
+	mux := http.NewServeMux()
 	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		value := (r.Context().Value(chCtxKey)).(string)
 		w.Header().Set(customHeader, value)
 	}))
-
+	ch := ContextHandler{mux}
 	go http.ListenAndServe(":3001", ch)
 
 	// allow server some time to start properly
