@@ -1,0 +1,1 @@
+This package contains code that sets environment variables for testing purposes 
