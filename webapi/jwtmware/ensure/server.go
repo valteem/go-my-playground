@@ -1,11 +1,11 @@
-// cybertec-postgresql/pgwatch
-
 package ensure
 
 import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -33,12 +33,6 @@ type userCred struct {
 
 func validateToken(r *http.Request) error {
 
-	u := userCred{}
-
-	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
-		return err
-	}
-
 	authHeader, ok := r.Header["Authorization"]
 	if !ok {
 		return errAuthHeaderNotFound
@@ -46,7 +40,7 @@ func validateToken(r *http.Request) error {
 	tokenString := strings.TrimPrefix(authHeader[0], authPrefix)
 	token, err := jwt.Parse(tokenString,
 		func(*jwt.Token) (any, error) {
-			return cfg.Secret, nil
+			return []byte(cfg.Secret), nil
 		},
 		jwt.WithExpirationRequired(),
 		jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}),
@@ -59,7 +53,8 @@ func validateToken(r *http.Request) error {
 	if claims["username"].(string) != cfg.UserName {
 		return errUserNotAuthorized
 	}
-	if claims["expire"].(time.Time).Unix() < time.Now().Unix() {
+	tokenExpirationTime := claims["exp"].(float64)
+	if tokenExpirationTime < float64(time.Now().Unix()) {
 		return errTokenExpired
 	}
 
@@ -75,7 +70,7 @@ func NewEnsureAuth(handler http.HandlerFunc) *EnsureAuth {
 }
 
 func (er *EnsureAuth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if err := validateToken(r); r != nil {
+	if err := validateToken(r); err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
@@ -90,7 +85,7 @@ func (s *Server) handlePing(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("pong"))
 }
 
-type authTocken struct {
+type authToken struct {
 	AccessToken string `json:"accesstoken"`
 }
 
@@ -100,7 +95,7 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		err   error
 		ut    userCred
 		token string
-		at    authTocken
+		at    authToken
 	)
 
 	defer func() {
@@ -121,20 +116,27 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	at = authTocken{AccessToken: token}
-	if err = json.NewEncoder(w).Encode(at); err != nil {
+	at = authToken{AccessToken: token}
+	encoded, err := json.Marshal(at)
+	if err != nil {
 		return
 	}
 
+	w.Write(encoded)
+
+}
+
+func loadConfig(ctx context.Context) {
+	var err error
+	cfg, err = config.Load(ctx)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func Start() *Server {
 
-	var err error
-	cfg, err = config.Load(context.Background())
-	if err != nil {
-		panic(err)
-	}
+	loadConfig(context.Background())
 
 	mux := http.NewServeMux()
 
@@ -147,6 +149,17 @@ func Start() *Server {
 	mux.Handle("/ping", NewEnsureAuth(s.handlePing))
 	mux.HandleFunc("/login", s.handleLogin)
 
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", cfg.Port))
+	if err != nil {
+		return nil
+	}
+
+	go func() {
+		if err := s.Serve(listener); err != nil {
+			panic(err)
+		}
+	}()
+
 	return s
 
 }
@@ -158,7 +171,7 @@ func generateJWT(username string) (string, error) {
 
 	claims["autorized"] = true
 	claims["username"] = username
-	claims["expire"] = time.Now().Add(time.Hour * time.Duration(cfg.Expire)).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * time.Duration(cfg.Expire)).Unix()
 
-	return token.SignedString(cfg.Secret)
+	return token.SignedString([]byte(cfg.Secret))
 }

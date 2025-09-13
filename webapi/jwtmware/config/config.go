@@ -6,6 +6,10 @@ import (
 	"github.com/sethvargo/go-envconfig"
 )
 
+type HTTP struct {
+	Port string `env:"HTTP_PORT"`
+}
+
 type JWT struct {
 	Secret string `env:"JWT_SECRET"`
 	Expire int    `env:"JWT_EXPIRE"` // token expiration time in hours
@@ -17,6 +21,7 @@ type AdminUser struct {
 }
 
 type Config struct {
+	HTTP
 	JWT
 	AdminUser
 }
