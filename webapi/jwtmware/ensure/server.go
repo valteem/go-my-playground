@@ -2,6 +2,7 @@ package ensure
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -20,10 +21,12 @@ const (
 )
 
 var (
-	cfg                   *config.Config
-	errAuthHeaderNotFound = errors.New("authorization header not found")
-	errUserNotAuthorized  = errors.New("user not authorized")
-	errTokenExpired       = errors.New("token expired")
+	cfg                       *config.Config
+	errAuthHeaderNotFound     = errors.New("authorization header not found")
+	errInvalidAuthHeader      = errors.New("invalid authorization header")
+	errTokenGenerationFailure = errors.New("token generation failure")
+	errTokenExpired           = errors.New("token expired")
+	errUserNotAuthorized      = errors.New("user not authorized")
 )
 
 type userCred struct {
@@ -93,7 +96,6 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 	var (
 		err   error
-		ut    userCred
 		token string
 		at    authToken
 	)
@@ -104,15 +106,24 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	if err = json.NewDecoder(r.Body).Decode(&ut); err != nil {
+	credentialsBase64 := r.Header.Get("Authorization")
+	decoded, err := base64.StdEncoding.DecodeString(credentialsBase64)
+	if err != nil {
+		return
+	}
+	credentialsStr := strings.Split(string(decoded), ":")
+	if len(credentialsStr) != 2 {
+		err = errInvalidAuthHeader
 		return
 	}
 
-	if ut.Username != cfg.UserName || ut.Password != cfg.Password {
+	if credentialsStr[0] != cfg.UserName || credentialsStr[1] != cfg.Password {
+		err = errUserNotAuthorized
 		return
 	}
 
-	if token, err = generateJWT(ut.Username); err != nil {
+	if token, err = generateJWT(credentialsStr[0]); err != nil {
+		err = errTokenGenerationFailure
 		return
 	}
 

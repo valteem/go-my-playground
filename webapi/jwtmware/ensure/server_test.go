@@ -1,8 +1,8 @@
 package ensure
 
 import (
-	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -22,16 +22,13 @@ func TestAuth(t *testing.T) {
 	time.Sleep(100 * time.Millisecond) // allow server some time to start properly
 
 	// First log in and receive access token
-	ut := userCred{Username: cfg.UserName, Password: cfg.Password}
-	utJson, err := json.Marshal(ut)
-	if err != nil {
-		t.Fatalf("failed to marshal user credentials: %v", err)
-	}
+	credentialsStr := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", cfg.UserName, cfg.Password)))
 
-	req, err := http.NewRequest(http.MethodPost, "http://localhost:3001/login", bytes.NewReader([]byte(utJson)))
+	req, err := http.NewRequest(http.MethodGet, "http://localhost:3001/login", nil)
 	if err != nil {
 		t.Fatalf("failed to create authorization request: %v", err)
 	}
+	req.Header.Set("Authorization", credentialsStr)
 
 	client := http.Client{}
 	resp, err := client.Do(req)
@@ -96,16 +93,13 @@ func TestHandlers(t *testing.T) {
 	mux.HandleFunc("/login", s.handleLogin)
 	mux.Handle("/ping", NewEnsureAuth(s.handlePing))
 
-	ut := userCred{Username: cfg.UserName, Password: cfg.Password}
-	utJson, err := json.Marshal(ut)
-	if err != nil {
-		t.Fatalf("failed to marshal user credentials: %v", err)
-	}
+	credentialsStr := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", cfg.UserName, cfg.Password)))
 
-	req, err := http.NewRequest(http.MethodPost, "/login", bytes.NewReader([]byte(utJson)))
+	req, err := http.NewRequest(http.MethodGet, "/login", nil)
 	if err != nil {
 		t.Fatalf("failed to create request: %v", err)
 	}
+	req.Header.Set("Authorization", credentialsStr)
 
 	resp := httptest.NewRecorder()
 
