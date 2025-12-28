@@ -1,6 +1,8 @@
 module github.com/valteem/reuse
 
-go 1.24.6
+go 1.24.9
+
+toolchain go1.25.5
 
 require (
 	github.com/google/go-cmp v0.6.0
