@@ -34,3 +34,38 @@ func TestTimeParse(t *testing.T) {
 		}
 	}
 }
+
+func TestDurationFormat(t *testing.T) {
+
+	tests := []struct {
+		input  time.Duration
+		output string
+	}{
+		{
+			input:  time.Duration(11*60*60+21*60+31) * 1000000000,
+			output: "11h21m31s",
+		},
+		{
+			input:  time.Duration(1*60*60+21) * 1000000000,
+			output: "1h0m21s",
+		},
+		{
+			input:  time.Duration(1) * 100000000, // 10^8
+			output: "100ms",
+		},
+		{
+			input:  time.Duration(1) * 100000, // 10^5
+			output: "100µs",
+		},
+		{
+			input:  time.Duration(1) * 100,
+			output: "100ns",
+		},
+	}
+
+	for _, tc := range tests {
+		if output := tc.input.String(); output != tc.output {
+			t.Errorf("string representation of duration input: get %q, expect %q", output, tc.output)
+		}
+	}
+}
