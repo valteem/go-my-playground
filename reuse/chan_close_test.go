@@ -39,3 +39,33 @@ func TestChanCloseDelay(t *testing.T) {
 		t.Errorf("delay in main: get %s, expect no less than %s", after, chanCloseDelay)
 	}
 }
+
+func TestBufChanCloseDelay(t *testing.T) {
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	// Same applies to buffered channel
+	c := make(chan int, 10)
+
+	go func() {
+		for range c {
+			<-c
+		}
+		wg.Done()
+	}()
+
+	now := time.Now()
+
+	go func() {
+		time.Sleep(chanCloseDelay)
+		close(c)
+	}()
+
+	wg.Wait()
+	after := time.Since(now)
+
+	if after < chanCloseDelay {
+		// Using %s format cause time.Duration has a built-in String() method
+		t.Errorf("delay in main: get %s, expect no less than %s", after, chanCloseDelay)
+	}
+}
