@@ -2,6 +2,7 @@ package reuse_test
 
 import (
 	"fmt"
+	"slices"
 	"testing"
 )
 
@@ -181,4 +182,33 @@ func TestMapRange(t *testing.T) {
 		}
 	})
 
+}
+
+func TestReplaceByteSlice(t *testing.T) {
+
+	tests := []struct {
+		oldStr string
+		input  string
+	}{
+		{"apples", "potatoes"},
+		{"oranges", "onions"},
+	}
+
+	f := func(b []byte, s string) []byte {
+		b = b[:0]
+		for _, ss := range s {
+			bb := byte(ss)
+			b = append(b, bb)
+		}
+		return b
+	}
+
+	for _, tc := range tests {
+		b := []byte(tc.oldStr)
+		b = f(b, tc.input)
+		expected := []byte(tc.input)
+		if !slices.Equal(b, expected) {
+			t.Errorf("replace output:\nget\n%v\nexpect\n%v", b, expected)
+		}
+	}
 }
