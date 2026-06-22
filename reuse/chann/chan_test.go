@@ -113,3 +113,28 @@ func TestReadOKWithFlag(t *testing.T) {
 	}
 
 }
+
+func TestReadClosedChan(t *testing.T) {
+
+	ch := make(chan int)
+	wg := sync.WaitGroup{}
+
+	go func() {
+		wg.Add(1)
+		ch <- 1
+		wg.Done()
+	}()
+
+	wg.Wait()
+	v, ok := <-ch
+	if v != 1 || !ok {
+		t.Errorf("reading from open channel: get %d, %t, expect %d, %t", v, ok, 1, true)
+	}
+
+	close(ch)
+	v, ok = <-ch
+	if v != 0 || ok {
+		t.Errorf("reading from closed channel: get %d, %t, expect %d, %t", v, ok, 0, false)
+	}
+
+}
