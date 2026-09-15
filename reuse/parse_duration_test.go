@@ -12,7 +12,7 @@ func TestParseDuration(t *testing.T) {
 		inp  float64
 		fail bool
 	}{
-		{(float64(1<<63) + 1000.0), false},
+		{(float64(1<<63) + 1000.0), true}, // rounds down to exactly float64(2^63)
 		{(float64(1<<63) + 10000.0), true},
 	}
 
